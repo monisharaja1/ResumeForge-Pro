@@ -1,0 +1,16 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='360' height='220' viewBox='0 0 360 220'>
+<rect width='360' height='220' fill='#faf5ff'/>
+<rect x='14' y='14' width='332' height='192' rx='10' fill='#ffffff' stroke='#ddd6fe'/>
+<rect x='24' y='24' width='90' height='172' rx='8' fill='#7c3aed'/>
+<circle cx='69' cy='50' r='17' fill='#f5f3ff'/>
+<rect x='38' y='80' width='62' height='6' fill='#ddd6fe'/>
+<rect x='38' y='93' width='48' height='6' fill='#c4b5fd'/>
+<rect x='126' y='30' width='188' height='10' fill='#5b21b6'/>
+<rect x='126' y='45' width='132' height='6' fill='#7c3aed'/>
+<rect x='126' y='66' width='192' height='8' fill='#7c3aed'/>
+<rect x='126' y='80' width='170' height='6' fill='#d1d5db'/>
+<rect x='126' y='93' width='180' height='6' fill='#e5e7eb'/>
+<rect x='126' y='115' width='192' height='8' fill='#7c3aed'/>
+<rect x='126' y='129' width='160' height='6' fill='#d1d5db'/>
+<rect x='126' y='142' width='174' height='6' fill='#e5e7eb'/>
+</svg>

@@ -1,0 +1,4081 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResumeForge Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&family=Lora:wght@400;500;600;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;500;600;700&family=Nunito:wght@400;600;700&family=Playfair+Display:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=Roboto+Slab:wght@400;500;700&family=Sora:wght@400;600;700;800&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#edf4ff;
+      --card:#ffffff;
+      --line:#c9d4e8;
+      --text:#1b2240;
+      --muted:#5d6989;
+      --accent:#0d9488;
+      --accent-2:#f97316;
+      --surface:#f4f7ff;
+      --head-grad-1:#0f3b66;
+      --head-grad-2:#0ea5a4;
+      --shadow:0 18px 44px rgba(24,53,103,.16);
+      --glass:rgba(255,255,255,.74);
+      --glass-line:rgba(255,255,255,.52);
+      --chip-1:#06b6d4;
+      --chip-2:#22c55e;
+      --chip-3:#f59e0b;
+      --chip-4:#f43f5e;
+      --ring:0 0 0 3px color-mix(in srgb, var(--accent) 26%, transparent);
+    }
+    body.dark {
+      --bg:#0d1224;
+      --card:#151d36;
+      --line:#2b3b5f;
+      --text:#ecf2ff;
+      --muted:#b8c4e1;
+      --accent:#38bdf8;
+      --accent-2:#f59e0b;
+      --surface:#10172b;
+      --head-grad-1:#0b1327;
+      --head-grad-2:#17386b;
+      --shadow:0 16px 40px rgba(0,0,0,.36);
+      --glass:rgba(21,29,54,.66);
+      --glass-line:rgba(152,176,223,.2);
+      --chip-1:#38bdf8;
+      --chip-2:#22d3ee;
+      --chip-3:#fbbf24;
+      --chip-4:#fb7185;
+      --ring:0 0 0 3px color-mix(in srgb, var(--accent) 32%, transparent);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Source Sans 3",sans-serif;
+      background:
+        radial-gradient(circle at 10% 10%, color-mix(in srgb, #22d3ee 26%, #fff) 0, transparent 34%),
+        radial-gradient(circle at 87% 14%, color-mix(in srgb, #f59e0b 22%, #fff) 0, transparent 28%),
+        radial-gradient(circle at 78% 88%, color-mix(in srgb, #ec4899 14%, #fff) 0, transparent 24%),
+        linear-gradient(148deg,#f4f9ff 0,var(--bg) 52%,#e8f1ff 100%);
+      color:var(--text);
+      padding:12px;
+      position:relative;
+      overflow-x:hidden;
+      transition:background .3s ease,color .2s ease;
+    }
+    body::before,
+    body::after{
+      content:"";
+      position:fixed;
+      z-index:-1;
+      border-radius:999px;
+      filter:blur(36px);
+      opacity:.46;
+      pointer-events:none;
+    }
+    body::before{
+      width:320px;height:320px;
+      left:-90px;top:15vh;
+      background:radial-gradient(circle,#22d3ee 0,transparent 72%);
+      animation:orbFloatA 12s ease-in-out infinite;
+    }
+    body::after{
+      width:360px;height:360px;
+      right:-120px;bottom:10vh;
+      background:radial-gradient(circle,#fb7185 0,transparent 72%);
+      animation:orbFloatB 14s ease-in-out infinite;
+    }
+    .app{
+      max-width:1480px;
+      margin:10px auto;
+      border:1px solid var(--line);
+      border-radius:24px;
+      overflow:hidden;
+      background:linear-gradient(176deg,color-mix(in srgb, var(--card) 95%, #f4f9ff) 0,var(--card) 50%);
+      box-shadow:var(--shadow);
+      position:relative;
+    }
+    header{
+      position:relative;
+      padding:16px 20px;
+      background:
+        radial-gradient(circle at 14% 12%, rgba(255,255,255,.16) 0, transparent 30%),
+        radial-gradient(circle at 82% 88%, rgba(255,255,255,.12) 0, transparent 34%),
+        linear-gradient(120deg,var(--head-grad-1),var(--head-grad-2));
+      color:#fff;
+      display:flex;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center
+    }
+    header::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(105deg, transparent 30%, rgba(255,255,255,.14) 46%, transparent 64%);
+      pointer-events:none;
+    }
+    header strong{
+      font-family:"Sora",sans-serif;
+      font-size:1.12rem;
+      letter-spacing:.35px;
+      font-weight:700;
+    }
+    #status{
+      margin-left:8px;
+      padding:4px 10px;
+      border:1px solid rgba(255,255,255,.3);
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      font-size:.78rem
+    }
+    .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    #navToggleBtn{display:none}
+    button,input,select,textarea{
+      font:inherit;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text)
+    }
+    input,select,textarea{
+      padding:9px 10px;
+      background:color-mix(in srgb, var(--card) 88%, #f3f8f5);
+      transition:border-color .15s ease, box-shadow .15s ease, background .2s ease;
+    }
+    button{
+      padding:8px 12px;
+      cursor:pointer;
+      font-weight:600;
+      transition:.18s transform,.18s box-shadow,.18s opacity,.18s border-color;
+      border-color:color-mix(in srgb,var(--line) 65%, var(--accent));
+    }
+    button:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(12,58,47,.16);opacity:.98}
+    button:active{transform:translateY(0);box-shadow:0 3px 10px rgba(12,58,47,.16)}
+    .primary{
+      background:linear-gradient(120deg,var(--accent),color-mix(in srgb, var(--accent) 60%, #0b534e));
+      border-color:color-mix(in srgb, var(--accent) 75%, #083a36);
+      color:#fff
+    }
+    .danger{background:#b42318;border-color:#b42318;color:#fff}
+    .controls button{
+      border-radius:14px;
+      backdrop-filter:blur(6px);
+      -webkit-backdrop-filter:blur(6px);
+    }
+    .controls > button:not(.primary):not(.danger){
+      background:linear-gradient(130deg, #ffffff 0, color-mix(in srgb, var(--accent) 8%, #fff) 100%);
+      border-color:color-mix(in srgb,var(--accent) 24%, var(--line));
+    }
+    #themeBtn{background:linear-gradient(120deg,#0ea5e9,#2563eb);color:#fff;border-color:#1d4ed8}
+    #marketBtn{background:linear-gradient(120deg,#06b6d4,#14b8a6);color:#fff;border-color:#0f766e}
+    #dupBtn{background:linear-gradient(120deg,#8b5cf6,#6366f1);color:#fff;border-color:#4f46e5}
+    #jsonExportBtn{background:linear-gradient(120deg,#22c55e,#16a34a);color:#fff;border-color:#15803d}
+    #jsonImportBtn{background:linear-gradient(120deg,#f59e0b,#ea580c);color:#fff;border-color:#c2410c}
+    #coverBtn,#interviewBtn,#langBtn,#brandPackBtn,#shareBtn,#portfolioBtn,#wordBtn{
+      background:linear-gradient(130deg,#fff,color-mix(in srgb,var(--chip-1) 9%, #fff));
+    }
+    .main{display:grid;grid-template-columns:220px 1.08fr .92fr;min-height:84vh}
+    .sidebar{
+      border-right:1px solid var(--line);
+      background:linear-gradient(180deg,color-mix(in srgb,var(--card) 90%, #eef4ff), color-mix(in srgb,var(--accent) 8%, #fff));
+      padding:14px 10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      max-height:84vh;
+      overflow:auto;
+    }
+    .side-title{
+      font-family:"Sora",sans-serif;
+      font-size:.88rem;
+      font-weight:700;
+      color:var(--muted);
+      letter-spacing:.3px;
+      margin:2px 6px 8px;
+    }
+    .side-link{
+      text-align:left;
+      border:1px solid var(--line);
+      background:linear-gradient(135deg,#fff,color-mix(in srgb,var(--accent) 10%, #fff));
+      border-radius:10px;
+      padding:8px 10px;
+      font-size:.86rem;
+      font-weight:700;
+      color:var(--text);
+      cursor:pointer;
+      position:relative;
+      overflow:hidden;
+    }
+    .side-link::before{
+      content:"";
+      position:absolute;
+      left:0;top:0;bottom:0;
+      width:4px;
+      background:linear-gradient(180deg,var(--chip-1),var(--chip-3));
+      opacity:.0;
+      transition:.18s opacity;
+    }
+    .side-link:hover{border-color:var(--accent)}
+    .side-link:hover::before{opacity:1}
+    .side-link.active{
+      border-color:var(--accent);
+      background:linear-gradient(120deg,var(--accent),color-mix(in srgb,var(--accent) 65%, #0b534e));
+      color:#fff;
+    }
+    .editor,.preview{padding:16px;overflow:auto;max-height:84vh}
+    .editor{
+      border-right:1px solid var(--line);
+      background:
+        linear-gradient(0deg, rgba(255,255,255,.65), rgba(255,255,255,.65)),
+        repeating-linear-gradient(135deg, transparent 0, transparent 12px, rgba(16,62,52,.03) 12px, rgba(16,62,52,.03) 13px),
+        var(--surface)
+    }
+    .panel{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      margin-bottom:12px;
+      background:linear-gradient(180deg,var(--glass) 0,color-mix(in srgb, var(--card) 86%, #eef4ff) 100%);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      border-color:color-mix(in srgb,var(--line) 72%, var(--glass-line));
+      box-shadow:0 10px 24px rgba(29,56,110,.11);
+      animation:rise .5s ease both;
+      transition:.2s transform,.2s box-shadow,.2s border-color;
+    }
+    .panel:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(11,44,37,.14);border-color:color-mix(in srgb, var(--accent) 45%, var(--line));}
+    .editor .panel:nth-of-type(1){animation-delay:.04s}
+    .editor .panel:nth-of-type(2){animation-delay:.1s}
+    .editor .panel:nth-of-type(3){animation-delay:.16s}
+    .panel h3{
+      margin:0 0 12px;
+      font-size:1rem;
+      display:flex;
+      align-items:center;
+      gap:7px;
+      font-family:"Sora",sans-serif;
+      letter-spacing:.2px;
+      position:relative;
+      padding-bottom:6px;
+    }
+    .panel h3::after{
+      content:"";
+      position:absolute;
+      left:0;
+      bottom:0;
+      width:56px;
+      height:3px;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--chip-1),var(--chip-2),var(--chip-3));
+    }
+    .grid{display:grid;grid-template-columns:140px 1fr;gap:8px;align-items:center}
+    .grid label{font-weight:700;color:var(--muted);font-size:.94rem}
+    .grid textarea{min-height:78px}
+    .photo-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+    .photo-row img{
+      width:74px;height:74px;border-radius:50%;object-fit:cover;border:2px solid var(--line);
+      box-shadow:0 7px 18px rgba(11,58,48,.2);
+    }
+    textarea:focus,input:focus,select:focus{outline:none;box-shadow:var(--ring);border-color:var(--accent)}
+    .hint{font-size:.82rem;color:var(--muted);margin-top:8px}
+    .tpl-toolbar{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:8px;
+    }
+    .tpl-cats{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .tpl-moods{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .tpl-pill{
+      border:1px solid var(--line);
+      background:var(--card);
+      border-radius:999px;
+      padding:5px 10px;
+      font-size:.8rem;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .tpl-pill.active{
+      border-color:var(--accent);
+      color:#fff;
+      background:linear-gradient(120deg,var(--chip-1),var(--chip-2));
+    }
+    .template-gallery{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+      gap:10px;
+      margin-top:4px;
+    }
+    .featured-showcase{
+      margin-top:10px;
+      margin-bottom:8px;
+      border:1px solid color-mix(in srgb,var(--accent) 26%, var(--line));
+      border-radius:14px;
+      padding:10px;
+      background:linear-gradient(145deg,color-mix(in srgb,var(--card) 94%, #f8fffc), color-mix(in srgb,var(--accent) 7%, #fff));
+    }
+    .featured-grid{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+    }
+    .featured-card{
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      padding:8px;
+      cursor:pointer;
+      transition:.16s transform,.16s border-color,.16s box-shadow;
+    }
+    .featured-card:hover{
+      transform:translateY(-2px);
+      border-color:var(--accent);
+      box-shadow:0 10px 18px rgba(11,44,37,.12);
+    }
+    .featured-card img{
+      width:100%;
+      height:210px;
+      object-fit:cover;
+      border-radius:8px;
+      border:1px solid color-mix(in srgb,var(--line) 85%, #fff);
+      background:#f8fafc;
+    }
+    .featured-meta{
+      margin-top:7px;
+      display:flex;
+      justify-content:space-between;
+      gap:6px;
+      font-size:.78rem;
+      color:var(--muted);
+      font-weight:700;
+    }
+    .canva-strip-wrap{
+      margin-top:12px;
+      margin-bottom:8px;
+      border:1px solid color-mix(in srgb,var(--accent) 26%, var(--line));
+      border-radius:14px;
+      padding:10px;
+      background:linear-gradient(145deg,color-mix(in srgb,var(--card) 94%, #f8fffc), color-mix(in srgb,var(--accent) 7%, #fff));
+    }
+    .canva-strip-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:8px;
+    }
+    .canva-strip-head strong{
+      font-family:"Sora",sans-serif;
+      font-size:.9rem;
+      letter-spacing:.2px;
+    }
+    .canva-chip{
+      font-size:.7rem;
+      border:1px solid color-mix(in srgb,var(--accent) 32%, var(--line));
+      background:linear-gradient(120deg,color-mix(in srgb,var(--chip-1) 18%, #fff),color-mix(in srgb,var(--chip-3) 18%, #fff));
+      color:#0f172a;
+      border-radius:999px;
+      padding:3px 8px;
+      font-weight:700;
+    }
+    .canva-strip{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:8px;
+    }
+    .canva-card{
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      padding:7px;
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+      cursor:pointer;
+      transition:.16s transform,.16s border-color,.16s box-shadow;
+    }
+    .canva-card:hover{
+      transform:translateY(-1px);
+      border-color:var(--accent);
+      box-shadow:0 10px 18px rgba(11,44,37,.12);
+    }
+    .canva-card img{
+      width:100%;
+      height:92px;
+      object-fit:cover;
+      border-radius:8px;
+      border:1px solid color-mix(in srgb,var(--line) 85%, #fff);
+      background:#f8fafc;
+    }
+    .canva-card-title{
+      font-weight:800;
+      font-size:.8rem;
+      line-height:1.2;
+    }
+    .canva-card-sub{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:6px;
+      font-size:.72rem;
+      color:var(--muted);
+    }
+    .tpl-card{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:9px;
+      background:linear-gradient(180deg,#fff 0,color-mix(in srgb,var(--card) 85%, #eef7f3) 100%);
+      cursor:pointer;
+      transition:.18s transform,.18s border-color,.18s box-shadow;
+      min-height:110px;
+      display:flex;
+      flex-direction:column;
+      gap:7px;
+      position:relative;
+    }
+    .tpl-card:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 12px 20px rgba(11,44,37,.14)}
+    .tpl-card.active{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 24%,transparent)}
+    .tpl-headline{display:flex;align-items:center;justify-content:space-between;gap:6px}
+    .tpl-thumb{
+      width:100%;
+      height:110px;
+      border-radius:10px;
+      object-fit:cover;
+      border:1px solid color-mix(in srgb, var(--line) 85%, #fff);
+      background:#f8fafc;
+    }
+    .tpl-name{font-weight:800;font-size:.86rem;line-height:1.2}
+    .tpl-cat{font-size:.68rem;padding:2px 7px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+    .tpl-tag{font-size:.76rem;color:var(--muted);line-height:1.2}
+    .tpl-swatches{
+      display:flex;gap:5px
+    }
+    .tpl-fav{
+      position:absolute;
+      top:8px;
+      right:8px;
+      width:26px;
+      height:26px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.92);
+      display:grid;
+      place-items:center;
+      font-size:.9rem;
+      cursor:pointer;
+      line-height:1;
+    }
+    .tpl-fav.on{
+      border-color:#f59e0b;
+      color:#f59e0b;
+      background:#fffbeb;
+    }
+    .tpl-actions{
+      display:flex;
+      gap:6px;
+      margin-top:auto;
+      align-items:center;
+    }
+    .tpl-actions button{
+      flex:1;
+      border-radius:9px;
+      padding:5px 8px;
+      font-size:.74rem;
+      font-weight:700;
+      line-height:1.1;
+    }
+    .tpl-actions .tpl-use{
+      background:linear-gradient(120deg,var(--chip-1),var(--chip-2));
+      border-color:color-mix(in srgb,var(--chip-2) 70%, #0a4d48);
+      color:#fff;
+    }
+    
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(10,18,16,.48);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:12000;
+      padding:16px;
+    }
+    .modal.show{display:flex}
+    .modal-card{
+      width:min(760px,100%);
+      max-height:88vh;
+      overflow:auto;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:var(--card);
+      box-shadow:0 20px 48px rgba(0,0,0,.28);
+      padding:14px;
+    }
+    .modal-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:10px;
+    }
+    .modal-head strong{
+      font-family:"Sora",sans-serif;
+      font-size:1rem;
+    }
+    .modal-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+    .modal-grid img{
+      width:100%;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#f8fafc;
+    }
+    .modal-actions{
+      margin-top:10px;
+      display:flex;
+      gap:8px;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .compare-wrap{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:8px;
+      align-items:center;
+    }
+    .compare-box{
+      margin-top:10px;
+      border:1px dashed var(--line);
+      border-radius:12px;
+      padding:8px;
+      font-size:.83rem;
+      color:var(--muted);
+      background:color-mix(in srgb,var(--card) 90%, #f3f8f6);
+      white-space:pre-wrap;
+    }
+    .pdf-tools{
+      margin-top:10px;
+      border:1px dashed color-mix(in srgb,var(--accent) 30%, var(--line));
+      border-radius:12px;
+      padding:10px;
+      background:color-mix(in srgb,var(--card) 93%, #f2fbf8);
+    }
+    .pdf-tools .row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .pdf-tools .row:last-child{margin-bottom:0}
+    .pdf-tools select[multiple]{
+      width:100%;
+      min-height:96px;
+      border-radius:10px;
+      padding:8px;
+      background:#fff;
+    }
+    .live-pdf-wrap{
+      margin-top:8px;
+      border:1px solid var(--line);
+      border-radius:10px;
+      overflow:hidden;
+      min-height:320px;
+      display:none;
+      background:#fff;
+    }
+    .live-pdf-wrap.show{display:block}
+    .live-pdf-wrap iframe{
+      width:100%;
+      height:420px;
+      border:0;
+      background:#fff;
+    }
+    .field-invalid{
+      border-color:#dc2626 !important;
+      box-shadow:0 0 0 2px rgba(220,38,38,.16);
+    }
+    .canva-fab{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      z-index:9999;
+      padding:10px 14px;
+      border-radius:999px;
+      background:linear-gradient(120deg,var(--chip-1),var(--chip-4),var(--chip-3));
+      color:#fff;
+      border:1px solid rgba(255,255,255,.45);
+      box-shadow:0 10px 24px rgba(18,56,114,.3);
+      font-weight:700;
+      text-decoration:none;
+      font-size:.9rem;
+    }
+    .canva-fab:hover{transform:translateY(-1px);opacity:.97}
+    #assistOutput{
+      border:1px dashed color-mix(in srgb,var(--accent) 28%, var(--line));
+      border-radius:12px;
+      padding:9px 10px;
+      background:linear-gradient(180deg,color-mix(in srgb,var(--card) 90%, #f6fbf9), color-mix(in srgb,var(--card) 98%, #fff));
+    }
+    .job-list{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns:1fr;
+      gap:8px;
+      max-height:220px;
+      overflow:auto;
+      padding-right:2px;
+    }
+    .job-card{
+      border:1px solid var(--line);
+      border-radius:11px;
+      padding:8px;
+      background:linear-gradient(135deg,#fff,color-mix(in srgb,var(--accent) 8%, #fff));
+    }
+    .job-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      font-weight:700;
+      font-size:.9rem;
+    }
+    .job-meta{
+      font-size:.78rem;
+      color:var(--muted);
+      margin-top:4px;
+      line-height:1.35;
+      word-break:break-word;
+    }
+    .job-actions{
+      margin-top:7px;
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .job-actions select{
+      min-width:112px;
+      padding:5px 8px;
+      border-radius:8px;
+      font-size:.8rem;
+    }
+    .job-actions button{
+      padding:5px 8px;
+      border-radius:8px;
+      font-size:.78rem;
+      font-weight:700;
+    }
+    .public-list{
+      margin-top:10px;
+      display:grid;
+      gap:8px;
+      max-height:230px;
+      overflow:auto;
+    }
+    .public-card{
+      border:1px solid var(--line);
+      border-radius:11px;
+      padding:8px;
+      background:linear-gradient(135deg,#fff,color-mix(in srgb,var(--accent) 8%, #fff));
+    }
+    .public-title{font-weight:700;font-size:.9rem}
+    .public-meta{font-size:.78rem;color:var(--muted);margin-top:4px;word-break:break-all}
+    .public-actions{margin-top:7px;display:flex;gap:6px;flex-wrap:wrap}
+    .public-actions button{padding:5px 8px;border-radius:8px;font-size:.78rem;font-weight:700}
+    #compareBtn,#saveTargetBtn,#loadTargetBtn,#deleteTargetBtn,#rewriteSummaryBtn,#addPackBtn,#atsBtn,#tailorBtn,#enhanceBtn,#verbCheckBtn,#heatmapBtn,#diffBtn,#completeBtn,#smartCleanBtn,#jobAddBtn,#jobRefreshBtn,#shareCreateBtn,#publicLinksRefreshBtn,#interviewBtn,#langBtn,#brandPackBtn,#linkedinBtn,#grammarBtn,#emailKitBtn,#quantifyBtn,#dupCheckBtn,#atsModeBtn,#rolePackBtn,#resetTemplateBtn,#finalCheckBtn,#jdMeterBtn,#smartBulletBtn,#smartBulletUseExpBtn,#smartBulletUseProjBtn,#fixWeakBulletsBtn{
+      border-color:color-mix(in srgb,var(--accent) 34%, var(--line));
+      background:linear-gradient(130deg,#ffffff,color-mix(in srgb,var(--accent) 10%, #fff));
+    }
+    #compareBtn:hover,#saveTargetBtn:hover,#loadTargetBtn:hover,#deleteTargetBtn:hover,#rewriteSummaryBtn:hover,#addPackBtn:hover,#atsBtn:hover,#tailorBtn:hover,#enhanceBtn:hover,#verbCheckBtn:hover,#heatmapBtn:hover,#diffBtn:hover,#completeBtn:hover,#smartCleanBtn:hover,#jobAddBtn:hover,#jobRefreshBtn:hover,#shareCreateBtn:hover,#publicLinksRefreshBtn:hover,#interviewBtn:hover,#langBtn:hover,#brandPackBtn:hover,#linkedinBtn:hover,#grammarBtn:hover,#emailKitBtn:hover,#quantifyBtn:hover,#dupCheckBtn:hover,#atsModeBtn:hover,#rolePackBtn:hover,#resetTemplateBtn:hover,#finalCheckBtn:hover,#jdMeterBtn:hover,#smartBulletBtn:hover,#smartBulletUseExpBtn:hover,#smartBulletUseProjBtn:hover,#fixWeakBulletsBtn:hover{
+      border-color:var(--accent);
+    }
+    .jd-meter{
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      background:color-mix(in srgb,var(--card) 92%, #f2fbf9);
+    }
+    .jd-meter .score{
+      font-family:"Sora",sans-serif;
+      font-size:1rem;
+      margin-bottom:8px;
+      font-weight:700;
+    }
+    .bar-wrap{
+      height:10px;
+      border-radius:999px;
+      background:#dbe7f4;
+      overflow:hidden;
+      margin-bottom:8px;
+    }
+    .bar-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#06b6d4,#22c55e);
+      transition:width .25s ease;
+    }
+    .bar-list{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:6px;
+    }
+    .bar-line{
+      display:grid;
+      grid-template-columns:88px 1fr 42px;
+      gap:8px;
+      align-items:center;
+      font-size:.8rem;
+      color:var(--muted);
+    }
+    .smart-bullet{
+      margin-top:10px;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      background:#fff;
+    }
+    ::-webkit-scrollbar{width:10px;height:10px}
+    ::-webkit-scrollbar-thumb{
+      background:color-mix(in srgb,var(--accent) 45%, #9ca3af);
+      border-radius:999px;
+      border:2px solid color-mix(in srgb,var(--card) 90%, #fff);
+    }
+    ::-webkit-scrollbar-track{background:transparent}
+    .tpl-bar{
+      height:7px;border-radius:999px;flex:1
+    }
+    .order-list{
+      display:flex;flex-wrap:wrap;gap:8px;margin-top:8px
+    }
+    .order-chip{
+      padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:var(--card);
+      cursor:grab;font-size:.84rem;font-weight:600;user-select:none
+    }
+    .order-chip.dragging{opacity:.55}
+    .preview-card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.95), rgba(250,252,249,.95)),
+        repeating-linear-gradient(0deg, rgba(22,55,44,.03), rgba(22,55,44,.03) 1px, transparent 1px, transparent 26px);
+      color:#1f2937;
+      box-shadow:0 16px 34px rgba(15,41,58,.12);
+      animation:floatIn .6s ease both;
+    }
+    .preview-card h1{
+      margin:0 0 4px;
+      font-size:2.05rem;
+      line-height:1.1;
+      font-family:"Sora",sans-serif;
+      font-weight:700;
+      letter-spacing:.15px;
+    }
+    .section{margin-top:16px}
+    .section h4{
+      margin:0 0 7px;
+      border-bottom:2px solid color-mix(in srgb, var(--accent) 80%, #0a4b47);
+      padding-bottom:5px;
+      font-size:1.03rem;
+      font-family:"Sora",sans-serif;
+      letter-spacing:.2px;
+    }
+    .item{margin-bottom:9px;line-height:1.4}
+    .meta{font-size:.87rem;color:#6b7280;margin-bottom:3px}
+    @keyframes rise{
+      from{opacity:0;transform:translateY(10px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+    @keyframes floatIn{
+      from{opacity:0;transform:translateY(12px) scale(.99)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    @keyframes orbFloatA{
+      0%,100%{transform:translateY(0) translateX(0)}
+      50%{transform:translateY(-16px) translateX(14px)}
+    }
+    @keyframes orbFloatB{
+      0%,100%{transform:translateY(0) translateX(0)}
+      50%{transform:translateY(14px) translateX(-16px)}
+    }
+    @media (max-width: 1100px) {
+      .main { grid-template-columns: 1fr; min-height: auto; }
+      .sidebar{
+        position:fixed;
+        top:0;
+        left:0;
+        width:min(280px,84vw);
+        height:100vh;
+        z-index:12020;
+        transform:translateX(-102%);
+        transition:transform .22s ease;
+        max-height:none;
+        border-right:1px solid var(--line);
+        box-shadow:0 14px 28px rgba(2,12,28,.25);
+      }
+      body.sidebar-open .sidebar{transform:translateX(0)}
+      .sidebar-backdrop{
+        position:fixed;inset:0;background:rgba(15,23,42,.44);z-index:12010;display:none;
+      }
+      body.sidebar-open .sidebar-backdrop{display:block}
+      .editor { border-right: 0; border-bottom: 1px solid var(--line); max-height: none; }
+      .preview { max-height: none; }
+      .grid { grid-template-columns: 1fr; }
+      .panel { padding: 12px; }
+    }
+    @media (max-width: 820px) {
+      body { padding: 6px; }
+      .app { margin: 4px auto; border-radius: 14px; }
+      header { padding: 12px; }
+      .controls { width: 100%; }
+      .controls > * { flex: 1 1 calc(50% - 8px); min-width: 0; }
+      .controls button, .controls select { width: 100%; }
+      #navToggleBtn{display:block}
+      .editor, .preview { padding: 12px; }
+      .preview-card { padding: 16px; border-radius: 14px; }
+      .preview-card h1 { font-size: 1.7rem; }
+      .section h4 { font-size: 1rem; }
+      .featured-grid { grid-template-columns:1fr; }
+      .featured-card img { height:190px; }
+    }
+    @media (max-width: 640px) {
+      header strong { font-size: 1rem; display: block; }
+      #status { margin-left: 0; margin-top: 6px; display: inline-block; }
+      .controls > * { flex: 1 1 100%; }
+      button, input, select, textarea { font-size: 16px; }
+      .side-link{font-size:.92rem;padding:10px 11px}
+      .photo-row { align-items: flex-start; }
+      .photo-row img { width: 64px; height: 64px; }
+      .grid textarea { min-height: 96px; }
+      .preview-card { padding: 14px; }
+      .preview-card h1 { font-size: 1.45rem; }
+      .section { margin-top: 12px; }
+      .item { margin-bottom: 7px; }
+      .meta { font-size: .82rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div><strong>ResumeForge Pro</strong> <span id="status" style="opacity:.85">Ready</span></div>
+      <div class="controls">
+        <select id="resumeSelect"><option value="">-- Select Resume --</option></select>
+        <button id="navToggleBtn" type="button">☰ Menu</button>
+        <button id="themeBtn">🌙 Dark</button>
+        <button id="marketBtn" type="button">Template Market</button>
+        <button id="dupBtn">Duplicate</button>
+        <button id="saveBtn" class="primary">Save</button>
+        <button id="deleteBtn" class="danger">Delete</button>
+        <button id="jsonExportBtn">Export</button>
+        <button id="jsonImportBtn">Import</button>
+        <button id="coverBtn" type="button">Cover Letter</button>
+        <button id="interviewBtn" type="button">Interview Q</button>
+        <button id="langBtn" type="button">Language</button>
+        <button id="brandPackBtn" type="button">Brand Pack</button>
+        <button id="shareBtn" type="button">Share Link</button>
+        <button id="portfolioBtn">Portfolio</button>
+        <button id="wordBtn">Word</button>
+        <button id="pdfBtn" class="primary">PDF</button>
+      </div>
+    </header>
+    <div class="main">
+      <aside class="sidebar" id="sidebarNav">
+        <div class="side-title">Quick Navigation</div>
+        <button type="button" class="side-link" data-scroll-to="panel-pdf">PDF Settings</button>
+        <button type="button" class="side-link" data-scroll-to="panel-ai">AI Assist</button>
+        <button type="button" class="side-link" data-scroll-to="panel-jobs">Job Tracker</button>
+        <button type="button" class="side-link" data-scroll-to="panel-publiclinks">Public Links</button>
+        <button type="button" class="side-link" data-scroll-to="panel-snapshots">Snapshots</button>
+        <button type="button" class="side-link" data-scroll-to="panel-visibility">Section Visibility</button>
+        <button type="button" class="side-link" data-scroll-to="panel-personal">Personal and Social</button>
+        <button type="button" class="side-link" data-scroll-to="panel-advanced">Advanced Sections</button>
+      </aside>
+      <div class="editor" id="editor">
+        <div class="panel" id="panel-pdf">
+          <h3>PDF Settings</h3>
+          <div class="grid">
+            <label>Template</label><select id="template"><option value="modern">Modern</option><option value="corporate">Corporate</option><option value="classic">Classic</option><option value="compact">Compact</option><option value="executive">Executive</option><option value="snack_gray">Snack Gray</option><option value="vision_blue">Vision Blue</option><option value="harsh_minimal">Harsh Minimal</option><option value="javid_split">Javid Split</option><option value="teal_modern">Teal Modern</option><option value="astra_clean">Astra Clean</option><option value="metro_sidebar">Metro Sidebar</option><option value="executive_slate">Executive Slate</option><option value="creative_split">Creative Split</option><option value="mono_compact">Mono Compact</option><option value="classic_clarity">Classic Clarity</option><option value="impact_panel">Impact Panel</option><option value="contemporary_photo">Contemporary Photo</option></select>
+            <label>Font</label><select id="font"><option value="">Default</option><option value="Helvetica">Helvetica</option><option value="Times">Times</option><option value="Courier">Courier</option><option value="Georgia">Georgia</option><option value="Poppins">Poppins</option><option value="Montserrat">Montserrat</option><option value="Nunito">Nunito</option><option value="FiraSans">Fira Sans</option><option value="Lora">Lora</option><option value="Merriweather">Merriweather</option><option value="RobotoSlab">Roboto Slab</option><option value="PlayfairDisplay">Playfair Display</option><option value="LibreBaskerville">Libre Baskerville</option></select>
+            <label>Page Size</label><select id="pageSize"><option value="letter">Letter</option><option value="a4">A4</option></select>
+            <label>Accent</label><input id="accent" type="color" value="#0e7490">
+            <label>Compact PDF</label><input id="compactMode" type="checkbox">
+            <label>ATS Safe</label><input id="atsSafeMode" type="checkbox">
+            <label>Margins</label>
+            <select id="marginPreset">
+              <option value="normal">Normal</option>
+              <option value="narrow">Narrow</option>
+              <option value="wide">Wide</option>
+            </select>
+            <label>Header Layout</label>
+            <select id="headerLayout">
+              <option value="default">Default</option>
+              <option value="left">Left</option>
+              <option value="center">Center</option>
+              <option value="split">Split</option>
+            </select>
+            <label>Page Layout</label>
+            <select id="pageLayout">
+              <option value="">Template Default</option>
+              <option value="single_column">Single Column</option>
+              <option value="two_column">Two Column</option>
+            </select>
+            <label>Template Lock</label>
+            <input id="templateLock" type="checkbox">
+            <label>Font Scale</label>
+            <div style="display:flex;align-items:center;gap:10px;max-width:320px;">
+              <input id="fontScale" type="range" min="0.8" max="1.3" step="0.02" value="1.0" style="flex:1;">
+              <span id="fontScaleValue" style="font-weight:700;color:var(--muted);min-width:44px;text-align:right;">100%</span>
+            </div>
+          </div>
+          <div style="margin-top:10px;">
+            <button id="onePageFitBtn" type="button">Auto 1-Page Fit</button>
+            <button id="exportPresetAtsBtn" type="button">ATS Apply Preset</button>
+            <button id="exportPresetCreativeBtn" type="button">Creative Preset</button>
+            <button id="exportPresetExecBtn" type="button">Executive Preset</button>
+            <button id="resetTemplateBtn" type="button">Reset Template Defaults</button>
+            <button id="canvaBtnPanel" type="button">Template Market</button>
+          </div>
+          <div class="featured-showcase">
+            <div class="canva-strip-head">
+              <strong>Featured Resume Designs</strong>
+              <span class="canva-chip">Front Page Picks</span>
+            </div>
+            <div id="featuredGrid" class="featured-grid"></div>
+          </div>
+          <div class="hint">Need more designs? Choose any card below and apply instantly.</div>
+          <div class="canva-strip-wrap">
+            <div class="canva-strip-head">
+              <strong>Canva-Style Picks</strong>
+              <span class="canva-chip">Click to apply</span>
+            </div>
+            <div id="canvaStrip" class="canva-strip"></div>
+          </div>
+          <div class="tpl-toolbar">
+            <input id="tplSearch" placeholder="Search template style or mood">
+            <div id="tplCats" class="tpl-cats"></div>
+            <div id="tplMoods" class="tpl-moods"></div>
+            <label style="display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--muted);font-weight:700;">
+              <input id="tplFavOnly" type="checkbox"> Favorites only
+            </label>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin:8px 0;">
+            <span id="tplCountInfo" class="hint">Templates: 0</span>
+            <button id="tplLoadMoreBtn" type="button">Load More</button>
+          </div>
+          <div id="templateGallery" class="template-gallery"></div>
+          <div class="compare-wrap">
+            <select id="compareWith"><option value="">Compare with template</option></select>
+            <button id="compareBtn" type="button">Compare</button>
+          </div>
+          <div id="compareOutput" class="compare-box"></div>
+          <div class="pdf-tools">
+            <div class="row">
+              <button id="livePdfBtn" type="button">Live PDF Preview</button>
+              <button id="bulkPdfBtn" type="button">Bulk PDF ZIP</button>
+              <span class="hint">Pick templates below for ZIP export.</span>
+            </div>
+            <div class="row">
+              <label style="display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--muted);font-weight:700;">
+                <input id="livePdfAuto" type="checkbox"> Auto live preview
+              </label>
+            </div>
+            <div class="row">
+              <button id="bulkSelectAllBtn" type="button">Select All</button>
+              <button id="bulkClearBtn" type="button">Clear</button>
+            </div>
+            <select id="bulkTemplates" multiple></select>
+            <div id="livePdfWrap" class="live-pdf-wrap">
+              <iframe id="livePdfFrame" title="Live PDF Preview"></iframe>
+            </div>
+          </div>
+        </div>
+        <div class="panel" id="panel-ai">
+          <h3>AI Assist</h3>
+          <div class="grid">
+            <label>Job Description</label><textarea id="jobDesc" placeholder="Paste job description here for ATS/Tailor..."></textarea>
+            <label>Saved Targets</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <input id="targetName" placeholder="Target name" style="min-width:130px;">
+              <select id="targetSelect" style="min-width:150px;"><option value="">-- Target --</option></select>
+              <button id="saveTargetBtn" type="button">Save</button>
+              <button id="loadTargetBtn" type="button">Load</button>
+              <button id="deleteTargetBtn" type="button">Delete</button>
+            </div>
+            <label>Tone Mode</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <select id="toneMode" style="min-width:150px;">
+                <option value="formal">Formal</option>
+                <option value="crisp">Crisp</option>
+                <option value="friendly">Friendly</option>
+              </select>
+              <button id="rewriteSummaryBtn" type="button">Rewrite Summary</button>
+            </div>
+            <label>Skill Pack</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <select id="skillPack" style="min-width:170px;">
+                <option value="backend">Python Backend</option>
+                <option value="data">Data Science</option>
+                <option value="frontend">Frontend React</option>
+                <option value="testing">QA Automation</option>
+              </select>
+              <button id="addPackBtn" type="button">Add Skill Pack</button>
+            </div>
+            <label>Language Variant</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <select id="langMode" style="min-width:170px;">
+                <option value="english">English</option>
+                <option value="tamil_romanized">Tamil (Romanized)</option>
+                <option value="hindi_romanized">Hindi (Romanized)</option>
+              </select>
+              <button id="langVariantBtn" type="button">Generate Variant</button>
+            </div>
+            <label>Role Pack</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <select id="rolePack" style="min-width:170px;">
+                <option value="backend">Backend</option>
+                <option value="data">Data</option>
+                <option value="frontend">Frontend</option>
+              </select>
+              <button id="rolePackBtn" type="button">Apply Pack</button>
+            </div>
+            <label>AI Assistant Prompt</label>
+            <textarea id="aiPrompt" placeholder="Example: tailor my resume for data analyst role, improve bullets, or show ATS score."></textarea>
+            <label>AI Actions</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button id="aiAskBtn" type="button" onclick="window.runAiAssistant && window.runAiAssistant().catch(e => alert(e.message))">Ask AI Assistant</button>
+              <button id="aiApplyBtn" type="button" disabled>Apply AI Changes</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+            <button id="atsBtn" type="button">ATS Score</button>
+            <button id="jdMeterBtn" type="button">JD Match Meter</button>
+            <button id="tailorBtn" type="button">Tailor Resume</button>
+            <button id="skillGapBtn" type="button">Skill Gap Plan</button>
+            <button id="enhanceBtn" type="button">Enhance Bullets</button>
+            <button id="interviewPanelBtn" type="button">Interview Q</button>
+            <button id="linkedinBtn" type="button">LinkedIn</button>
+            <button id="grammarBtn" type="button">Grammar Fix</button>
+            <button id="emailKitBtn" type="button">Email Kit</button>
+            <button id="quantifyBtn" type="button">Quantify</button>
+            <button id="dupCheckBtn" type="button">Duplicates</button>
+            <button id="atsModeBtn" type="button">One-click ATS Mode</button>
+            <button id="verbCheckBtn" type="button">Action Verb Check</button>
+            <button id="heatmapBtn" type="button">Keyword Heatmap</button>
+            <button id="recommendTplBtn" type="button">Recommend Template</button>
+            <button id="diffBtn" type="button">Diff View</button>
+            <button id="completeBtn" type="button">Completeness Meter</button>
+            <button id="finalCheckBtn" type="button">Final Check</button>
+            <button id="smartCleanBtn" type="button">Smart Visibility Clean</button>
+          </div>
+          <div class="jd-meter" id="jdMeterCard" style="display:none;">
+            <div class="score" id="jdMeterScore">JD Match: 0%</div>
+            <div class="bar-wrap"><div id="jdMeterFill" class="bar-fill"></div></div>
+            <div class="bar-list">
+              <div class="bar-line"><span>Summary</span><div class="bar-wrap" style="margin:0;height:8px;"><div id="jdSecSummary" class="bar-fill"></div></div><span id="jdSecSummaryTxt">0%</span></div>
+              <div class="bar-line"><span>Skills</span><div class="bar-wrap" style="margin:0;height:8px;"><div id="jdSecSkills" class="bar-fill"></div></div><span id="jdSecSkillsTxt">0%</span></div>
+              <div class="bar-line"><span>Experience</span><div class="bar-wrap" style="margin:0;height:8px;"><div id="jdSecExp" class="bar-fill"></div></div><span id="jdSecExpTxt">0%</span></div>
+              <div class="bar-line"><span>Projects</span><div class="bar-wrap" style="margin:0;height:8px;"><div id="jdSecProj" class="bar-fill"></div></div><span id="jdSecProjTxt">0%</span></div>
+            </div>
+          </div>
+          <div class="smart-bullet">
+            <div class="hint" style="font-weight:700;margin-bottom:6px;">Smart Bullet Generator</div>
+            <textarea id="smartBulletInput" placeholder="Paste one weak bullet line..." style="min-height:62px;"></textarea>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
+              <button id="smartBulletBtn" type="button" onclick="window.runSmartBulletGenerator && window.runSmartBulletGenerator()">Generate Smart Bullet</button>
+              <button id="smartBulletUseExpBtn" type="button">Add to Experience</button>
+              <button id="smartBulletUseProjBtn" type="button">Add to Projects</button>
+              <button id="fixWeakBulletsBtn" type="button">Fix All Weak Bullets</button>
+            </div>
+            <textarea id="smartBulletOutput" placeholder="Improved bullet appears here..." style="min-height:62px;margin-top:8px;"></textarea>
+          </div>
+          <div id="assistOutput" class="hint" style="margin-top:10px;white-space:pre-wrap;"></div>
+          <div style="margin-top:12px;">
+            <div class="hint" style="font-weight:700;">Resume Score History</div>
+            <canvas id="scoreHistoryChart" width="700" height="120" style="width:100%;max-width:100%;background:#fff;border:1px solid var(--line);border-radius:10px;"></canvas>
+          </div>
+        </div>
+        <div class="panel" id="panel-jobs">
+          <h3>Job Tracker</h3>
+          <div class="grid">
+            <label>Company</label><input id="jobCompany" placeholder="Google, Zoho, TCS...">
+            <label>Role</label><input id="jobRole" placeholder="Backend Developer">
+            <label>Status</label>
+            <select id="jobStatus">
+              <option value="saved">Saved</option>
+              <option value="applied">Applied</option>
+              <option value="interview">Interview</option>
+              <option value="offer">Offer</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <label>Job Link</label><input id="jobLink" placeholder="https://...">
+            <label>Follow-up Date</label><input id="jobFollowUpDate" type="date">
+            <label>Reminder</label><input id="jobReminderEnabled" type="checkbox">
+            <label>Notes</label><textarea id="jobNotes" placeholder="Referral, salary range, deadlines..."></textarea>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+            <button id="jobAddBtn" type="button">Add Job</button>
+            <button id="jobRefreshBtn" type="button">Refresh</button>
+          </div>
+          <div id="jobList" class="job-list"></div>
+          <div id="jobReminderList" class="hint" style="white-space:pre-wrap;margin-top:8px;"></div>
+        </div>
+        <div class="panel" id="panel-publiclinks">
+          <h3>Public Resume Links</h3>
+          <div class="grid">
+            <label>Expiry</label>
+            <select id="shareExpiryDays">
+              <option value="1">1 day</option>
+              <option value="7" selected>7 days</option>
+              <option value="14">14 days</option>
+              <option value="30">30 days</option>
+            </select>
+            <label>Actions</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button id="shareCreateBtn" type="button">Create Link</button>
+              <button id="publicLinksRefreshBtn" type="button">Refresh</button>
+            </div>
+          </div>
+          <div id="publicLinksList" class="public-list"></div>
+        </div>
+        <div class="panel" id="panel-snapshots">
+          <h3>Snapshots</h3>
+          <div class="grid">
+            <label>Name</label><input id="snapshotName" placeholder="Snapshot name">
+            <label>Saved</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <select id="snapshotSelect" style="min-width:180px;"><option value="">-- Snapshot --</option></select>
+              <button id="saveSnapshotBtn" type="button">Save Snapshot</button>
+              <button id="loadSnapshotBtn" type="button">Load Snapshot</button>
+              <button id="deleteSnapshotBtn" type="button">Delete</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel" id="panel-visibility">
+          <h3>Section Visibility</h3>
+          <div class="grid">
+            <label>Summary</label><input id="secSummary" type="checkbox" checked>
+            <label>Experience</label><input id="secExperience" type="checkbox" checked>
+            <label>Internships</label><input id="secInternships" type="checkbox" checked>
+            <label>Education</label><input id="secEducation" type="checkbox" checked>
+            <label>Projects</label><input id="secProjects" type="checkbox" checked>
+            <label>Certifications</label><input id="secCertifications" type="checkbox" checked>
+            <label>Languages</label><input id="secLanguages" type="checkbox" checked>
+            <label>Skills</label><input id="secSkills" type="checkbox" checked>
+            <label>Achievements</label><input id="secAchievements" type="checkbox" checked>
+            <label>References</label><input id="secReferences" type="checkbox" checked>
+            <label>Custom</label><input id="secCustom" type="checkbox" checked>
+          </div>
+        </div>
+        <div class="panel" id="panel-personal">
+          <h3>Personal and Social</h3>
+          <div class="grid">
+            <label>Profile Photo</label>
+            <div class="photo-row">
+              <img id="profilePreview" src="https://via.placeholder.com/74?text=Photo" alt="Profile">
+              <input id="profilePhoto" type="file" accept="image/*">
+              <button id="removePhotoBtn" type="button">Remove</button>
+            </div>
+            <label>Full Name</label><input id="fullName">
+            <label>Profile Title</label><input id="profileTitle">
+            <label>Email</label><input id="email">
+            <label>Phone</label><input id="phone">
+            <label>City</label><input id="city">
+            <label>Address</label><input id="address">
+            <label>Summary</label><textarea id="summary"></textarea>
+            <label>LinkedIn</label><input id="linkedin">
+            <label>GitHub</label><input id="github">
+            <label>Twitter</label><input id="twitter">
+            <label>Website</label><input id="website">
+            <label>QR Link</label><input id="qrLink" placeholder="https://your-link.com">
+          </div>
+        </div>
+        <div class="panel" id="panel-advanced">
+          <h3>Advanced Sections</h3>
+          <div class="hint">Drag chips to reorder preview sections</div>
+          <div id="sectionOrderList" class="order-list"></div>
+          <div style="margin:8px 0 10px 0;">
+            <button id="normalizeDatesBtn" type="button">Normalize Dates</button>
+          </div>
+          <div class="grid">
+            <label>Experience</label><textarea id="experiences" placeholder="Job, Company, Start, End, Description"></textarea>
+            <label>Internships</label><textarea id="internships" placeholder="Role, Company, Start, End, Description"></textarea>
+            <label>Education</label><textarea id="educations" placeholder="Degree, Institution, Start, End, Description"></textarea>
+            <label>Education Format</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+              <select id="educationPreset" style="min-width:240px;">
+                <option value="default">Degree, Institution, Start, End, Description</option>
+                <option value="school">School, Board, Start, End, Percentage / CGPA</option>
+                <option value="college">College, University, Start, End, CGPA</option>
+                <option value="academic">Program, Institute, Start, End, GPA / Rank</option>
+              </select>
+              <button id="educationPresetApplyBtn" type="button">Apply Format</button>
+            </div>
+            <label>Education Hint</label><div id="educationPresetHint" class="hint">Choose a format and fill entries in the same order.</div>
+            <label>Projects</label><textarea id="projects" placeholder="Name, Role, Tech, Start, End, Description, Link"></textarea>
+            <label>Certifications</label><textarea id="certifications" placeholder="Name, Issuer, Date, Link"></textarea>
+            <label>Languages</label><textarea id="languages" placeholder="Language, Proficiency"></textarea>
+            <label>Skills</label><textarea id="skills" placeholder="One skill per line"></textarea>
+            <label>Achievements</label><textarea id="achievements" placeholder="Title, Subtitle, Description"></textarea>
+            <label>References</label><textarea id="references" placeholder="Name, Title, Company, Phone, Email, Website"></textarea>
+            <label>Custom Sections</label><textarea id="customSections" placeholder="Section Title: item 1 ; item 2 ; item 3"></textarea>
+          </div>
+          <div class="hint">Format: one entry per line; use comma separator.</div>
+        </div>
+      </div>
+      <div class="preview">
+        <div class="preview-card" id="preview"></div>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+  <button class="canva-fab" id="marketFab" type="button">Template Market</button>
+  <div class="modal" id="tplPreviewModal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <strong id="tplPreviewTitle">Template Preview</strong>
+        <button id="tplPreviewClose" type="button">Close</button>
+      </div>
+      <div class="modal-grid">
+        <img id="tplPreviewImage" alt="Template preview">
+        <div class="hint" id="tplPreviewMeta"></div>
+      </div>
+      <div class="modal-actions">
+        <button id="tplPreviewApply" class="primary" type="button">Use This Template</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const API_BASE = `${window.location.origin}/api`;
+    const DRAFT_KEY = "resumeforge_draft_v3";
+    const THEME_KEY = "resumeforge_theme_v1";
+    const TARGETS_KEY = "resumeforge_targets_v1";
+    const TEMPLATE_CATALOG_URL = `${window.location.origin}/templates_catalog.json`;
+    const TEMPLATE_FAV_KEY = "resumeforge_tpl_favorites_v1";
+    const SNAPSHOT_KEY = "resumeforge_snapshots_v1";
+    let currentId = null;
+    let lastSaved = null;
+    let draftTimer = null;
+    let profilePicData = null;
+    let baselinePayload = null;
+    let heatmapKeywords = [];
+    let sectionOrder = ["summary","experience","internship","education","projects","skills","achievements","custom"];
+    let templateCatalog = [];
+    let activeTplCategory = "All";
+    let activeTplMood = "All";
+    let previewTemplateId = null;
+    let tplPageSize = 8;
+    let tplVisibleCount = 8;
+    let tplLastFilterKey = "";
+    let livePdfObjectUrl = null;
+    let livePdfTimer = null;
+    let autoSaveTimer = null;
+    let autoSaving = false;
+    let isHydrating = false;
+    let aiSuggestedPatch = null;
+    let lastServerSaveAt = 0;
+    const SECTION_VIS_IDS = {
+      summary: "secSummary",
+      experience: "secExperience",
+      internship: "secInternships",
+      education: "secEducation",
+      projects: "secProjects",
+      certifications: "secCertifications",
+      languages: "secLanguages",
+      skills: "secSkills",
+      achievements: "secAchievements",
+      references: "secReferences",
+      custom: "secCustom",
+    };
+
+    const ids = ["fullName","profileTitle","email","phone","city","address","summary","linkedin","github","twitter","website","qrLink","experiences","internships","educations","projects","certifications","languages","skills","achievements","references","customSections"];
+    const NULL_EL = {
+      value: "",
+      checked: false,
+      innerHTML: "",
+      textContent: "",
+      style: { setProperty(){} },
+      classList: { add(){}, remove(){}, toggle(){}, contains(){ return false; } },
+      addEventListener(){},
+      setAttribute(){},
+      removeAttribute(){},
+      scrollIntoView(){},
+      querySelectorAll(){ return []; },
+    };
+    const byId = id => document.getElementById(id) || NULL_EL;
+    const on = (id, evt, handler) => {
+      const el = byId(id);
+      if (!el) return false;
+      el.addEventListener(evt, handler);
+      return true;
+    };
+    const statusEl = byId("status");
+
+    const splitLines = s => (s || "").split("\n").map(v => v.trim()).filter(Boolean);
+    const uniq = arr => [...new Set((arr || []).filter(Boolean))];
+    const ACTION_VERBS = ["built","designed","developed","implemented","optimized","created","led","managed","launched","automated","improved","delivered","analyzed","reduced","increased","migrated","deployed","tested"];
+    const WEAK_PHRASES = ["worked on","helped","responsible for","involved in","assisted","participated in","handled"];
+    const SKILL_PACKS = {
+      backend: ["Python", "FastAPI", "Flask", "REST APIs", "SQL", "PostgreSQL", "Docker", "Git"],
+      data: ["Python", "Pandas", "NumPy", "Scikit-learn", "Power BI", "SQL", "Data Visualization", "Statistics"],
+      frontend: ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Redux", "Responsive Design", "REST APIs"],
+      testing: ["Selenium", "PyTest", "API Testing", "Postman", "Test Planning", "Regression Testing", "CI/CD", "Bug Tracking"]
+    };
+    const ROLE_PACKS = {
+      backend: {
+        title: "Backend Developer",
+        summary: "Backend developer focused on APIs, scalable services, and clean data models.",
+        skills: ["Python", "Flask", "FastAPI", "SQL", "PostgreSQL", "Docker", "Git", "REST APIs"]
+      },
+      data: {
+        title: "Data Analyst",
+        summary: "Data-focused professional turning raw data into measurable business insights.",
+        skills: ["Python", "Pandas", "NumPy", "SQL", "Power BI", "Data Visualization", "Statistics", "Excel"]
+      },
+      frontend: {
+        title: "Frontend Developer",
+        summary: "Frontend developer building responsive, accessible, and high-performance user interfaces.",
+        skills: ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Redux", "Responsive Design", "REST APIs"]
+      }
+    };
+    const EDUCATION_PRESETS = {
+      default: {
+        placeholder: "Degree, Institution, Start, End, Description",
+        hint: "Use this for generic degree details."
+      },
+      school: {
+        placeholder: "School, Board, Start, End, Percentage / CGPA",
+        hint: "Example: St.Joseph School, State Board, 2018, 2020, 89%"
+      },
+      college: {
+        placeholder: "College, University, Start, End, CGPA",
+        hint: "Example: ABC College, Anna University, 2020, 2023, 8.4 / 10"
+      },
+      academic: {
+        placeholder: "Program, Institute, Start, End, GPA / Rank",
+        hint: "Example: B.Sc Computer Science, XYZ Institute, 2019, 2022, GPA 3.7"
+      }
+    };
+    function previewFontFamily(fontKey) {
+      const map = {
+        "Helvetica": "Helvetica, Arial, sans-serif",
+        "Times": "\"Times New Roman\", Times, serif",
+        "Courier": "\"Courier New\", Courier, monospace",
+        "Georgia": "Georgia, \"Times New Roman\", serif",
+        "Poppins": "\"Poppins\", \"Source Sans 3\", sans-serif",
+        "Montserrat": "\"Montserrat\", \"Source Sans 3\", sans-serif",
+        "Nunito": "\"Nunito\", \"Source Sans 3\", sans-serif",
+        "FiraSans": "\"Fira Sans\", \"Source Sans 3\", sans-serif",
+        "Lora": "\"Lora\", Georgia, serif",
+        "Merriweather": "\"Merriweather\", Georgia, serif",
+        "RobotoSlab": "\"Roboto Slab\", Georgia, serif",
+        "PlayfairDisplay": "\"Playfair Display\", Georgia, serif",
+        "LibreBaskerville": "\"Libre Baskerville\", Georgia, serif",
+      };
+      return map[String(fontKey || "").trim()] || "Source Sans 3, sans-serif";
+    }
+    const parsePipe = (line, n) => {
+      const raw = String(line || "");
+      const parts = (raw.includes("|") ? raw.split("|") : raw.split(",")).map(v => v.trim());
+      while (parts.length < n) parts.push("");
+      return parts;
+    };
+    const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const escReg = s => String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+    function setStatus(msg) { statusEl.textContent = msg; }
+    function statusWithTime(prefix) {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, "0");
+      const mm = String(now.getMinutes()).padStart(2, "0");
+      const ss = String(now.getSeconds()).padStart(2, "0");
+      setStatus(`${prefix} (${hh}:${mm}:${ss})`);
+    }
+    function setAssist(msg) { byId("assistOutput").textContent = msg || ""; }
+    function markInvalid(id, bad, hint = "") {
+      const el = byId(id);
+      if (!el) return;
+      el.classList.toggle("field-invalid", !!bad);
+      if (bad && hint) el.title = hint;
+      else el.removeAttribute("title");
+    }
+    function validateInputsLive() {
+      const email = (byId("email").value || "").trim();
+      const phone = (byId("phone").value || "").trim();
+      const emailBad = !!email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+      const phoneBad = !!phone && !/^\+?[0-9()\-\s]{8,}$/.test(phone);
+      markInvalid("email", emailBad, "Invalid email format");
+      markInvalid("phone", phoneBad, "Phone should be at least 8 digits");
+      return { emailBad, phoneBad, hasErrors: emailBad || phoneBad };
+    }
+    function updateFontScaleLabel() {
+      const v = parseFloat(byId("fontScale").value || "1");
+      byId("fontScaleValue").textContent = `${Math.round(v * 100)}%`;
+    }
+    function getSectionVisibility() {
+      const out = {};
+      Object.entries(SECTION_VIS_IDS).forEach(([k, id]) => { out[k] = !!byId(id).checked; });
+      return out;
+    }
+    function setSectionVisibility(v) {
+      const map = v || {};
+      Object.entries(SECTION_VIS_IDS).forEach(([k, id]) => { byId(id).checked = map[k] !== false; });
+    }
+    function applyOnePageFit() {
+      byId("compactMode").checked = true;
+      byId("atsSafeMode").checked = true;
+      byId("marginPreset").value = "narrow";
+      byId("fontScale").value = "0.90";
+      updateFontScaleLabel();
+      setAssist("Applied auto 1-page fit preset.");
+      preview();
+      scheduleDraft();
+    }
+    function normalizeDateToken(raw) {
+      const s = (raw || "").trim();
+      if (!s) return "";
+      if (/^(present|current|ongoing|now)$/i.test(s)) return "Present";
+      let m = s.match(/^(\d{4})[-\/](\d{1,2})$/);
+      if (m) {
+        const y = Number(m[1]);
+        const mo = Number(m[2]);
+        if (mo >= 1 && mo <= 12) return `${MONTHS[mo - 1]} ${y}`;
+      }
+      m = s.match(/^(\d{1,2})[-\/](\d{4})$/);
+      if (m) {
+        const mo = Number(m[1]);
+        const y = Number(m[2]);
+        if (mo >= 1 && mo <= 12) return `${MONTHS[mo - 1]} ${y}`;
+      }
+      if (/^\d{4}$/.test(s)) return s;
+      return s;
+    }
+    function normalizeRowsDateField(raw, fieldCount, startIdx, endIdx) {
+      return splitLines(raw).map(line => {
+        const parts = parsePipe(line, fieldCount);
+        if (startIdx >= 0 && startIdx < parts.length) parts[startIdx] = normalizeDateToken(parts[startIdx]);
+        if (endIdx >= 0 && endIdx < parts.length) parts[endIdx] = normalizeDateToken(parts[endIdx]);
+        return parts.join(", ");
+      }).join("\n");
+    }
+    function runNormalizeDates() {
+      byId("experiences").value = normalizeRowsDateField(byId("experiences").value, 5, 2, 3);
+      byId("internships").value = normalizeRowsDateField(byId("internships").value, 5, 2, 3);
+      byId("educations").value = normalizeRowsDateField(byId("educations").value, 5, 2, 3);
+      byId("projects").value = normalizeRowsDateField(byId("projects").value, 7, 3, 4);
+      byId("certifications").value = normalizeRowsDateField(byId("certifications").value, 4, 2, -1);
+      preview();
+      scheduleDraft();
+      setAssist("Dates normalized (e.g., 2024-01 -> Jan 2024, current -> Present).");
+      setStatus("Dates normalized");
+    }
+    function buildPdfFilename(payload) {
+      const safe = (v, fallback = "") => String(v || fallback).replace(/[^a-zA-Z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+      const name = safe(payload.full_name, "resume");
+      const role = safe(payload.profile_title, "profile");
+      const tpl = safe(byId("template").value, "template");
+      const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+      return `${name}_${role}_${tpl}_${date}.pdf`;
+    }
+
+    function getTargets() {
+      try { return JSON.parse(localStorage.getItem(TARGETS_KEY) || "[]"); }
+      catch { return []; }
+    }
+    function setTargets(targets) {
+      localStorage.setItem(TARGETS_KEY, JSON.stringify(targets || []));
+    }
+    function getFavTemplates() {
+      try { return JSON.parse(localStorage.getItem(TEMPLATE_FAV_KEY) || "[]"); }
+      catch { return []; }
+    }
+    function setFavTemplates(ids) {
+      localStorage.setItem(TEMPLATE_FAV_KEY, JSON.stringify(uniq(ids || [])));
+    }
+    function getSnapshots() {
+      try { return JSON.parse(localStorage.getItem(SNAPSHOT_KEY) || "[]"); }
+      catch { return []; }
+    }
+    function setSnapshots(items) {
+      localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(items || []));
+    }
+    function refreshSnapshotSelect() {
+      const rows = getSnapshots();
+      byId("snapshotSelect").innerHTML = '<option value="">-- Snapshot --</option>' + rows.map((s, i) => `<option value="${i}">${s.name}</option>`).join("");
+    }
+    function saveSnapshot() {
+      const payload = parsePayload();
+      const name = byId("snapshotName").value.trim() || `Snapshot ${new Date().toISOString().slice(0, 16).replace("T", " ")}`;
+      const rows = getSnapshots().filter(s => s.name.toLowerCase() !== name.toLowerCase());
+      rows.unshift({ name, payload, created: new Date().toISOString() });
+      setSnapshots(rows.slice(0, 25));
+      refreshSnapshotSelect();
+      byId("snapshotName").value = "";
+      setAssist(`Snapshot saved: ${name}`);
+    }
+    function loadSnapshot() {
+      const idx = Number(byId("snapshotSelect").value);
+      if (Number.isNaN(idx)) return;
+      const row = getSnapshots()[idx];
+      if (!row?.payload) return;
+      const p = row.payload;
+      byId("fullName").value = p.full_name || "";
+      byId("profileTitle").value = p.profile_title || "";
+      byId("email").value = p.email || "";
+      byId("phone").value = p.phone || "";
+      byId("city").value = p.city || "";
+      byId("address").value = p.address || "";
+      byId("summary").value = p.summary || "";
+      byId("linkedin").value = p.linkedin || "";
+      byId("github").value = p.github || "";
+      byId("twitter").value = p.twitter || "";
+      byId("website").value = p.website || "";
+      byId("experiences").value = rowsToText(p.experiences || [], ["job_title", "company", "start_date", "end_date", "description"]);
+      byId("educations").value = rowsToText(p.educations || [], ["degree", "institution", "start_date", "end_date", "description"]);
+      byId("projects").value = rowsToText(p.projects || [], ["name", "role", "technologies", "start_date", "end_date", "description", "link"]);
+      byId("certifications").value = rowsToText(p.certifications || [], ["name", "issuer", "date", "link"]);
+      byId("languages").value = rowsToText(p.languages || [], ["name", "proficiency"]);
+      byId("skills").value = (p.skills || []).join("\n");
+      byId("achievements").value = rowsToText(p.achievements || [], ["title", "subtitle", "description"]);
+      byId("references").value = rowsToText(p.references || [], ["name", "title", "company", "phone", "email", "website"]);
+      byId("customSections").value = customSectionsToText(p.custom_sections || []);
+      setSectionVisibility(p.section_visibility || {});
+      if (Array.isArray(p.section_order) && p.section_order.length) sectionOrder = p.section_order;
+      renderSectionOrderList();
+      preview();
+      validateInputsLive();
+      scheduleDraft();
+      setAssist(`Snapshot loaded: ${row.name}`);
+    }
+    function deleteSnapshot() {
+      const idx = Number(byId("snapshotSelect").value);
+      if (Number.isNaN(idx)) return;
+      const rows = getSnapshots();
+      if (!rows[idx]) return;
+      const name = rows[idx].name;
+      rows.splice(idx, 1);
+      setSnapshots(rows);
+      refreshSnapshotSelect();
+      setAssist(`Snapshot deleted: ${name}`);
+    }
+
+    function collect() {
+      const data = Object.fromEntries(ids.map(id => [id, byId(id).value.trim()]));
+      data.profilePic = profilePicData || "";
+      data.jobDesc = byId("jobDesc").value.trim();
+      return data;
+    }
+
+    function applyEducationPreset() {
+      const key = byId("educationPreset").value || "default";
+      const preset = EDUCATION_PRESETS[key] || EDUCATION_PRESETS.default;
+      byId("educations").placeholder = preset.placeholder;
+      byId("educationPresetHint").textContent = preset.hint;
+      scheduleDraft();
+    }
+
+    function rowsToText(rows, keys) {
+      return (rows || []).map(r => keys.map(k => (r[k] ?? "")).join(", ")).join("\n");
+    }
+
+    function customSectionsFromText(raw) {
+      return splitLines(raw).map(line => {
+        let title = "";
+        let itemsRaw = "";
+        if (line.includes(":")) {
+          const parts = line.split(":");
+          title = (parts.shift() || "").trim();
+          itemsRaw = parts.join(":").trim();
+        } else {
+          [title, itemsRaw] = parsePipe(line, 2);
+        }
+        const items = (itemsRaw || "").split(";").map(v => v.trim()).filter(Boolean);
+        return { title, items };
+      }).filter(s => s.title && s.items.length);
+    }
+
+    function customSectionsToText(sections) {
+      return (sections || []).map(s => {
+        const items = (s.items || []).join(" ; ");
+        return `${s.title || ""}: ${items}`.trim();
+      }).join("\n");
+    }
+
+    async function loadTemplateCatalog() {
+      try {
+        const res = await fetch(TEMPLATE_CATALOG_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error("catalog fetch failed");
+        templateCatalog = await res.json();
+      } catch {
+        const fallback = Array.from(byId("template").options).map(o => ({
+          id: o.value,
+          name: o.textContent,
+          category: "All",
+          mood: "Balanced",
+          tagline: "Preset style",
+          canva_query: `${o.textContent || o.value} resume template`,
+          settings: { template: o.value },
+          palette: [byId("accent").value || "#0f766e", "#d1fae5", "#f8fafc"],
+        }));
+        templateCatalog = fallback;
+      }
+      renderTemplateCategories();
+      renderTemplateMoods();
+      refreshCompareSelectors();
+      renderFeaturedShowcase();
+      renderCanvaStrip();
+      renderTemplateGallery();
+      syncBulkTemplateOptions();
+    }
+
+    function renderFeaturedShowcase() {
+      const root = byId("featuredGrid");
+      if (!root) return;
+      const preferred = ["sig-classic-clarity", "sig-impact-panel", "sig-contemporary-photo"];
+      const picks = preferred
+        .map(id => (templateCatalog || []).find(t => t.id === id))
+        .filter(Boolean);
+      const fallback = (templateCatalog || [])
+        .filter(t => {
+          const c = String(t.category || "").toLowerCase();
+          return c === "signature" || c === "canva style" || c === "creative";
+        })
+        .slice(0, 3);
+      const cards = picks.length ? picks : fallback.length ? fallback : (templateCatalog || []).slice(0, 3);
+      root.innerHTML = cards.map(t => `
+        <button type="button" class="featured-card" data-pick="${t.id}" title="Apply ${t.name || t.id}">
+          <img src="${templateThumbUrl(t, true)}" alt="${t.name || t.id}">
+          <div class="featured-meta">
+            <span>${t.name || t.id}</span>
+            <span>${t.mood || "Style"}</span>
+          </div>
+        </button>
+      `).join("");
+      root.querySelectorAll("[data-pick]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const item = (templateCatalog || []).find(t => t.id === btn.dataset.pick);
+          if (item) applyTemplatePreset(item);
+        });
+      });
+    }
+
+    function renderTemplateMoods() {
+      const moods = ["All", ...uniq((templateCatalog || []).map(t => (t.mood || "Balanced").trim()).filter(Boolean))];
+      const root = byId("tplMoods");
+      root.innerHTML = moods.map(m => `<button type="button" class="tpl-pill ${activeTplMood === m ? "active" : ""}" data-mood="${m}">${m}</button>`).join("");
+      root.querySelectorAll("[data-mood]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeTplMood = btn.dataset.mood;
+          renderTemplateMoods();
+          renderTemplateGallery();
+        });
+      });
+    }
+
+    function renderCanvaStrip() {
+      const root = byId("canvaStrip");
+      const picks = (templateCatalog || []).slice(0, 6);
+      root.innerHTML = picks.map(t => `
+        <button type="button" class="canva-card" data-pick="${t.id}" title="Apply ${t.name || t.id}">
+          <img src="${templateThumbUrl(t)}" alt="${t.name || t.id}">
+          <div class="canva-card-title">${t.name || t.id}</div>
+          <div class="canva-card-sub">
+            <span>${t.category || "General"} | ${t.mood || "Balanced"}</span>
+            <span>Apply</span>
+          </div>
+        </button>
+      `).join("");
+      root.querySelectorAll("[data-pick]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const item = (templateCatalog || []).find(t => t.id === btn.dataset.pick);
+          if (item) applyTemplatePreset(item);
+        });
+      });
+    }
+
+    function renderTemplateCategories() {
+      const dynamicCats = uniq(
+        (templateCatalog || [])
+          .map(t => (t.category || "General").trim())
+          .filter(c => c && c.toLowerCase() !== "all")
+      );
+      const cats = ["All", ...dynamicCats];
+      const root = byId("tplCats");
+      root.innerHTML = cats.map(c => `<button type="button" class="tpl-pill ${activeTplCategory === c ? "active" : ""}" data-cat="${c}">${c}</button>`).join("");
+      root.querySelectorAll("[data-cat]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          activeTplCategory = btn.dataset.cat;
+          renderTemplateCategories();
+          renderTemplateGallery();
+        });
+      });
+    }
+
+    function _previewVariant(item) {
+      const id = String(item?.id || "").toLowerCase();
+      const t = String(item?.settings?.template || "").toLowerCase();
+      const c = String(item?.category || "").toLowerCase();
+      const explicit = String(item?.preview_variant || "").toLowerCase();
+      if (explicit) return explicit;
+      if (id.includes("two-column") || ["javid_split", "metro_sidebar", "creative_split", "impact_panel"].includes(t)) return "sidebar";
+      if (id.includes("creative-blue") || id.includes("vision")) return "hero";
+      if (c === "corporate") return "corporate";
+      if (c === "ats") return "plain";
+      if (id.includes("zen") || id.includes("minimal")) return "minimal";
+      return "modern";
+    }
+
+    function _buildResumePreviewSvg(item, width, height, detailed) {
+      const p = (item?.palette || ["#0f766e", "#d1fae5", "#f8fafc"]).slice(0, 3);
+      const accent = p[0] || "#0f766e";
+      const soft = p[1] || "#d1fae5";
+      const paper = p[2] || "#f8fafc";
+      const variant = _previewVariant(item);
+      const w = Number(width) || 360;
+      const h = Number(height) || 220;
+      const m = Math.round(w * 0.045);
+      const line = (x, y, ww, hh, fill = "#cbd5e1", rx = 3) => `<rect x="${x}" y="${y}" width="${ww}" height="${hh}" rx="${rx}" fill="${fill}"/>`;
+      const txt = (x, y, ww, rows, gap, shade) => Array.from({ length: rows }).map((_, i) => line(x, y + (i * gap), Math.max(20, ww - (i % 3 === 0 ? 0 : (i % 2 ? 16 : 8))), detailed ? 4 : 5, shade, 2)).join("");
+      const cardShadow = `<filter id="s"><feDropShadow dx="0" dy="${detailed ? 2 : 1}" stdDeviation="${detailed ? 2 : 1.2}" flood-color="#0f172a" flood-opacity="0.22"/></filter>`;
+      let body = "";
+
+      if (variant === "sidebar") {
+        const sideW = Math.round(w * 0.3);
+        body += line(0, 0, sideW, h, accent, 0);
+        body += line(sideW + m, m + 4, Math.round(w * 0.46), detailed ? 9 : 11, "#1f2937", 3);
+        body += line(sideW + m, m + 20, Math.round(w * 0.3), 6, "#94a3b8", 3);
+        body += txt(sideW + m, m + 40, Math.round(w * 0.62), detailed ? 18 : 9, detailed ? 8 : 10, "#dbe4ef");
+        body += `<circle cx="${Math.round(sideW / 2)}" cy="${Math.round(m + 28)}" r="${Math.round(w * 0.07)}" fill="#ffffff"/>`;
+        body += line(Math.round(sideW * 0.18), Math.round(m + 70), Math.round(sideW * 0.64), 6, "#a7f3d0", 3);
+        body += txt(Math.round(sideW * 0.12), Math.round(m + 86), Math.round(sideW * 0.76), detailed ? 12 : 7, 9, "#d1fae5");
+      } else if (variant === "hero") {
+        body += line(0, 0, w, Math.round(h * 0.18), accent, 0);
+        body += line(m, Math.round(h * 0.21), Math.round(w * 0.48), detailed ? 10 : 11, "#1f2937", 3);
+        body += line(m, Math.round(h * 0.21) + 16, Math.round(w * 0.3), 6, "#64748b", 3);
+        body += `<circle cx="${Math.round(w - m - (w * 0.09))}" cy="${Math.round(h * 0.12)}" r="${Math.round(w * 0.09)}" fill="#f8fafc"/>`;
+        body += line(m, Math.round(h * 0.35), Math.round(w * 0.4), 7, accent, 3);
+        body += txt(m, Math.round(h * 0.39), Math.round(w * 0.9), detailed ? 18 : 9, detailed ? 8 : 10, "#cbd5e1");
+      } else if (variant === "corporate") {
+        body += line(0, 0, w, Math.round(h * 0.12), soft, 0);
+        body += line(m, m + 2, Math.round(w * 0.36), detailed ? 9 : 10, "#0f172a", 3);
+        body += line(m, m + 18, Math.round(w * 0.24), 6, "#64748b", 3);
+        body += line(Math.round(w * 0.55), m + 2, Math.round(w * 0.33), 6, "#94a3b8", 3);
+        body += line(Math.round(w * 0.55), m + 14, Math.round(w * 0.29), 6, "#cbd5e1", 3);
+        body += txt(m, Math.round(h * 0.18), Math.round(w * 0.9), detailed ? 20 : 10, detailed ? 8 : 10, "#d6dee8");
+        body += line(m, Math.round(h * 0.52), Math.round(w * 0.3), 7, accent, 3);
+      } else if (variant === "plain") {
+        body += line(m, m + 4, Math.round(w * 0.32), detailed ? 9 : 10, "#111827", 3);
+        body += line(m, m + 20, Math.round(w * 0.22), 6, "#6b7280", 3);
+        body += line(m, m + 34, Math.round(w * 0.88), 1, "#d1d5db", 0);
+        body += txt(m, m + 44, Math.round(w * 0.9), detailed ? 22 : 11, detailed ? 8 : 10, "#d1d5db");
+      } else if (variant === "minimal") {
+        body += line(m, m + 2, Math.round(w * 0.44), detailed ? 9 : 10, "#111827", 3);
+        body += line(m, m + 18, Math.round(w * 0.26), 6, "#6b7280", 3);
+        body += line(m, Math.round(h * 0.18), Math.round(w * 0.2), 6, accent, 3);
+        body += txt(m, Math.round(h * 0.23), Math.round(w * 0.88), detailed ? 18 : 9, detailed ? 8 : 10, "#d5dbe3");
+      } else {
+        body += line(0, 0, w, Math.round(h * 0.15), accent, 0);
+        body += line(m, Math.round(h * 0.18), Math.round(w * 0.46), detailed ? 9 : 10, "#0f172a", 3);
+        body += line(m, Math.round(h * 0.18) + 16, Math.round(w * 0.3), 6, "#64748b", 3);
+        body += txt(m, Math.round(h * 0.32), Math.round(w * 0.9), detailed ? 18 : 9, detailed ? 8 : 10, "#d3dde8");
+      }
+
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'>
+        <defs>${cardShadow}</defs>
+        <rect width='${w}' height='${h}' fill='${paper}'/>
+        <rect x='${m}' y='${m}' width='${w - (m * 2)}' height='${h - (m * 2)}' rx='8' fill='#ffffff' stroke='#d5dde6' filter='url(#s)'/>
+        <g transform='translate(${m},${m})'>
+          ${body}
+        </g>
+      </svg>`;
+      return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+    }
+
+    function templateThumbUrl(item, detailed = false) {
+      if (!detailed && item?.thumbnail) return item.thumbnail;
+      const width = detailed ? 920 : 360;
+      const height = detailed ? 1180 : 220;
+      return _buildResumePreviewSvg(item, width, height, detailed);
+    }
+
+    function refreshCompareSelectors() {
+      const items = (templateCatalog || []);
+      const optionHtml = '<option value="">Compare with template</option>' + items.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+      byId("compareWith").innerHTML = optionHtml;
+      byId("compareOutput").textContent = "Pick one template and click Compare.";
+    }
+
+    function syncBulkTemplateOptions() {
+      const root = byId("bulkTemplates");
+      if (!root) return;
+      const current = new Set(Array.from(root.selectedOptions || []).map(o => o.value));
+      const options = Array.from(byId("template").options || []).map(o => ({ value: o.value, text: o.textContent || o.value }));
+      root.innerHTML = options.map(o => `<option value="${o.value}">${o.text}</option>`).join("");
+      if (!current.size && byId("template").value) current.add(byId("template").value);
+      Array.from(root.options).forEach(o => {
+        if (current.has(o.value)) o.selected = true;
+      });
+    }
+
+    function getSelectedBulkTemplates() {
+      const root = byId("bulkTemplates");
+      const selected = Array.from(root?.selectedOptions || []).map(o => o.value).filter(Boolean);
+      return selected.length ? selected : [byId("template").value];
+    }
+
+    function applyTemplatePreset(item) {
+      const s = item?.settings || {};
+      if (s.template && Array.from(byId("template").options).some(o => o.value === s.template)) byId("template").value = s.template;
+      if (typeof s.accent === "string" && s.accent.startsWith("#")) byId("accent").value = s.accent;
+      if (s.font) byId("font").value = s.font;
+      if (s.pageSize) byId("pageSize").value = s.pageSize;
+      if (s.marginPreset) byId("marginPreset").value = s.marginPreset;
+      if (s.headerLayout) byId("headerLayout").value = s.headerLayout;
+      if (typeof s.atsSafeMode === "boolean") byId("atsSafeMode").checked = s.atsSafeMode;
+      if (s.pageLayout) byId("pageLayout").value = s.pageLayout;
+      else if ((item?.preview_variant || "").toLowerCase() === "sidebar" || ["javid_split", "metro_sidebar", "creative_split", "impact_panel"].includes(byId("template").value)) byId("pageLayout").value = "two_column";
+      else byId("pageLayout").value = "";
+      if (typeof s.compactMode === "boolean") byId("compactMode").checked = s.compactMode;
+      renderTemplateGallery();
+      syncBulkTemplateOptions();
+      preview();
+      scheduleDraft();
+      setAssist(`Applied template: ${item.name}`);
+      setStatus("Template applied");
+    }
+
+    function findCatalogByTemplateValue(templateValue) {
+      const items = templateCatalog || [];
+      return items.find(t => (t.settings?.template || "").toLowerCase() === String(templateValue || "").toLowerCase()) || null;
+    }
+
+    function applyTemplateDefaultsBySelected(force = false) {
+      const lockOn = !!byId("templateLock")?.checked;
+      if (!force && !lockOn) return;
+      const tpl = byId("template").value;
+      const item = findCatalogByTemplateValue(tpl);
+      if (item) applyTemplatePreset(item);
+      else {
+        byId("pageLayout").value = ["javid_split", "metro_sidebar", "creative_split", "impact_panel"].includes(tpl) ? "two_column" : "";
+        preview();
+        scheduleDraft();
+      }
+    }
+
+    function applyTemplateLockState() {
+      const lockOn = !!byId("templateLock")?.checked;
+      ["font","pageSize","accent","compactMode","pageLayout"].forEach(id => {
+        if (byId(id)) byId(id).disabled = lockOn;
+      });
+      byId("resetTemplateBtn").disabled = false;
+      setStatus(lockOn ? "Template lock ON" : "Template lock OFF");
+    }
+
+    function toggleTemplateFavorite(id) {
+      const set = new Set(getFavTemplates());
+      if (set.has(id)) set.delete(id);
+      else set.add(id);
+      setFavTemplates(Array.from(set));
+      renderTemplateGallery();
+    }
+
+    function filteredTemplates() {
+      const q = byId("tplSearch")?.value?.trim().toLowerCase() || "";
+      const favOnly = !!byId("tplFavOnly")?.checked;
+      const favs = new Set(getFavTemplates());
+      return (templateCatalog || []).filter(t => {
+        const categoryOk = activeTplCategory === "All" || (t.category || "General") === activeTplCategory;
+        const moodOk = activeTplMood === "All" || (t.mood || "Balanced") === activeTplMood;
+        const hay = `${t.name || ""} ${t.tagline || ""} ${t.category || ""} ${t.mood || ""} ${t.settings?.template || ""}`.toLowerCase();
+        const searchOk = !q || hay.includes(q);
+        const favOk = !favOnly || favs.has(t.id);
+        return categoryOk && moodOk && searchOk && favOk;
+      });
+    }
+
+    function runCompareTemplates() {
+      const bId = byId("compareWith").value;
+      const a = (templateCatalog || []).find(t => t.settings?.template === byId("template").value) || null;
+      const b = (templateCatalog || []).find(t => t.id === bId);
+      if (!a || !b) {
+        byId("compareOutput").textContent = "Select a template in dropdown to compare.";
+        return;
+      }
+      const sa = a.settings || {};
+      const sb = b.settings || {};
+      const lines = [
+        `${a.name} vs ${b.name}`,
+        `Template: ${sa.template || "-"} vs ${sb.template || "-"}`,
+        `Font: ${sa.font || "Default"} vs ${sb.font || "Default"}`,
+        `Accent: ${sa.accent || "-"} vs ${sb.accent || "-"}`,
+        `Page: ${sa.pageSize || "letter"} vs ${sb.pageSize || "letter"}`,
+        `Compact: ${!!sa.compactMode} vs ${!!sb.compactMode}`,
+      ];
+      byId("compareOutput").textContent = lines.join("\n");
+    }
+
+    function renderTemplateGallery() {
+      const favs = new Set(getFavTemplates());
+      const selectedTpl = byId("template").value;
+      const items = filteredTemplates();
+      const filterKey = `${activeTplCategory}|${activeTplMood}|${(byId("tplSearch")?.value || "").trim().toLowerCase()}|${byId("tplFavOnly")?.checked ? 1 : 0}`;
+      if (filterKey !== tplLastFilterKey) {
+        tplVisibleCount = tplPageSize;
+        tplLastFilterKey = filterKey;
+      }
+      const visible = items.slice(0, tplVisibleCount);
+
+      const root = byId("templateGallery");
+      root.innerHTML = visible.map(t => {
+        const palette = (t.palette || ["#0f766e", "#d1fae5", "#f8fafc"]).slice(0, 3);
+        const isActive = t.settings?.template === selectedTpl;
+        const isFav = favs.has(t.id);
+        return `
+          <article class="tpl-card ${isActive ? "active" : ""}" data-id="${t.id}">
+            <span class="tpl-fav ${isFav ? "on" : ""}" data-fav="${t.id}" title="Favorite">${isFav ? "&#9733;" : "&#9734;"}</span>
+            <img class="tpl-thumb" src="${templateThumbUrl(t)}" alt="${t.name}">
+            <div class="tpl-headline">
+              <span class="tpl-name">${t.name || t.id}</span>
+              <span class="tpl-cat">${t.category || "General"}</span>
+            </div>
+            <div class="tpl-tag">${t.tagline || "Styled preset"} | ${t.mood || "Balanced"}</div>
+            <div class="tpl-swatches">
+              <span class="tpl-bar" style="background:${palette[0]}"></span>
+              <span class="tpl-bar" style="background:${palette[1]}"></span>
+              <span class="tpl-bar" style="background:${palette[2]}"></span>
+            </div>
+            <div class="tpl-actions">
+              <button type="button" class="tpl-use" data-apply="${t.id}">Use This</button>
+              <button type="button" class="tpl-open" data-open-canva="${t.id}">Preview</button>
+            </div>
+          </article>
+        `;
+      }).join("") || `<div class="hint">No templates match your search.</div>`;
+
+      const info = byId("tplCountInfo");
+      if (info) info.textContent = `Templates: ${Math.min(tplVisibleCount, items.length)} / ${items.length}`;
+      const loadBtn = byId("tplLoadMoreBtn");
+      if (loadBtn) {
+        loadBtn.style.display = items.length > tplVisibleCount ? "inline-block" : "none";
+        loadBtn.textContent = items.length > tplVisibleCount ? "Load More" : "All Loaded";
+      }
+
+      root.querySelectorAll("[data-id]").forEach(card => {
+        card.addEventListener("click", () => {
+          const item = (templateCatalog || []).find(t => t.id === card.dataset.id);
+          if (item) applyTemplatePreset(item);
+        });
+      });
+      root.querySelectorAll("[data-apply]").forEach(node => {
+        node.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const item = (templateCatalog || []).find(t => t.id === node.dataset.apply);
+          if (item) applyTemplatePreset(item);
+        });
+      });
+      root.querySelectorAll("[data-open-canva]").forEach(node => {
+        node.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const item = (templateCatalog || []).find(t => t.id === node.dataset.openCanva);
+          if (!item) return;
+          openTemplatePreview(item);
+        });
+      });
+      root.querySelectorAll("[data-fav]").forEach(star => {
+        star.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleTemplateFavorite(star.dataset.fav);
+        });
+      });
+    }
+
+    function loadMoreTemplates() {
+      const total = filteredTemplates().length;
+      tplVisibleCount = Math.min(total, tplVisibleCount + tplPageSize);
+      renderTemplateGallery();
+    }
+
+    async function recommendTemplates() {
+      setStatus("Recommending...");
+      const payload = parsePayload();
+      payload.job_description = byId("jobDesc").value.trim();
+      payload.top_k = 3;
+      try {
+        const res = await fetch(`${API_BASE}/template-recommend`, {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        const top = data.top_templates || [];
+        if (!top.length) {
+          setAssist("No template recommendation available right now.");
+          return;
+        }
+        const lines = top.map((t, i) => `${i + 1}. ${t.name} (${t.category || "General"}) score=${Number(t.score || 0).toFixed(2)}`);
+        setAssist(`Top template recommendations (${data.algorithm || "model"}):\n${lines.join("\n")}\n\nTip: Click card or Use This to apply.`);
+        const first = top[0];
+        if (first && first.category) {
+          activeTplCategory = first.category;
+          renderTemplateCategories();
+          renderTemplateGallery();
+        }
+        setStatus("Template recommendations ready");
+      } catch (e) {
+        setAssist(`Template recommendation failed: ${e?.message || e}`);
+        setStatus("Recommend failed");
+      }
+    }
+
+    function applyExportPreset(name) {
+      const n = String(name || "").toLowerCase();
+      if (n === "ats") {
+        byId("template").value = "compact";
+        byId("font").value = "Helvetica";
+        byId("atsSafeMode").checked = true;
+        byId("compactMode").checked = true;
+        byId("pageLayout").value = "single_column";
+        byId("marginPreset").value = "narrow";
+        byId("headerLayout").value = "default";
+      } else if (n === "creative") {
+        byId("template").value = "javid_split";
+        byId("font").value = "Helvetica";
+        byId("atsSafeMode").checked = false;
+        byId("compactMode").checked = false;
+        byId("pageLayout").value = "two_column";
+        byId("marginPreset").value = "normal";
+        byId("headerLayout").value = "split";
+      } else if (n === "executive") {
+        byId("template").value = "executive";
+        byId("font").value = "Times";
+        byId("atsSafeMode").checked = false;
+        byId("compactMode").checked = false;
+        byId("pageLayout").value = "single_column";
+        byId("marginPreset").value = "normal";
+        byId("headerLayout").value = "left";
+      }
+      renderTemplateGallery();
+      preview();
+      scheduleDraft();
+      setStatus(`${name} preset applied`);
+      setAssist(`${name} export preset applied. Click PDF to export.`);
+    }
+    function openTemplatePreview(item) {
+      previewTemplateId = item?.id || null;
+      byId("tplPreviewTitle").textContent = item?.name || "Template Preview";
+      byId("tplPreviewImage").src = templateThumbUrl(item, true);
+      const s = item?.settings || {};
+      byId("tplPreviewMeta").textContent = `${item?.category || "General"} | ${item?.mood || "Balanced"} | ${item?.tagline || "Styled preset"} | Template: ${s.template || "-"} | Font: ${s.font || "Default"} | Page: ${s.pageSize || "letter"}`;
+      byId("tplPreviewModal").classList.add("show");
+    }
+
+    function closeTemplatePreview() {
+      byId("tplPreviewModal").classList.remove("show");
+    }
+
+    function jumpToTemplateMarket() {
+      const panel = byId("templateGallery");
+      if (panel) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+      setStatus("Template market");
+    }
+
+    function refreshTargetSelect() {
+      const targets = getTargets();
+      const sel = byId("targetSelect");
+      sel.innerHTML = '<option value="">-- Target --</option>' + targets.map((t, idx) => `<option value="${idx}">${t.name}</option>`).join("");
+    }
+
+    function saveTarget() {
+      const name = byId("targetName").value.trim();
+      const desc = byId("jobDesc").value.trim();
+      if (!name || !desc) {
+        setAssist("Target name and job description are required.");
+        return;
+      }
+      const targets = getTargets().filter(t => t.name.toLowerCase() !== name.toLowerCase());
+      targets.push({ name, description: desc, updated: new Date().toISOString() });
+      setTargets(targets);
+      refreshTargetSelect();
+      byId("targetName").value = "";
+      setAssist(`Saved target: ${name}`);
+    }
+
+    function loadTarget() {
+      const idx = Number(byId("targetSelect").value);
+      if (Number.isNaN(idx)) return;
+      const t = getTargets()[idx];
+      if (!t) return;
+      byId("jobDesc").value = t.description || "";
+      scheduleDraft();
+      setAssist(`Loaded target: ${t.name}`);
+    }
+
+    function deleteTarget() {
+      const idx = Number(byId("targetSelect").value);
+      if (Number.isNaN(idx)) return;
+      const targets = getTargets();
+      if (!targets[idx]) return;
+      const name = targets[idx].name;
+      targets.splice(idx, 1);
+      setTargets(targets);
+      refreshTargetSelect();
+      setAssist(`Deleted target: ${name}`);
+    }
+
+    function renderSectionOrderList() {
+      const labels = {
+        summary: "Summary", experience: "Experience", internship: "Internships", education: "Education",
+        projects: "Projects", skills: "Skills", achievements: "Achievements", custom: "Custom"
+      };
+      const root = byId("sectionOrderList");
+      root.innerHTML = sectionOrder.map(k => `<span class="order-chip" draggable="true" data-key="${k}">${labels[k] || k}</span>`).join("");
+      let dragKey = null;
+      root.querySelectorAll(".order-chip").forEach(chip => {
+        chip.addEventListener("dragstart", e => {
+          dragKey = chip.dataset.key;
+          chip.classList.add("dragging");
+          e.dataTransfer.effectAllowed = "move";
+        });
+        chip.addEventListener("dragend", () => chip.classList.remove("dragging"));
+        chip.addEventListener("dragover", e => e.preventDefault());
+        chip.addEventListener("drop", e => {
+          e.preventDefault();
+          const dropKey = chip.dataset.key;
+          if (!dragKey || dragKey === dropKey) return;
+          const next = sectionOrder.filter(k => k !== dragKey);
+          const dropIdx = next.indexOf(dropKey);
+          next.splice(dropIdx, 0, dragKey);
+          sectionOrder = next;
+          renderSectionOrderList();
+          preview();
+          scheduleDraft();
+        });
+      });
+    }
+
+    function removeWeakRows(raw, minFields, fieldCount) {
+      return splitLines(raw)
+        .map(line => parsePipe(line, fieldCount))
+        .filter(parts => parts.filter(Boolean).length >= minFields)
+        .map(parts => parts.join(", "))
+        .join("\n");
+    }
+
+    function parsePayload() {
+      const d = collect();
+      const internshipRows = splitLines(d.internships).map(line => {
+        const [role, comp, st, en, desc] = parsePipe(line, 5);
+        return { job_title: role, company: comp, start_date: st, end_date: en, description: desc };
+      }).filter(x => x.job_title || x.company || x.start_date || x.end_date || x.description);
+      const experienceRows = splitLines(d.experiences).map(line => {
+        const [job, comp, st, en, desc] = parsePipe(line, 5);
+        return { job_title: job, company: comp, start_date: st, end_date: en, description: desc };
+      });
+      const internshipMergedAsExperience = internshipRows.map(x => {
+        const title = (x.job_title || "").trim();
+        const tagged = /intern/i.test(title) ? title : `${title} (Internship)`.trim();
+        return { ...x, job_title: tagged };
+      });
+      return {
+        id: currentId,
+        title: d.fullName || "Untitled",
+        full_name: d.fullName,
+        profile_title: d.profileTitle,
+        profile_pic: profilePicData ? profilePicData.split(",").pop() : null,
+        email: d.email, phone: d.phone, city: d.city, address: d.address, summary: d.summary,
+        linkedin: d.linkedin, github: d.github, twitter: d.twitter, website: d.website, qr_link: d.qrLink,
+        experiences: [...experienceRows, ...internshipMergedAsExperience],
+        internships: internshipRows,
+        educations: splitLines(d.educations).map(line => {
+          const [deg, inst, st, en, desc] = parsePipe(line, 5);
+          return { degree: deg, institution: inst, start_date: st, end_date: en, description: desc };
+        }),
+        projects: splitLines(d.projects).map(line => {
+          const [name, role, tech, st, en, desc, link] = parsePipe(line, 7);
+          return { name, role, technologies: tech, start_date: st, end_date: en, description: desc, link };
+        }),
+        certifications: splitLines(d.certifications).map(line => {
+          const [name, issuer, date, link] = parsePipe(line, 4);
+          return { name, issuer, date, link };
+        }),
+        languages: splitLines(d.languages).map(line => {
+          const [name, proficiency] = parsePipe(line, 2);
+          return { name, proficiency };
+        }),
+        skills: splitLines(d.skills),
+        achievements: splitLines(d.achievements).map(line => {
+          const [title, subtitle, description] = parsePipe(line, 3);
+          return { title, subtitle, description };
+        }),
+        references: splitLines(d.references).map(line => {
+          const [name, title, company, phone, email, website] = parsePipe(line, 6);
+          return { name, title, company, phone, email, website };
+        }),
+        custom_sections: customSectionsFromText(d.customSections),
+        section_order: sectionOrder,
+        section_visibility: getSectionVisibility()
+      };
+    }
+
+    function preview() {
+      const p = parsePayload();
+      const vis = getSectionVisibility();
+      const card = byId("preview");
+      const section = (title, body) => body ? `<div class="section"><h4>${title}</h4>${body}</div>` : "";
+      const hl = text => {
+        let out = String(text || "");
+        for (const kw of (heatmapKeywords || [])) {
+          if (!kw) continue;
+          const re = new RegExp(`\\b${escReg(kw)}\\b`, "gi");
+          out = out.replace(re, m => `<mark style="background:#fef08a;padding:0 2px;border-radius:3px;">${m}</mark>`);
+        }
+        return out;
+      };
+      const list = arr => arr.map(x => `<div class="item">${hl(x)}</div>`).join("");
+      const customHtml = (p.custom_sections || []).map(s => section(s.title, list((s.items || []).map(i => i)))).join("");
+      const sectionMap = {
+        summary: vis.summary ? section("Summary", p.summary ? `<div class="item">${hl(p.summary).replace(/\n/g,"<br>")}</div>` : "") : "",
+        experience: vis.experience ? section("Experience", list(p.experiences.map(e => `<strong>${hl(e.job_title)}</strong> ${e.company ? "at " + hl(e.company) : ""}<div class="meta">${hl(e.start_date)} - ${hl(e.end_date || "Present")}</div>${hl(e.description)}`))) : "",
+        internship: vis.internship ? section("Internships", list((p.internships || []).map(e => `<strong>${hl(e.job_title)}</strong> ${e.company ? "at " + hl(e.company) : ""}<div class="meta">${hl(e.start_date)} - ${hl(e.end_date || "Present")}</div>${hl(e.description)}`))) : "",
+        education: vis.education ? section("Education", list(p.educations.map(e => `<strong>${hl(e.degree)}</strong> ${hl(e.institution)}<div class="meta">${hl(e.start_date)} - ${hl(e.end_date || "Present")}</div>${hl(e.description)}`))) : "",
+        projects: vis.projects ? section("Projects", list(p.projects.map(e => `<strong>${hl(e.name)}</strong> ${hl(e.role)}<div class="meta">${hl(e.technologies)}</div>${hl(e.description)}`))) : "",
+        skills: vis.skills ? section("Skills", hl(p.skills.join(", "))) : "",
+        achievements: vis.achievements ? section("Achievements", list(p.achievements.map(a => `<strong>${hl(a.title)}</strong> ${hl(a.subtitle)}<div>${hl(a.description)}</div>`))) : "",
+        custom: vis.custom ? customHtml : ""
+      };
+      const orderedSections = (sectionOrder || []).map(k => sectionMap[k] || "").join("");
+      const selectedLayout = byId("pageLayout").value;
+      if (selectedLayout === "two_column") {
+        const leftCol = [
+          sectionMap.summary || "",
+          sectionMap.education || "",
+          sectionMap.skills || "",
+          sectionMap.achievements || "",
+          sectionMap.custom || "",
+        ].join("");
+        const rightCol = [
+          sectionMap.internship || "",
+          sectionMap.experience || "",
+          sectionMap.projects || "",
+        ].join("");
+        card.innerHTML = `
+          ${profilePicData ? `<img src="${profilePicData}" alt="Profile" style="width:78px;height:78px;border-radius:50%;object-fit:cover;border:2px solid #dbe3ea;margin-bottom:8px;">` : ""}
+          <h1>${p.full_name || "Your Name"}</h1>
+          ${p.profile_title ? `<div>${hl(p.profile_title)}</div>` : ""}
+          <div class="meta">${hl([p.email,p.phone,p.city,p.address].filter(Boolean).join(", "))}</div>
+          <div style="display:grid;grid-template-columns:34% 66%;gap:14px;margin-top:10px;">
+            <div>${leftCol}</div>
+            <div>${rightCol}</div>
+          </div>
+        `;
+      } else {
+        card.innerHTML = `
+          ${profilePicData ? `<img src="${profilePicData}" alt="Profile" style="width:78px;height:78px;border-radius:50%;object-fit:cover;border:2px solid #dbe3ea;margin-bottom:8px;">` : ""}
+          <h1>${p.full_name || "Your Name"}</h1>
+          ${p.profile_title ? `<div>${hl(p.profile_title)}</div>` : ""}
+          <div class="meta">${hl([p.email,p.phone,p.city,p.address].filter(Boolean).join(", "))}</div>
+          ${orderedSections}
+        `;
+      }
+      byId("preview").style.setProperty("--accent", byId("accent").value);
+      byId("preview").style.fontFamily = previewFontFamily(byId("font").value);
+    }
+
+    function scheduleDraft() {
+      clearTimeout(draftTimer);
+      draftTimer = setTimeout(() => {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({
+          data: collect(),
+          id: currentId,
+          settings: { template: byId("template").value, font: byId("font").value, pageSize: byId("pageSize").value, accent: byId("accent").value, compactMode: byId("compactMode").checked, atsSafeMode: byId("atsSafeMode").checked, marginPreset: byId("marginPreset").value, headerLayout: byId("headerLayout").value, pageLayout: byId("pageLayout").value, templateLock: byId("templateLock").checked, fontScale: byId("fontScale").value, sectionVisibility: getSectionVisibility(), jobDesc: byId("jobDesc").value, toneMode: byId("toneMode").value, skillPack: byId("skillPack").value, langMode: byId("langMode").value, rolePack: byId("rolePack").value, educationPreset: byId("educationPreset").value, sectionOrder }
+        }));
+        statusWithTime("Draft saved");
+      }, 600);
+      scheduleLivePdfPreview();
+      scheduleAutoSaveServer();
+    }
+
+    function scheduleLivePdfPreview() {
+      clearTimeout(livePdfTimer);
+      if (!byId("livePdfAuto")?.checked) return;
+      livePdfTimer = setTimeout(() => {
+        livePdfPreview().catch(() => setStatus("Live preview failed"));
+      }, 1400);
+    }
+
+    function scheduleAutoSaveServer() {
+      clearTimeout(autoSaveTimer);
+      autoSaveTimer = setTimeout(async () => {
+        if (isHydrating || autoSaving) return;
+        const now = Date.now();
+        if (now - lastServerSaveAt < 12000) return;
+        const p = parsePayload();
+        if (!(p.full_name || p.summary || (p.experiences || []).length || (p.skills || []).length)) return;
+        const check = validateInputsLive();
+        if (check.hasErrors) return;
+        autoSaving = true;
+        try {
+          await saveResume(true);
+          lastServerSaveAt = Date.now();
+          statusWithTime("Auto-saved");
+        } catch {
+          setStatus("Auto-save skipped");
+        } finally {
+          autoSaving = false;
+        }
+      }, 2200);
+    }
+
+    function restoreDraft() {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return false;
+      try {
+        isHydrating = true;
+        const draft = JSON.parse(raw);
+        ids.forEach(id => byId(id).value = draft.data[id] || "");
+        profilePicData = draft.data?.profilePic || null;
+        byId("profilePreview").src = profilePicData || "https://via.placeholder.com/74?text=Photo";
+        currentId = draft.id || null;
+        byId("template").value = draft.settings?.template || "modern";
+        byId("font").value = draft.settings?.font || "";
+        byId("pageSize").value = draft.settings?.pageSize || "letter";
+        byId("accent").value = draft.settings?.accent || "#0e7490";
+        byId("compactMode").checked = !!draft.settings?.compactMode;
+        byId("atsSafeMode").checked = !!draft.settings?.atsSafeMode;
+        byId("marginPreset").value = draft.settings?.marginPreset || "normal";
+        byId("headerLayout").value = draft.settings?.headerLayout || "default";
+        byId("pageLayout").value = draft.settings?.pageLayout || "";
+        byId("templateLock").checked = !!draft.settings?.templateLock;
+        byId("fontScale").value = draft.settings?.fontScale || "1.0";
+        updateFontScaleLabel();
+        applyTemplateLockState();
+        setSectionVisibility(draft.settings?.sectionVisibility || {});
+        byId("jobDesc").value = draft.settings?.jobDesc || draft.data?.jobDesc || "";
+        byId("toneMode").value = draft.settings?.toneMode || "formal";
+        byId("skillPack").value = draft.settings?.skillPack || "backend";
+        byId("langMode").value = draft.settings?.langMode || "english";
+        byId("rolePack").value = draft.settings?.rolePack || "backend";
+        byId("educationPreset").value = draft.settings?.educationPreset || "default";
+        applyEducationPreset();
+        sectionOrder = Array.isArray(draft.settings?.sectionOrder) && draft.settings.sectionOrder.length
+          ? draft.settings.sectionOrder
+          : sectionOrder;
+        renderSectionOrderList();
+        renderTemplateGallery();
+        setStatus("Draft restored");
+        isHydrating = false;
+        return true;
+      } catch {
+        isHydrating = false;
+        return false;
+      }
+    }
+
+    async function refreshList() {
+      const res = await fetch(`${API_BASE}/resumes`);
+      const rows = await res.json();
+      const sel = byId("resumeSelect");
+      sel.innerHTML = '<option value="">-- Select Resume --</option>';
+      rows.forEach(r => {
+        const o = document.createElement("option");
+        o.value = r.id;
+        o.textContent = `${r.title || r.full_name || "Untitled"} ${r.updated ? "(" + String(r.updated).slice(0,10) + ")" : ""}`;
+        sel.appendChild(o);
+      });
+      if (currentId) sel.value = String(currentId);
+    }
+
+    async function saveResume(silent = false) {
+      const check = validateInputsLive();
+      if (check.hasErrors) {
+        if (!silent) alert("Please fix email/phone format before saving.");
+        setStatus("Validation issues");
+        throw new Error("Validation failed");
+      }
+      if (!silent) setStatus("Saving...");
+      const payload = parsePayload();
+      const res = await fetch(`${API_BASE}/resumes`, { method:"POST", headers:{ "Content-Type":"application/json" }, body:JSON.stringify(payload) });
+      if (!res.ok) throw new Error("Save failed");
+      const body = await res.json();
+      currentId = body.id;
+      lastSaved = new Date().toISOString();
+      baselinePayload = parsePayload();
+      if (!silent) saveSnapshot();
+      localStorage.removeItem(DRAFT_KEY);
+      try {
+        await refreshList();
+      } catch (e) {
+        setAssist(`Resume list load failed: ${e?.message || e}. You can still edit locally.`);
+      }
+      if (!silent) statusWithTime("Saved");
+    }
+
+    async function loadResume(id) {
+      isHydrating = true;
+      try {
+        const res = await fetch(`${API_BASE}/resumes/${id}`);
+        if (!res.ok) throw new Error("Load failed");
+        const d = await res.json();
+        currentId = d.id;
+        const join = items => (items || []).map(v => v.join(", ")).join("\n");
+        byId("fullName").value = d.full_name || "";
+        byId("profileTitle").value = d.profile_title || "";
+        byId("email").value = d.email || ""; byId("phone").value = d.phone || ""; byId("city").value = d.city || ""; byId("address").value = d.address || "";
+        byId("summary").value = d.summary || "";
+        byId("linkedin").value = d.linkedin || ""; byId("github").value = d.github || ""; byId("twitter").value = d.twitter || ""; byId("website").value = d.website || "";
+        byId("qrLink").value = d.qr_link || "";
+        const loadedExp = d.experiences || [];
+        const internshipRows = loadedExp.filter(e => /intern/i.test(String(e.job_title || "")));
+        const normalExpRows = loadedExp.filter(e => !/intern/i.test(String(e.job_title || "")));
+        byId("experiences").value = join(normalExpRows.map(e => [e.job_title, e.company, e.start_date, e.end_date, e.description]));
+        byId("internships").value = join(internshipRows.map(e => [String(e.job_title || "").replace(/\s*\(internship\)\s*$/i, ""), e.company, e.start_date, e.end_date, e.description]));
+        byId("educations").value = join((d.educations || []).map(e => [e.degree, e.institution, e.start_date, e.end_date, e.description]));
+        byId("projects").value = join((d.projects || []).map(e => [e.name, e.role, e.technologies, e.start_date, e.end_date, e.description, e.link]));
+        byId("certifications").value = join((d.certifications || []).map(e => [e.name, e.issuer, e.date, e.link]));
+        byId("languages").value = join((d.languages || []).map(e => [e.name, e.proficiency]));
+        byId("skills").value = (d.skills || []).join("\n");
+        byId("achievements").value = join((d.achievements || []).map(e => [e.title, e.subtitle, e.description]));
+        byId("references").value = join((d.references || []).map(e => [e.name, e.title, e.company, e.phone, e.email, e.website]));
+        byId("customSections").value = customSectionsToText(d.custom_sections || []);
+        profilePicData = d.profile_pic ? `data:image/*;base64,${d.profile_pic}` : null;
+        byId("profilePreview").src = profilePicData || "https://via.placeholder.com/74?text=Photo";
+        renderTemplateGallery();
+        renderSectionOrderList();
+        baselinePayload = parsePayload();
+        setStatus("Loaded");
+        preview();
+        validateInputsLive();
+      } finally {
+        isHydrating = false;
+      }
+    }
+
+    async function deleteResume() {
+      if (!currentId) return alert("Select a saved resume first.");
+      if (!confirm("Delete this resume permanently?")) return;
+      const res = await fetch(`${API_BASE}/resumes/${currentId}`, { method:"DELETE" });
+      if (!res.ok) throw new Error("Delete failed");
+      currentId = null;
+      baselinePayload = null;
+      heatmapKeywords = [];
+      ids.forEach(id => byId(id).value = "");
+      profilePicData = null;
+      byId("profilePreview").src = "https://via.placeholder.com/74?text=Photo";
+      await refreshList();
+      preview();
+      setStatus("Deleted");
+    }
+
+    function buildPdfPayload() {
+      const payload = parsePayload();
+      payload.template_name = byId("template").value;
+      payload.page_size = byId("pageSize").value;
+      payload.accent_color_override = byId("accent").value;
+      payload.font_override = byId("font").value || null;
+      payload.compact_mode = byId("compactMode").checked;
+      payload.ats_safe_mode = byId("atsSafeMode").checked;
+      payload.font_scale = parseFloat(byId("fontScale").value || "1");
+      payload.margin_preset = byId("marginPreset").value;
+      payload.header_layout = byId("headerLayout").value;
+      payload.layout_override = byId("pageLayout").value || null;
+      payload.section_order = sectionOrder;
+      payload.section_visibility = getSectionVisibility();
+      return payload;
+    }
+
+    async function exportPDF() {
+      setStatus("PDF...");
+      const payload = buildPdfPayload();
+      const res = await fetch(`${API_BASE}/export-pdf`, { method:"POST", headers:{ "Content-Type":"application/json", "Accept":"application/pdf" }, body:JSON.stringify(payload) });
+      if (!res.ok) throw new Error(await res.text());
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = buildPdfFilename(payload); a.click();
+      URL.revokeObjectURL(url);
+      setStatus("PDF ready");
+    }
+
+    async function livePdfPreview() {
+      setStatus("Live preview...");
+      const payload = buildPdfPayload();
+      const res = await fetch(`${API_BASE}/preview-pdf`, {
+        method: "POST",
+        headers: { "Content-Type":"application/json", "Accept":"application/pdf" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const blob = await res.blob();
+      if (livePdfObjectUrl) URL.revokeObjectURL(livePdfObjectUrl);
+      livePdfObjectUrl = URL.createObjectURL(blob);
+      const frame = byId("livePdfFrame");
+      const wrap = byId("livePdfWrap");
+      frame.src = livePdfObjectUrl;
+      wrap.classList.add("show");
+      setStatus("Live preview ready");
+    }
+
+    async function exportBulkPdfZip() {
+      setStatus("Bulk ZIP...");
+      const payload = buildPdfPayload();
+      payload.template_names = getSelectedBulkTemplates();
+      const res = await fetch(`${API_BASE}/export-bulk-pdf`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json", "Accept":"application/zip" },
+        body:JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${(payload.full_name || "resume").replace(/\s+/g, "_")}_bulk_templates.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setStatus("Bulk ZIP ready");
+    }
+
+    async function exportWord() {
+      setStatus("Word...");
+      const payload = parsePayload();
+      const res = await fetch(`${API_BASE}/export-word`, { method:"POST", headers:{ "Content-Type":"application/json", "Accept":"application/rtf" }, body:JSON.stringify(payload) });
+      if (!res.ok) throw new Error(await res.text());
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = `${payload.full_name || "resume"}_resume.rtf`; a.click();
+      URL.revokeObjectURL(url);
+      setStatus("Word ready");
+    }
+
+    async function exportPortfolio() {
+      setStatus("Portfolio...");
+      const payload = parsePayload();
+      const res = await fetch(`${API_BASE}/export-portfolio`, { method:"POST", headers:{ "Content-Type":"application/json", "Accept":"text/html" }, body:JSON.stringify(payload) });
+      if (!res.ok) throw new Error(await res.text());
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = `${payload.full_name || "resume"}_portfolio.html`; a.click();
+      URL.revokeObjectURL(url);
+      setStatus("Portfolio ready");
+    }
+
+    async function generateCoverLetter() {
+      setStatus("Cover letter...");
+      setAssist("");
+      const payload = parsePayload();
+      payload.job_description = byId("jobDesc").value.trim();
+      payload.company = byId("jobCompany") ? byId("jobCompany").value.trim() : "";
+      payload.role = byId("jobRole") ? byId("jobRole").value.trim() : "";
+
+      const res = await fetch(`${API_BASE}/cover-letter`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      const letter = data.cover_letter || "";
+      setAssist(letter || "Cover letter could not be generated.");
+      if (letter) {
+        const blob = new Blob([letter], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${(payload.full_name || "resume").replace(/\s+/g, "_")}_cover_letter.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+      setStatus("Cover letter ready");
+    }
+
+    async function runInterviewQuestions() {
+      setStatus("Interview Q...");
+      setAssist("");
+      const payload = parsePayload();
+      payload.job_description = byId("jobDesc").value.trim();
+      payload.count = 20;
+      const res = await fetch(`${API_BASE}/interview-questions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      const lines = (data.questions || []).map((q, i) => `${i + 1}. ${q}`);
+      setAssist(lines.length ? lines.join("\n") : "No questions generated.");
+      if (lines.length) {
+        const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${(payload.full_name || "resume").replace(/\s+/g, "_")}_interview_questions.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+      setStatus("Interview Q ready");
+    }
+
+    async function runLanguageVariant() {
+      setStatus("Language variant...");
+      setAssist("");
+      const payload = parsePayload();
+      payload.language = byId("langMode").value;
+      const res = await fetch(`${API_BASE}/multilingual-resume`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      const text = data.preview_text || "";
+      setAssist(text || "Language variant unavailable.");
+      if (text) {
+        const blob = new Blob([text], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${(payload.full_name || "resume").replace(/\s+/g, "_")}_${data.language || "language"}_variant.txt`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+      setStatus("Language variant ready");
+    }
+
+    async function exportBrandingPack() {
+      setStatus("Brand pack...");
+      const payload = parsePayload();
+      payload.job_description = byId("jobDesc").value.trim();
+      payload.company = byId("jobCompany") ? byId("jobCompany").value.trim() : "";
+      payload.role = byId("jobRole") ? byId("jobRole").value.trim() : "";
+      payload.language = byId("langMode").value;
+      const res = await fetch(`${API_BASE}/export-branding-pack`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json", "Accept":"application/zip" },
+        body:JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${payload.full_name || "resume"}_branding_pack.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setStatus("Brand pack ready");
+      setAssist("Downloaded branding pack (JSON, cover letter, interview Q, portfolio, language variant).");
+    }
+
+    async function createPublicResumeLink() {
+      setStatus("Creating link...");
+      setAssist("");
+      const payload = parsePayload();
+      const expiryDays = Number(byId("shareExpiryDays")?.value || 7);
+      const res = await fetch(`${API_BASE}/public-resume`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ resume: payload, expires_days: expiryDays }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      const url = data.url || "";
+      if (url && navigator.clipboard?.writeText) {
+        try { await navigator.clipboard.writeText(url); } catch {}
+      }
+      const lines = [
+        "Public resume link created:",
+        url || "-",
+        data.expires_at ? `Expires: ${data.expires_at}` : "",
+        url ? "Link copied to clipboard (if browser allowed)." : "",
+      ];
+      setAssist(lines.filter(Boolean).join("\n"));
+      await loadPublicLinks();
+      setStatus("Public link ready");
+    }
+
+    function linkUrlFromToken(token) {
+      return `${window.location.origin}/public/${token}`;
+    }
+
+    function renderPublicLinks(rows) {
+      const root = byId("publicLinksList");
+      if (!rows || !rows.length) {
+        root.innerHTML = `<div class="hint">No public links yet. Create one to share your resume.</div>`;
+        return;
+      }
+      root.innerHTML = rows.map(r => {
+        const url = linkUrlFromToken(r.token);
+        const revoked = !!r.revoked;
+        return `
+          <div class="public-card" data-token="${r.token}">
+            <div class="public-title">${r.title || "Public Resume"} ${revoked ? "(Revoked)" : ""}</div>
+            <div class="public-meta">${url}</div>
+            <div class="public-meta">Expires: ${r.expires_at || "-"} | Created: ${r.created || "-"}</div>
+            <div class="public-actions">
+              <button type="button" data-copy-link="${r.token}" ${revoked ? "disabled" : ""}>Copy</button>
+              <button type="button" data-open-link="${r.token}" ${revoked ? "disabled" : ""}>Open</button>
+              <button type="button" data-revoke-link="${r.token}" class="danger" ${revoked ? "disabled" : ""}>Revoke</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      root.querySelectorAll("[data-copy-link]").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          const token = btn.dataset.copyLink;
+          const url = linkUrlFromToken(token);
+          try { await navigator.clipboard.writeText(url); } catch {}
+          setAssist(`Copied public link:\n${url}`);
+        });
+      });
+      root.querySelectorAll("[data-open-link]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const token = btn.dataset.openLink;
+          const url = linkUrlFromToken(token);
+          window.open(url, "_blank");
+        });
+      });
+      root.querySelectorAll("[data-revoke-link]").forEach(btn => {
+        btn.addEventListener("click", () => revokePublicLink(btn.dataset.revokeLink).catch(e => {
+          setAssist(e.message);
+          alert(e.message);
+        }));
+      });
+    }
+
+    async function loadPublicLinks() {
+      const res = await fetch(`${API_BASE}/public-resume`);
+      if (!res.ok) throw new Error(await res.text());
+      const rows = await res.json();
+      renderPublicLinks(rows);
+    }
+
+    async function revokePublicLink(token) {
+      const res = await fetch(`${API_BASE}/public-resume/${token}`, { method: "DELETE" });
+      if (!res.ok) throw new Error(await res.text());
+      await loadPublicLinks();
+      setStatus("Public link revoked");
+      setAssist("Public link revoked.");
+    }
+
+    function applyAiPatch(patch) {
+      if (!patch || typeof patch !== "object") return false;
+      let changed = false;
+      if (typeof patch.summary === "string" && patch.summary.trim()) {
+        byId("summary").value = patch.summary.trim();
+        changed = true;
+      }
+      if (Array.isArray(patch.skills) && patch.skills.length) {
+        byId("skills").value = patch.skills.join("\n");
+        changed = true;
+      }
+      if (Array.isArray(patch.experiences) && patch.experiences.length) {
+        byId("experiences").value = rowsToText(patch.experiences, ["job_title", "company", "start_date", "end_date", "description"]);
+        changed = true;
+      }
+      if (Array.isArray(patch.projects) && patch.projects.length) {
+        byId("projects").value = rowsToText(patch.projects, ["name", "role", "technologies", "start_date", "end_date", "description", "link"]);
+        changed = true;
+      }
+      if (changed) {
+        preview();
+        scheduleDraft();
+      }
+      return changed;
+    }
+
+    async function runAiAssistant() {
+      setStatus("AI assistant...");
+      const prompt = byId("aiPrompt").value.trim();
+      if (!prompt) {
+        setAssist("Type a prompt first. Example: tailor my resume for backend role.");
+        return;
+      }
+      const payload = parsePayload();
+      payload.prompt = prompt;
+      payload.job_description = byId("jobDesc").value.trim();
+      payload.company = byId("jobCompany") ? byId("jobCompany").value.trim() : "";
+      payload.role = byId("jobRole") ? byId("jobRole").value.trim() : "";
+
+      const res = await fetch(`${API_BASE}/ai-assistant`, {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      aiSuggestedPatch = data.apply_patch || null;
+      byId("aiApplyBtn").disabled = !(aiSuggestedPatch && Object.keys(aiSuggestedPatch).length);
+      setAssist(data.answer || "AI assistant response unavailable.");
+      setStatus("AI response ready");
+    }
+
+    function applyAiAssistantChanges() {
+      if (!aiSuggestedPatch || !Object.keys(aiSuggestedPatch).length) {
+        setAssist("No AI changes to apply.");
+        return;
+      }
+      const ok = applyAiPatch(aiSuggestedPatch);
+      if (ok) {
+        setAssist((byId("assistOutput").textContent || "") + "\n\nApplied AI changes to form.");
+        setStatus("AI changes applied");
+      } else {
+        setAssist("AI returned guidance only. No direct form changes available.");
+      }
+      aiSuggestedPatch = null;
+      byId("aiApplyBtn").disabled = true;
+    }
+
+    async function runATS() {
+      setStatus("ATS scoring...");
+      setAssist("");
+      const payload = parsePayload();
+      payload.job_description = byId("jobDesc").value.trim();
+      const res = await fetch(`${API_BASE}/ats-score`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      const sec = data.section_scores || {};
+      const sectionLine = Object.keys(sec).length
+        ? `Section Match: Summary ${sec.summary ?? 0}% | Skills ${sec.skills ?? 0}% | Experience ${sec.experience ?? 0}% | Projects ${sec.projects ?? 0}%`
+        : "";
+      const lines = [
+        `ATS Score: ${data.score ?? 0}/100`,
+        data.text_similarity != null ? `TF-IDF Similarity: ${data.text_similarity}%` : "",
+        sectionLine,
+        data.matched_keywords?.length ? `Matched: ${data.matched_keywords.join(", ")}` : "Matched: -",
+        data.missing_keywords?.length ? `Missing: ${data.missing_keywords.join(", ")}` : "Missing: -",
+        data.suggestions?.length ? `Suggestions:\n- ${data.suggestions.join("\n- ")}` : "",
+        data.section_advice?.length ? `Section Advice:\n- ${data.section_advice.join("\n- ")}` : "",
+      ];
+      renderJdMeter(data);
+      setAssist(lines.filter(Boolean).join("\n"));
+      setStatus("ATS done");
+      await loadScoreHistory();
+    }
+
+    function renderJdMeter(data) {
+      const score = Number(data?.score || 0);
+      const sec = data?.section_scores || {};
+      byId("jdMeterCard").style.display = "block";
+      byId("jdMeterScore").textContent = `JD Match: ${score}%`;
+      byId("jdMeterFill").style.width = `${Math.max(0, Math.min(100, score))}%`;
+      const bind = (barId, txtId, val) => {
+        const v = Number(val || 0);
+        byId(barId).style.width = `${Math.max(0, Math.min(100, v))}%`;
+        byId(txtId).textContent = `${v}%`;
+      };
+      bind("jdSecSummary", "jdSecSummaryTxt", sec.summary);
+      bind("jdSecSkills", "jdSecSkillsTxt", sec.skills);
+      bind("jdSecExp", "jdSecExpTxt", sec.experience);
+      bind("jdSecProj", "jdSecProjTxt", sec.projects);
+    }
+
+    async function runJdMatchMeter() {
+      setStatus("JD match...");
+      setAssist("");
+      const payload = parsePayload();
+      payload.job_description = byId("jobDesc").value.trim();
+      if (!payload.job_description) {
+        setAssist("Paste job description first to compute match meter.");
+        return;
+      }
+      const res = await fetch(`${API_BASE}/ats-score`, {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      renderJdMeter(data);
+      heatmapKeywords = data.matched_keywords || [];
+      preview();
+      const topMissing = (data.missing_keywords || []).slice(0, 8);
+      setAssist(
+        `JD Match: ${data.score || 0}%\nTF-IDF Similarity: ${data.text_similarity || 0}%\nMatched: ${(data.matched_keywords || []).join(", ") || "-"}\nTop Missing: ${topMissing.join(", ") || "-"}`
+      );
+      setStatus("JD match ready");
+    }
+
+    function smartRewriteBullet(raw, jdText) {
+      const line = String(raw || "").trim().replace(/^[\-\*\u2022]\s*/, "");
+      if (!line) return "";
+      const strongVerbMap = [
+        ["worked on", "Built"],
+        ["responsible for", "Owned"],
+        ["helped", "Collaborated on"],
+        ["handled", "Managed"],
+        ["made", "Delivered"],
+        ["did", "Executed"],
+      ];
+      let out = line;
+      for (const [from, to] of strongVerbMap) {
+        const re = new RegExp(`\\b${escReg(from)}\\b`, "i");
+        if (re.test(out)) { out = out.replace(re, to); break; }
+      }
+      if (!/^(built|designed|developed|implemented|optimized|created|led|managed|launched|automated|improved|delivered|analyzed|reduced|increased|migrated|deployed|tested|owned|executed|collaborated)/i.test(out)) {
+        out = `Delivered ${out.charAt(0).toLowerCase()}${out.slice(1)}`;
+      }
+      const jdKeywords = uniq(
+        String(jdText || "")
+          .toLowerCase()
+          .match(/[a-z][a-z0-9\-\+\.]{2,}/g) || []
+      ).filter(k => !["and","the","with","for","you","your","our","are","this","that","from","have","has","using","into"].includes(k));
+      const focus = jdKeywords.find(k => out.toLowerCase().includes(k)) || jdKeywords[0] || "key project goals";
+      const hasMetric = /\d+%|\d+\s*(k|m|b)|\d+\+?/.test(out.toLowerCase());
+      if (!hasMetric) out = `${out}, improving ${focus} by XX%`;
+      if (!/[.;]$/.test(out)) out = `${out}.`;
+      return out.charAt(0).toUpperCase() + out.slice(1);
+    }
+
+    function runSmartBulletGenerator() {
+      const input = byId("smartBulletInput").value.trim();
+      const jd = byId("jobDesc").value.trim();
+      if (!input) {
+        setAssist("Enter a bullet line in Smart Bullet Generator.");
+        return;
+      }
+      const improved = smartRewriteBullet(input, jd);
+      byId("smartBulletOutput").value = improved;
+      setAssist(`Smart bullet generated.\n${improved}`);
+      setStatus("Smart bullet ready");
+    }
+
+    function appendSmartBulletToSection(section) {
+      const bullet = byId("smartBulletOutput").value.trim();
+      if (!bullet) {
+        setAssist("Generate bullet first, then add.");
+        return;
+      }
+      if (section === "experience") {
+        const rows = splitLines(byId("experiences").value);
+        if (!rows.length) {
+          byId("experiences").value = `Role, Company, Start, End, ${bullet}`;
+        } else {
+          const parts = parsePipe(rows[rows.length - 1], 5);
+          parts[4] = [parts[4], bullet].filter(Boolean).join(" ");
+          rows[rows.length - 1] = parts.join(", ");
+          byId("experiences").value = rows.join("\n");
+        }
+      } else {
+        const rows = splitLines(byId("projects").value);
+        if (!rows.length) {
+          byId("projects").value = `Project, Role, Tech, Start, End, ${bullet}, `;
+        } else {
+          const parts = parsePipe(rows[rows.length - 1], 7);
+          parts[5] = [parts[5], bullet].filter(Boolean).join(" ");
+          rows[rows.length - 1] = parts.join(", ");
+          byId("projects").value = rows.join("\n");
+        }
+      }
+      preview();
+      scheduleDraft();
+      setStatus("Bullet added");
+    }
+
+    function splitSmartBullets(text) {
+      const raw = String(text || "").trim();
+      if (!raw) return [];
+      if (raw.includes("\n")) return raw.split("\n").map(v => v.trim()).filter(Boolean);
+      if (raw.includes(";")) return raw.split(";").map(v => v.trim()).filter(Boolean);
+      return [raw];
+    }
+
+    function shouldRewriteBulletLine(line) {
+      const l = String(line || "").toLowerCase();
+      if (!l) return false;
+      if (WEAK_PHRASES.some(p => l.includes(p))) return true;
+      const startsStrong = ACTION_VERBS.some(v => l.startsWith(v + " "));
+      return !startsStrong;
+    }
+
+    function rewriteAllWeakBulletsInRows(raw, fieldCount, descIndex, jd) {
+      let changed = 0;
+      const rows = splitLines(raw).map(line => {
+        const parts = parsePipe(line, fieldCount);
+        const bullets = splitSmartBullets(parts[descIndex] || "");
+        if (!bullets.length) return parts.join(", ");
+        const next = bullets.map(b => {
+          if (!shouldRewriteBulletLine(b)) return b;
+          const rewritten = smartRewriteBullet(b, jd);
+          if (rewritten && rewritten !== b) changed += 1;
+          return rewritten || b;
+        });
+        parts[descIndex] = next.join("; ");
+        return parts.join(", ");
+      }).join("\n");
+      return { rows, changed };
+    }
+
+    function runFixAllWeakBullets() {
+      const jd = byId("jobDesc").value.trim();
+      const exp = rewriteAllWeakBulletsInRows(byId("experiences").value, 5, 4, jd);
+      const proj = rewriteAllWeakBulletsInRows(byId("projects").value, 7, 5, jd);
+      byId("experiences").value = exp.rows;
+      byId("projects").value = proj.rows;
+      const total = exp.changed + proj.changed;
+      preview();
+      scheduleDraft();
+      setAssist(total
+        ? `Weak bullets fixed: ${total}\nExperience: ${exp.changed}\nProjects: ${proj.changed}`
+        : "No weak bullets found to rewrite.");
+      setStatus(total ? "Weak bullets fixed" : "No weak bullets");
+    }
+
+    function clearJobInputs() {
+      byId("jobCompany").value = "";
+      byId("jobRole").value = "";
+      byId("jobStatus").value = "saved";
+      byId("jobLink").value = "";
+      byId("jobFollowUpDate").value = "";
+      byId("jobReminderEnabled").checked = false;
+      byId("jobNotes").value = "";
+    }
+
+    function renderJobs(rows) {
+      const root = byId("jobList");
+      if (!rows || !rows.length) {
+        root.innerHTML = `<div class="hint">No jobs tracked yet. Add your first target role.</div>`;
+        return;
+      }
+      root.innerHTML = rows.map(j => `
+        <div class="job-card" data-job="${j.id}">
+          <div class="job-head">
+            <span>${(j.company || "-")} - ${(j.role || "-")}</span>
+            <span style="font-size:.74rem;color:var(--muted);">${(j.status || "saved").toUpperCase()}</span>
+          </div>
+          <div class="job-meta">
+            ${j.job_link ? `Link: ${j.job_link}` : "No link"}
+            ${j.follow_up_date ? ` | Follow-up: ${j.follow_up_date}` : ""}
+            ${j.reminder_enabled ? " | Reminder: ON" : ""}
+            ${j.notes ? ` | Notes: ${j.notes}` : ""}
+          </div>
+          <div class="job-actions">
+            <select data-status="${j.id}">
+              <option value="saved" ${(j.status === "saved") ? "selected" : ""}>Saved</option>
+              <option value="applied" ${(j.status === "applied") ? "selected" : ""}>Applied</option>
+              <option value="interview" ${(j.status === "interview") ? "selected" : ""}>Interview</option>
+              <option value="offer" ${(j.status === "offer") ? "selected" : ""}>Offer</option>
+              <option value="rejected" ${(j.status === "rejected") ? "selected" : ""}>Rejected</option>
+            </select>
+            <input type="date" data-followup="${j.id}" value="${j.follow_up_date || ""}" />
+            <label style="display:flex;align-items:center;gap:4px;font-size:.78rem;color:var(--muted);">
+              <input type="checkbox" data-reminder="${j.id}" ${j.reminder_enabled ? "checked" : ""}/> Reminder
+            </label>
+            <button type="button" data-usejd="${j.id}">Use JD</button>
+            <button type="button" data-deljob="${j.id}" class="danger">Delete</button>
+          </div>
+        </div>
+      `).join("");
+
+      root.querySelectorAll("[data-status]").forEach(node => {
+        node.addEventListener("change", () => updateJobStatus(node.dataset.status, node.value));
+      });
+      root.querySelectorAll("[data-followup]").forEach(node => {
+        node.addEventListener("change", () => updateJobMeta(node.dataset.followup, { follow_up_date: node.value }));
+      });
+      root.querySelectorAll("[data-reminder]").forEach(node => {
+        node.addEventListener("change", () => updateJobMeta(node.dataset.reminder, { reminder_enabled: !!node.checked }));
+      });
+      root.querySelectorAll("[data-deljob]").forEach(node => {
+        node.addEventListener("click", () => deleteJob(node.dataset.deljob));
+      });
+      root.querySelectorAll("[data-usejd]").forEach(node => {
+        node.addEventListener("click", () => useJobJD(node.dataset.usejd));
+      });
+    }
+
+    function renderJobReminders(rows) {
+      const box = byId("jobReminderList");
+      if (!rows || !rows.length) {
+        box.textContent = "No active follow-up reminders.";
+        return;
+      }
+      const lines = rows.slice(0, 8).map(r => {
+        const tag = r.is_overdue ? "OVERDUE" : (r.is_today ? "TODAY" : "UPCOMING");
+        return `${tag}: ${r.company} - ${r.role} (${r.follow_up_date})`;
+      });
+      box.textContent = `Follow-up Reminders:\n${lines.join("\n")}`;
+    }
+
+    async function loadJobs() {
+      const res = await fetch(`${API_BASE}/job-tracker`);
+      if (!res.ok) throw new Error(await res.text());
+      const rows = await res.json();
+      renderJobs(rows);
+      await loadJobReminders();
+    }
+
+    async function loadJobReminders() {
+      const res = await fetch(`${API_BASE}/job-reminders`);
+      if (!res.ok) return;
+      const rows = await res.json();
+      renderJobReminders(rows || []);
+    }
+
+    async function addJob() {
+      const payload = {
+        company: byId("jobCompany").value.trim(),
+        role: byId("jobRole").value.trim(),
+        status: byId("jobStatus").value,
+        job_link: byId("jobLink").value.trim(),
+        follow_up_date: byId("jobFollowUpDate").value || "",
+        reminder_enabled: byId("jobReminderEnabled").checked,
+        notes: byId("jobNotes").value.trim(),
+        jd_text: byId("jobDesc").value.trim(),
+      };
+      if (!payload.company || !payload.role) {
+        setAssist("Job Tracker: company and role are required.");
+        return;
+      }
+      const res = await fetch(`${API_BASE}/job-tracker`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      clearJobInputs();
+      await loadJobs();
+      setStatus("Job saved");
+      setAssist("Job Tracker: entry added.");
+    }
+
+    async function updateJobStatus(jobId, status) {
+      const res = await fetch(`${API_BASE}/job-tracker/${jobId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (!res.ok) {
+        setAssist("Job Tracker: status update failed.");
+        return;
+      }
+      setStatus("Job updated");
+    }
+
+    async function updateJobMeta(jobId, fields) {
+      const res = await fetch(`${API_BASE}/job-tracker/${jobId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fields),
+      });
+      if (!res.ok) return;
+      await loadJobReminders();
+      setStatus("Job reminder updated");
+    }
+
+    async function deleteJob(jobId) {
+      const res = await fetch(`${API_BASE}/job-tracker/${jobId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error(await res.text());
+      await loadJobs();
+      setStatus("Job deleted");
+    }
+
+    async function useJobJD(jobId) {
+      const res = await fetch(`${API_BASE}/job-tracker`);
+      if (!res.ok) throw new Error(await res.text());
+      const rows = await res.json();
+      const row = (rows || []).find(r => String(r.id) === String(jobId));
+      if (!row) return;
+      byId("jobDesc").value = row.jd_text || row.notes || "";
+      scheduleDraft();
+      setAssist(`Loaded JD from ${row.company} - ${row.role}`);
+      setStatus("JD loaded");
+    }
+
+    async function runSkillGap() {
+      setStatus("Skill gap...");
+      setAssist("");
+      const payload = parsePayload();
+      payload.job_description = byId("jobDesc").value.trim();
+      const res = await fetch(`${API_BASE}/skill-gap`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      const lines = [
+        data.missing_skills?.length ? `Missing skills: ${data.missing_skills.join(", ")}` : "Missing skills: none",
+        data.plan_30_days?.length ? `30-day plan:\n- ${data.plan_30_days.join("\n- ")}` : "",
+        data.message || ""
+      ];
+      setAssist(lines.filter(Boolean).join("\n"));
+      setStatus("Skill gap ready");
+    }
+
+    async function runLinkedInOptimize() {
+      setStatus("LinkedIn optimize...");
+      const payload = parsePayload();
+      payload.target_role = byId("jobRole") ? byId("jobRole").value.trim() : "";
+      const res = await fetch(`${API_BASE}/linkedin-optimize`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      setAssist(
+        `LinkedIn Headline:\n${data.headline || "-"}\n\nAbout:\n${data.about || "-"}\n\nTop Skills:\n${(data.top_skills || []).join(", ")}`
+      );
+      setStatus("LinkedIn ready");
+    }
+
+    async function runGrammarFix() {
+      setStatus("Grammar fix...");
+      const payload = parsePayload();
+      const res = await fetch(`${API_BASE}/grammar-fix`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      if (data.summary) byId("summary").value = data.summary;
+      if (Array.isArray(data.experiences)) {
+        byId("experiences").value = rowsToText(data.experiences, ["job_title", "company", "start_date", "end_date", "description"]);
+      }
+      if (Array.isArray(data.projects)) {
+        byId("projects").value = rowsToText(data.projects, ["name", "role", "technologies", "start_date", "end_date", "description", "link"]);
+      }
+      preview();
+      scheduleDraft();
+      setAssist(data.message || "Grammar cleanup done.");
+      setStatus("Grammar done");
+    }
+
+    async function runEmailKit() {
+      setStatus("Email kit...");
+      const payload = parsePayload();
+      payload.company = byId("jobCompany") ? byId("jobCompany").value.trim() : "";
+      payload.role = byId("jobRole") ? byId("jobRole").value.trim() : "";
+      const res = await fetch(`${API_BASE}/email-apply-kit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      setAssist(`Subject: ${data.subject || "-"}\n\nBody:\n${data.body || "-"}\n\nChecklist:\n- ${(data.checklist || []).join("\n- ")}`);
+      setStatus("Email kit ready");
+    }
+
+    async function runQuantify() {
+      setStatus("Quantify...");
+      const payload = parsePayload();
+      const res = await fetch(`${API_BASE}/achievement-quantify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      setAssist(
+        `Total lines checked: ${data.total_lines || 0}\n\nSuggestions:\n- ${(data.suggestions || []).join("\n- ")}\n\n${data.message || ""}`
+      );
+      setStatus("Quantify ready");
+    }
+
+    async function runDuplicateCheck() {
+      setStatus("Duplicate check...");
+      const payload = parsePayload();
+      const res = await fetch(`${API_BASE}/duplicate-detector`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      setAssist(
+        `Duplicate skills: ${(data.duplicate_skills || []).join(", ") || "none"}\n\nDuplicate bullets:\n- ${(data.duplicate_bullets || []).join("\n- ") || "none"}\n\n${data.message || ""}`
+      );
+      setStatus("Duplicate check done");
+    }
+
+    function applyATSMode() {
+      byId("atsSafeMode").checked = true;
+      byId("compactMode").checked = true;
+      byId("pageLayout").value = "single_column";
+      byId("font").value = "Helvetica";
+      byId("marginPreset").value = "normal";
+      preview();
+      scheduleDraft();
+      setAssist("ATS mode applied: ATS Safe + Compact + Single Column + Helvetica.");
+      setStatus("ATS mode on");
+    }
+
+    function applyRolePack() {
+      const key = byId("rolePack").value;
+      const pack = ROLE_PACKS[key];
+      if (!pack) return;
+      byId("profileTitle").value = pack.title;
+      if (!byId("summary").value.trim()) byId("summary").value = pack.summary;
+      const current = splitLines(byId("skills").value);
+      byId("skills").value = uniq([...current, ...(pack.skills || [])]).join("\n");
+      preview();
+      scheduleDraft();
+      setAssist(`Role pack applied: ${pack.title}`);
+      setStatus("Role pack ready");
+    }
+
+    function drawScoreHistory(rows) {
+      const canvas = byId("scoreHistoryChart");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = "#d1d5db";
+      ctx.strokeRect(0, 0, w, h);
+      if (!rows || !rows.length) {
+        ctx.fillStyle = "#64748b";
+        ctx.font = "12px sans-serif";
+        ctx.fillText("No score history yet. Run ATS Score.", 12, 22);
+        return;
+      }
+      const values = rows.map(r => Number(r.score || 0));
+      const max = 100;
+      const min = 0;
+      const pad = 22;
+      ctx.strokeStyle = "#94a3b8";
+      ctx.beginPath();
+      ctx.moveTo(pad, h - pad);
+      ctx.lineTo(w - pad, h - pad);
+      ctx.moveTo(pad, pad);
+      ctx.lineTo(pad, h - pad);
+      ctx.stroke();
+      ctx.strokeStyle = "#0d9488";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      values.forEach((v, i) => {
+        const x = pad + (i * ((w - pad * 2) / Math.max(1, values.length - 1)));
+        const y = (h - pad) - ((v - min) / (max - min)) * (h - pad * 2);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.fillStyle = "#0f172a";
+      ctx.font = "11px sans-serif";
+      ctx.fillText(`Latest: ${values[values.length - 1]}/100`, w - 110, 16);
+    }
+
+    async function loadScoreHistory() {
+      try {
+        const res = await fetch(`${API_BASE}/score-history`);
+        if (!res.ok) return;
+        const rows = await res.json();
+        drawScoreHistory(rows || []);
+      } catch {}
+    }
+
+    async function runKeywordHeatmap() {
+      setStatus("Heatmap...");
+      setAssist("");
+      const payload = parsePayload();
+      payload.job_description = byId("jobDesc").value.trim();
+      const res = await fetch(`${API_BASE}/ats-score`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      heatmapKeywords = data.matched_keywords || [];
+      preview();
+      setAssist(heatmapKeywords.length
+        ? `Heatmap applied for matched keywords: ${heatmapKeywords.join(", ")}`
+        : "No matched keywords found to highlight.");
+      setStatus("Heatmap done");
+    }
+
+    function runDiffView() {
+      const current = parsePayload();
+      const base = baselinePayload;
+      if (!base) {
+        setAssist("No baseline found. Load or save resume once, then use Diff View.");
+        return;
+      }
+
+      const lines = [];
+      const check = (label, a, b) => {
+        if ((a || "").trim() !== (b || "").trim()) lines.push(`${label}: changed`);
+      };
+      check("Full Name", base.full_name, current.full_name);
+      check("Profile Title", base.profile_title, current.profile_title);
+      check("Summary", base.summary, current.summary);
+      check("Skills", (base.skills || []).join("|"), (current.skills || []).join("|"));
+
+      const countSections = [
+        ["Experience", "experiences"],
+        ["Education", "educations"],
+        ["Projects", "projects"],
+        ["Certifications", "certifications"],
+        ["Languages", "languages"],
+        ["Achievements", "achievements"],
+        ["References", "references"],
+        ["Custom Sections", "custom_sections"],
+      ];
+      for (const [label, key] of countSections) {
+        const before = (base[key] || []).length;
+        const after = (current[key] || []).length;
+        if (before !== after) lines.push(`${label}: ${before} -> ${after}`);
+      }
+
+      setAssist(lines.length ? `Diff vs baseline:\n- ${lines.join("\n- ")}` : "No changes from baseline.");
+      setStatus("Diff ready");
+    }
+
+    async function runTailor() {
+      setStatus("Tailoring...");
+      setAssist("");
+      const payload = parsePayload();
+      payload.job_description = byId("jobDesc").value.trim();
+      const res = await fetch(`${API_BASE}/tailor-resume`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      if (data.tailored_summary) byId("summary").value = data.tailored_summary;
+      if (Array.isArray(data.recommended_skills)) byId("skills").value = data.recommended_skills.join("\n");
+      preview();
+      scheduleDraft();
+      const lines = [
+        "Tailored summary and skills applied.",
+        data.focus_keywords?.length ? `Focus keywords: ${data.focus_keywords.join(", ")}` : "",
+        data.ats_preview?.score != null ? `ATS preview: ${data.ats_preview.score}/100` : ""
+      ];
+      setAssist(lines.filter(Boolean).join("\n"));
+      setStatus("Tailor done");
+    }
+
+    async function runEnhanceBullets() {
+      setStatus("Enhancing bullets...");
+      setAssist("");
+      const payload = parsePayload();
+      const res = await fetch(`${API_BASE}/enhance-bullets`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      if (Array.isArray(data.experiences)) {
+        byId("experiences").value = rowsToText(data.experiences, ["job_title", "company", "start_date", "end_date", "description"]);
+      }
+      if (Array.isArray(data.projects)) {
+        byId("projects").value = rowsToText(data.projects, ["name", "role", "technologies", "start_date", "end_date", "description", "link"]);
+      }
+      preview();
+      scheduleDraft();
+      setAssist(data.message || "Bullets enhanced.");
+      setStatus("Enhancement done");
+    }
+
+    function runActionVerbCheck() {
+      const weak = [];
+      const strong = [];
+      const scan = (text, label) => {
+        splitLines(text).forEach((line, idx) => {
+          const l = line.toLowerCase();
+          if (WEAK_PHRASES.some(p => l.includes(p))) weak.push(`${label} line ${idx + 1}: ${line}`);
+          if (ACTION_VERBS.some(v => l.startsWith(v + " ") || l.includes(" " + v + " "))) strong.push(`${label} line ${idx + 1}`);
+        });
+      };
+      scan(byId("experiences").value, "Experience");
+      scan(byId("projects").value, "Project");
+
+      const out = [];
+      out.push(`Strong action lines: ${strong.length}`);
+      out.push(`Weak phrasing lines: ${weak.length}`);
+      if (weak.length) {
+        out.push("Rewrite suggestions:");
+        weak.slice(0, 10).forEach(w => out.push(`- ${w}`));
+      } else {
+        out.push("No major weak phrases detected.");
+      }
+      setAssist(out.join("\n"));
+      setStatus("Verb check done");
+    }
+
+    function runCompletenessMeter() {
+      const p = parsePayload();
+      let score = 0;
+      const checks = [];
+      const add = (ok, pts, msg) => {
+        if (ok) score += pts;
+        checks.push(`${ok ? "OK" : "MISS"}: ${msg}`);
+      };
+
+      add(!!p.full_name, 10, "Full name");
+      add(!!p.email, 8, "Email");
+      add(!!p.phone, 6, "Phone");
+      add((p.summary || "").length >= 40, 12, "Summary (40+ chars)");
+      add((p.skills || []).length >= 5, 12, "Skills (5+)");
+      add((p.experiences || []).length >= 1, 16, "Experience (1+)");
+      add((p.educations || []).length >= 1, 12, "Education (1+)");
+      add((p.projects || []).length >= 1, 10, "Projects (1+)");
+      add(!!p.linkedin || !!p.github || !!p.website, 6, "At least one social link");
+      add((p.achievements || []).length >= 1 || (p.certifications || []).length >= 1, 8, "Achievements/Certifications");
+
+      score = Math.min(100, score);
+      setAssist(`Completeness Score: ${score}/100\n${checks.join("\n")}`);
+      setStatus("Completeness ready");
+    }
+
+    function runFinalCheck() {
+      const p = parsePayload();
+      const issues = [];
+      const warnings = [];
+      const scoreParts = [];
+
+      const must = (ok, label, pts = 0) => {
+        if (!ok) issues.push(`Missing: ${label}`);
+        else if (pts) scoreParts.push(pts);
+      };
+      must(!!p.full_name, "Full Name", 8);
+      must(!!p.email, "Email", 8);
+      must(!!p.phone, "Phone", 6);
+      must((p.summary || "").trim().length >= 50, "Summary (50+ chars)", 10);
+      must((p.experiences || []).length >= 1, "Experience", 14);
+      must((p.educations || []).length >= 1, "Education", 10);
+      must((p.skills || []).length >= 5, "Skills (5+)", 12);
+
+      const weakLines = [];
+      const scanWeak = (arr) => {
+        arr.forEach(v => {
+          const line = (v.description || "").toLowerCase();
+          if (WEAK_PHRASES.some(w => line.includes(w))) weakLines.push(v.description || "");
+        });
+      };
+      scanWeak(p.experiences || []);
+      scanWeak(p.projects || []);
+      if (weakLines.length) warnings.push(`Weak bullet phrasing detected: ${weakLines.length} line(s).`);
+
+      const dupSkills = [];
+      const seen = new Set();
+      (p.skills || []).forEach(s => {
+        const k = String(s || "").trim().toLowerCase();
+        if (!k) return;
+        if (seen.has(k)) dupSkills.push(s);
+        seen.add(k);
+      });
+      if (dupSkills.length) warnings.push(`Duplicate skills: ${dupSkills.join(", ")}`);
+
+      const jd = byId("jobDesc").value.trim();
+      if (!jd) warnings.push("Job description not set. ATS validation may be incomplete.");
+      else scoreParts.push(8);
+
+      const finalScore = Math.min(100, scoreParts.reduce((a, b) => a + b, 0));
+      const report = [
+        `Final Check Score: ${finalScore}/100`,
+        issues.length ? `\nCritical:\n- ${issues.join("\n- ")}` : "\nCritical:\n- None",
+        warnings.length ? `\nWarnings:\n- ${warnings.join("\n- ")}` : "\nWarnings:\n- None",
+        `\nRecommendation: ${issues.length ? "Fix critical items first, then export." : "Ready to export."}`,
+      ];
+      setAssist(report.join("\n"));
+      setStatus("Final check done");
+    }
+
+    async function runRewriteSummary() {
+      setStatus("Rewriting summary...");
+      setAssist("");
+      const summary = byId("summary").value.trim();
+      const tone = byId("toneMode").value;
+      if (!summary) {
+        setAssist("Summary is empty. Add summary text first.");
+        setStatus("Rewrite skipped");
+        return;
+      }
+      const res = await fetch(`${API_BASE}/rewrite-summary`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({ summary, tone })
+      });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      byId("summary").value = data.rewritten_summary || summary;
+      preview();
+      scheduleDraft();
+      setAssist(`Summary rewritten in ${data.tone || tone} tone.`);
+      setStatus("Rewrite done");
+    }
+
+    function addSkillPack() {
+      const packId = byId("skillPack").value;
+      const packSkills = SKILL_PACKS[packId] || [];
+      const current = splitLines(byId("skills").value);
+      const merged = uniq([...current, ...packSkills]);
+      byId("skills").value = merged.join("\n");
+      preview();
+      scheduleDraft();
+      setAssist(`Added ${packSkills.length} skills from ${packId} pack.`);
+      setStatus("Skill pack added");
+    }
+
+    function runSmartVisibilityClean() {
+      const before = {
+        exp: splitLines(byId("experiences").value).length,
+        intern: splitLines(byId("internships").value).length,
+        edu: splitLines(byId("educations").value).length,
+        proj: splitLines(byId("projects").value).length,
+        cert: splitLines(byId("certifications").value).length,
+        lang: splitLines(byId("languages").value).length,
+        ach: splitLines(byId("achievements").value).length,
+        ref: splitLines(byId("references").value).length,
+      };
+
+      byId("experiences").value = removeWeakRows(byId("experiences").value, 2, 5);
+      byId("internships").value = removeWeakRows(byId("internships").value, 2, 5);
+      byId("educations").value = removeWeakRows(byId("educations").value, 2, 5);
+      byId("projects").value = removeWeakRows(byId("projects").value, 2, 7);
+      byId("certifications").value = removeWeakRows(byId("certifications").value, 1, 4);
+      byId("languages").value = removeWeakRows(byId("languages").value, 1, 2);
+      byId("achievements").value = removeWeakRows(byId("achievements").value, 1, 3);
+      byId("references").value = removeWeakRows(byId("references").value, 2, 6);
+      byId("customSections").value = customSectionsToText(customSectionsFromText(byId("customSections").value));
+      byId("skills").value = uniq(splitLines(byId("skills").value)).join("\n");
+
+      const after = {
+        exp: splitLines(byId("experiences").value).length,
+        intern: splitLines(byId("internships").value).length,
+        edu: splitLines(byId("educations").value).length,
+        proj: splitLines(byId("projects").value).length,
+        cert: splitLines(byId("certifications").value).length,
+        lang: splitLines(byId("languages").value).length,
+        ach: splitLines(byId("achievements").value).length,
+        ref: splitLines(byId("references").value).length,
+      };
+      const removed = Object.keys(before).reduce((n, k) => n + Math.max(0, before[k] - after[k]), 0);
+      preview();
+      scheduleDraft();
+      setAssist(`Smart clean done. Removed ${removed} incomplete rows and deduplicated skills.`);
+      setStatus("Smart clean done");
+    }
+
+    function exportJSON() {
+      const blob = new Blob([JSON.stringify({ data: collect(), settings: { template: byId("template").value, font: byId("font").value, pageSize: byId("pageSize").value, accent: byId("accent").value, compactMode: byId("compactMode").checked, atsSafeMode: byId("atsSafeMode").checked, marginPreset: byId("marginPreset").value, headerLayout: byId("headerLayout").value, pageLayout: byId("pageLayout").value, templateLock: byId("templateLock").checked, fontScale: byId("fontScale").value, sectionVisibility: getSectionVisibility(), jobDesc: byId("jobDesc").value, toneMode: byId("toneMode").value, skillPack: byId("skillPack").value, langMode: byId("langMode").value, rolePack: byId("rolePack").value, educationPreset: byId("educationPreset").value, sectionOrder } }, null, 2)], { type:"application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = `${byId("fullName").value || "resume"}.json`; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importJSON() {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.onchange = e => {
+        const file = e.target.files[0]; if (!file) return;
+        const name = (file.name || "").toLowerCase();
+        if (name.endsWith(".pdf") || name.endsWith(".docx") || name.endsWith(".doc") || name.endsWith(".txt") || name.endsWith(".rtf")) {
+          importAnyFile(file).catch(err => {
+            alert(err.message || "Import failed");
+          });
+          return;
+        }
+        const r = new FileReader();
+        r.onload = ev => {
+          try {
+            const raw = String(ev.target.result || "").replace(/^\uFEFF/, "");
+            let payload = null;
+            try {
+              payload = JSON.parse(raw);
+            } catch {
+              payload = null;
+            }
+
+            if (payload && typeof payload === "object" && (payload.data || payload.settings)) {
+              ids.forEach(id => byId(id).value = payload.data?.[id] || "");
+              profilePicData = payload.data?.profilePic || null;
+              byId("profilePreview").src = profilePicData || "https://via.placeholder.com/74?text=Photo";
+              byId("template").value = payload.settings?.template || "modern";
+              byId("font").value = payload.settings?.font || "";
+              byId("pageSize").value = payload.settings?.pageSize || "letter";
+              byId("accent").value = payload.settings?.accent || "#0e7490";
+              byId("compactMode").checked = !!payload.settings?.compactMode;
+              byId("atsSafeMode").checked = !!payload.settings?.atsSafeMode;
+              byId("marginPreset").value = payload.settings?.marginPreset || "normal";
+              byId("headerLayout").value = payload.settings?.headerLayout || "default";
+              byId("pageLayout").value = payload.settings?.pageLayout || "";
+              byId("templateLock").checked = !!payload.settings?.templateLock;
+              byId("fontScale").value = payload.settings?.fontScale || "1.0";
+              updateFontScaleLabel();
+              applyTemplateLockState();
+              setSectionVisibility(payload.settings?.sectionVisibility || {});
+              byId("jobDesc").value = payload.settings?.jobDesc || payload.data?.jobDesc || "";
+              byId("toneMode").value = payload.settings?.toneMode || "formal";
+              byId("skillPack").value = payload.settings?.skillPack || "backend";
+              byId("langMode").value = payload.settings?.langMode || "english";
+              byId("rolePack").value = payload.settings?.rolePack || "backend";
+              byId("educationPreset").value = payload.settings?.educationPreset || "default";
+              applyEducationPreset();
+              sectionOrder = Array.isArray(payload.settings?.sectionOrder) && payload.settings.sectionOrder.length
+                ? payload.settings.sectionOrder
+                : sectionOrder;
+              renderSectionOrderList();
+              renderTemplateGallery();
+              currentId = null;
+              heatmapKeywords = [];
+              baselinePayload = parsePayload();
+              preview();
+              validateInputsLive();
+              scheduleDraft();
+              setStatus("Imported");
+              return;
+            }
+
+            const text = raw.trim();
+            if (!text) {
+              alert("Selected file is empty.");
+              return;
+            }
+            const lines = text.split(/\r?\n/).map(v => v.trim()).filter(Boolean);
+            const emailMatch = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+            const phoneMatch = text.match(/(\+?\d[\d\s\-()]{8,}\d)/);
+            const nameGuess = lines.find(l => l.length >= 3 && l.length <= 40 && !/@/.test(l)) || "";
+
+            byId("fullName").value = byId("fullName").value || nameGuess;
+            if (emailMatch) byId("email").value = emailMatch[0];
+            if (phoneMatch) byId("phone").value = phoneMatch[0];
+            byId("summary").value = lines.slice(0, 10).join(" ");
+            currentId = null;
+            heatmapKeywords = [];
+            baselinePayload = parsePayload();
+            preview();
+            validateInputsLive();
+            scheduleDraft();
+            setStatus("Imported as text");
+            setAssist("Non-JSON file loaded as plain text. Check fields once.");
+          } catch { alert("Import failed. Try a valid JSON or text file."); }
+        };
+        r.readAsText(file);
+      };
+      input.click();
+    }
+
+    function applyImportedFields(fields) {
+      if (!fields || typeof fields !== "object") return;
+      if (fields.fullName) byId("fullName").value = fields.fullName;
+      if (fields.profileTitle) byId("profileTitle").value = fields.profileTitle;
+      if (fields.email) byId("email").value = fields.email;
+      if (fields.phone) byId("phone").value = fields.phone;
+      if (fields.summary) byId("summary").value = fields.summary;
+      if (fields.experiences) byId("experiences").value = fields.experiences;
+      if (fields.educations) byId("educations").value = fields.educations;
+      if (fields.skills) byId("skills").value = fields.skills;
+      preview();
+      validateInputsLive();
+      scheduleDraft();
+    }
+
+    async function importAnyFile(file) {
+      setStatus("Importing file...");
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch(`${API_BASE}/import-resume-file`, {
+        method: "POST",
+        body: form,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Import failed");
+      applyImportedFields(data.fields || {});
+      setAssist(data.message || "Imported file parsed. Please review fields.");
+      setStatus("Imported");
+      validateInputsLive();
+    }
+
+    function duplicateResume() { currentId = null; setStatus("Duplicate created"); scheduleDraft(); }
+
+    function initTheme() { if (localStorage.getItem(THEME_KEY) === "dark") document.body.classList.add("dark"); }
+    function setThemeButtonLabel() {
+      const btn = byId("themeBtn");
+      if (!btn) return;
+      const dark = document.body.classList.contains("dark");
+      btn.textContent = dark ? "☀ Light" : "🌙 Dark";
+    }
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem(THEME_KEY, document.body.classList.contains("dark") ? "dark" : "light");
+      setThemeButtonLabel();
+    }
+
+    function initSidebarNav() {
+      const links = Array.from(document.querySelectorAll("[data-scroll-to]"));
+      const backdrop = byId("sidebarBackdrop");
+      const navToggle = byId("navToggleBtn");
+      const closeSidebar = () => document.body.classList.remove("sidebar-open");
+      const openSidebar = () => document.body.classList.add("sidebar-open");
+      if (navToggle) navToggle.addEventListener("click", () => {
+        const open = document.body.classList.contains("sidebar-open");
+        if (open) closeSidebar();
+        else openSidebar();
+      });
+      if (backdrop) backdrop.addEventListener("click", closeSidebar);
+
+      links.forEach(link => {
+        link.addEventListener("click", () => {
+          const id = link.dataset.scrollTo;
+          const section = byId(id);
+          if (section) {
+            section.scrollIntoView({ behavior: "smooth", block: "start" });
+            links.forEach(l => l.classList.remove("active"));
+            link.classList.add("active");
+          }
+          closeSidebar();
+        });
+      });
+
+      const observer = new IntersectionObserver((entries) => {
+        const visible = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        links.forEach(l => l.classList.toggle("active", l.dataset.scrollTo === visible.target.id));
+      }, { root: byId("editor"), threshold: 0.45 });
+      ["panel-pdf","panel-ai","panel-jobs","panel-publiclinks","panel-snapshots","panel-visibility","panel-personal","panel-advanced"].forEach(id => {
+        const el = byId(id);
+        if (el) observer.observe(el);
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeSidebar();
+      });
+    }
+
+    async function init() {
+      isHydrating = true;
+      initTheme();
+      setThemeButtonLabel();
+      initSidebarNav();
+      await loadTemplateCatalog();
+      // Start with a clean form every time server/app is opened.
+      ids.forEach(id => {
+        byId(id).value = "";
+        byId(id).setAttribute("autocomplete", "off");
+      });
+      profilePicData = null;
+      byId("profilePreview").src = "https://via.placeholder.com/74?text=Photo";
+      byId("compactMode").checked = false;
+      byId("atsSafeMode").checked = false;
+      byId("marginPreset").value = "normal";
+      byId("headerLayout").value = "default";
+      byId("pageLayout").value = "";
+      byId("templateLock").checked = false;
+      byId("livePdfAuto").checked = false;
+      byId("fontScale").value = "1.0";
+      updateFontScaleLabel();
+      applyTemplateLockState();
+      setSectionVisibility({});
+      byId("jobDesc").value = "";
+      byId("toneMode").value = "formal";
+      byId("skillPack").value = "backend";
+      byId("langMode").value = "english";
+      byId("rolePack").value = "backend";
+      sectionOrder = ["summary","experience","internship","education","projects","skills","achievements","custom"];
+      renderSectionOrderList();
+      renderTemplateGallery();
+      syncBulkTemplateOptions();
+      refreshTargetSelect();
+      refreshSnapshotSelect();
+      heatmapKeywords = [];
+      currentId = null;
+      baselinePayload = parsePayload();
+      preview();
+      validateInputsLive();
+      await refreshList();
+      ids.forEach(id => byId(id).addEventListener("input", () => { preview(); scheduleDraft(); }));
+      ids.forEach(id => byId(id).addEventListener("input", validateInputsLive));
+      byId("educationPreset").addEventListener("change", () => {
+        applyEducationPreset();
+        preview();
+      });
+      ["template","font","pageSize","accent","jobDesc","toneMode","skillPack","langMode","rolePack","compactMode","atsSafeMode","fontScale","marginPreset","headerLayout","pageLayout","templateLock", ...Object.values(SECTION_VIS_IDS)].forEach(id => byId(id).addEventListener("input", () => {
+        if (id === "template") {
+          if (byId("templateLock").checked) applyTemplateDefaultsBySelected(true);
+          else byId("pageLayout").value = ["javid_split", "metro_sidebar", "creative_split", "impact_panel"].includes(byId("template").value) ? "two_column" : "";
+          renderTemplateGallery();
+          syncBulkTemplateOptions();
+        }
+        if (id === "fontScale") updateFontScaleLabel();
+        if (id === "templateLock") applyTemplateLockState();
+        preview();
+        validateInputsLive();
+        scheduleDraft();
+      }));
+      byId("template").addEventListener("change", () => {
+        if (byId("templateLock").checked) applyTemplateDefaultsBySelected(true);
+        else byId("pageLayout").value = ["javid_split", "metro_sidebar", "creative_split", "impact_panel"].includes(byId("template").value) ? "two_column" : "";
+        renderTemplateGallery();
+        syncBulkTemplateOptions();
+        preview();
+        validateInputsLive();
+        scheduleDraft();
+      });
+      byId("pageLayout").addEventListener("change", () => {
+        preview();
+        scheduleDraft();
+      });
+      byId("templateLock").addEventListener("change", () => {
+        applyTemplateLockState();
+        if (byId("templateLock").checked) applyTemplateDefaultsBySelected(true);
+        scheduleDraft();
+      });
+      byId("tplSearch").addEventListener("input", renderTemplateGallery);
+      byId("tplFavOnly").addEventListener("change", renderTemplateGallery);
+      byId("tplLoadMoreBtn").addEventListener("click", loadMoreTemplates);
+      byId("profilePhoto").addEventListener("change", e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          profilePicData = ev.target.result;
+          byId("profilePreview").src = profilePicData;
+          preview();
+          scheduleDraft();
+        };
+        reader.readAsDataURL(file);
+      });
+      byId("removePhotoBtn").addEventListener("click", () => {
+        profilePicData = null;
+        byId("profilePhoto").value = "";
+        byId("profilePreview").src = "https://via.placeholder.com/74?text=Photo";
+        preview();
+        scheduleDraft();
+      });
+      byId("themeBtn").addEventListener("click", toggleTheme);
+      byId("saveBtn").addEventListener("click", () => saveResume().catch(e => alert(e.message)));
+      byId("deleteBtn").addEventListener("click", () => deleteResume().catch(e => alert(e.message)));
+      byId("wordBtn").addEventListener("click", () => exportWord().catch(e => alert(e.message)));
+      byId("coverBtn").addEventListener("click", () => generateCoverLetter().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("interviewBtn").addEventListener("click", () => runInterviewQuestions().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("langBtn").addEventListener("click", () => runLanguageVariant().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("brandPackBtn").addEventListener("click", () => exportBrandingPack().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("shareBtn").addEventListener("click", () => createPublicResumeLink().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("portfolioBtn").addEventListener("click", () => exportPortfolio().catch(e => alert(e.message)));
+      byId("pdfBtn").addEventListener("click", () => exportPDF().catch(e => alert(e.message)));
+      byId("livePdfBtn").addEventListener("click", () => livePdfPreview().catch(e => alert(e.message)));
+      byId("livePdfAuto").addEventListener("change", () => {
+        if (byId("livePdfAuto").checked) scheduleLivePdfPreview();
+      });
+      byId("bulkPdfBtn").addEventListener("click", () => exportBulkPdfZip().catch(e => alert(e.message)));
+      byId("bulkSelectAllBtn").addEventListener("click", () => {
+        const root = byId("bulkTemplates");
+        Array.from(root.options || []).forEach(o => o.selected = true);
+      });
+      byId("bulkClearBtn").addEventListener("click", () => {
+        const root = byId("bulkTemplates");
+        Array.from(root.options || []).forEach(o => o.selected = false);
+        const first = byId("template").value;
+        const match = Array.from(root.options || []).find(o => o.value === first);
+        if (match) match.selected = true;
+      });
+      byId("atsBtn").addEventListener("click", () => runATS().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("jdMeterBtn").addEventListener("click", () => runJdMatchMeter().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("smartBulletBtn").addEventListener("click", runSmartBulletGenerator);
+      byId("smartBulletUseExpBtn").addEventListener("click", () => appendSmartBulletToSection("experience"));
+      byId("smartBulletUseProjBtn").addEventListener("click", () => appendSmartBulletToSection("project"));
+      byId("fixWeakBulletsBtn").addEventListener("click", runFixAllWeakBullets);
+      byId("skillGapBtn").addEventListener("click", () => runSkillGap().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("tailorBtn").addEventListener("click", () => runTailor().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("enhanceBtn").addEventListener("click", () => runEnhanceBullets().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("linkedinBtn").addEventListener("click", () => runLinkedInOptimize().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("grammarBtn").addEventListener("click", () => runGrammarFix().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("emailKitBtn").addEventListener("click", () => runEmailKit().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("quantifyBtn").addEventListener("click", () => runQuantify().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("dupCheckBtn").addEventListener("click", () => runDuplicateCheck().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("atsModeBtn").addEventListener("click", applyATSMode);
+      byId("verbCheckBtn").addEventListener("click", runActionVerbCheck);
+      byId("heatmapBtn").addEventListener("click", () => runKeywordHeatmap().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("recommendTplBtn").addEventListener("click", recommendTemplates);
+      byId("diffBtn").addEventListener("click", runDiffView);
+      byId("completeBtn").addEventListener("click", runCompletenessMeter);
+      byId("finalCheckBtn").addEventListener("click", runFinalCheck);
+      byId("saveTargetBtn").addEventListener("click", saveTarget);
+      byId("loadTargetBtn").addEventListener("click", loadTarget);
+      byId("deleteTargetBtn").addEventListener("click", deleteTarget);
+      byId("shareCreateBtn").addEventListener("click", () => createPublicResumeLink().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("publicLinksRefreshBtn").addEventListener("click", () => loadPublicLinks().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("jobAddBtn").addEventListener("click", () => addJob().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("jobRefreshBtn").addEventListener("click", () => loadJobs().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("saveSnapshotBtn").addEventListener("click", saveSnapshot);
+      byId("loadSnapshotBtn").addEventListener("click", loadSnapshot);
+      byId("deleteSnapshotBtn").addEventListener("click", deleteSnapshot);
+      byId("onePageFitBtn").addEventListener("click", applyOnePageFit);
+      byId("exportPresetAtsBtn").addEventListener("click", () => applyExportPreset("ATS Apply"));
+      byId("exportPresetCreativeBtn").addEventListener("click", () => applyExportPreset("Creative"));
+      byId("exportPresetExecBtn").addEventListener("click", () => applyExportPreset("Executive"));
+      byId("resetTemplateBtn").addEventListener("click", () => applyTemplateDefaultsBySelected(true));
+      byId("normalizeDatesBtn").addEventListener("click", runNormalizeDates);
+      byId("educationPresetApplyBtn").addEventListener("click", () => {
+        applyEducationPreset();
+        preview();
+        setAssist("Education format applied.");
+      });
+      byId("compareBtn").addEventListener("click", runCompareTemplates);
+      byId("rewriteSummaryBtn").addEventListener("click", () => runRewriteSummary().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("addPackBtn").addEventListener("click", addSkillPack);
+      byId("rolePackBtn").addEventListener("click", applyRolePack);
+      byId("aiAskBtn").addEventListener("click", () => runAiAssistant().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("aiApplyBtn").addEventListener("click", applyAiAssistantChanges);
+      byId("langVariantBtn").addEventListener("click", () => runLanguageVariant().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("interviewPanelBtn").addEventListener("click", () => runInterviewQuestions().catch(e => { setAssist(e.message); alert(e.message); }));
+      byId("smartCleanBtn").addEventListener("click", runSmartVisibilityClean);
+      byId("dupBtn").addEventListener("click", duplicateResume);
+      byId("jsonExportBtn").addEventListener("click", exportJSON);
+      byId("jsonImportBtn").addEventListener("click", importJSON);
+      if (byId("canvaBtn")) byId("canvaBtn").addEventListener("click", jumpToTemplateMarket);
+      if (byId("canvaBtnPanel")) byId("canvaBtnPanel").addEventListener("click", jumpToTemplateMarket);
+      if (byId("marketBtn")) byId("marketBtn").addEventListener("click", jumpToTemplateMarket);
+      if (byId("marketFab")) byId("marketFab").addEventListener("click", jumpToTemplateMarket);
+      byId("tplPreviewClose").addEventListener("click", closeTemplatePreview);
+      byId("tplPreviewModal").addEventListener("click", (e) => {
+        if (e.target.id === "tplPreviewModal") closeTemplatePreview();
+      });
+      byId("tplPreviewApply").addEventListener("click", () => {
+        const item = (templateCatalog || []).find(t => t.id === previewTemplateId);
+        if (item) {
+          applyTemplatePreset(item);
+          closeTemplatePreview();
+        }
+      });
+      try { await loadJobs(); } catch {}
+      try { await loadPublicLinks(); } catch {}
+      try { await loadScoreHistory(); } catch {}
+      applyEducationPreset();
+      byId("resumeSelect").addEventListener("change", e => { if (e.target.value) loadResume(e.target.value).catch(err => alert(err.message)); });
+      document.addEventListener("keydown", e => {
+        if (e.ctrlKey && e.key.toLowerCase() === "s") { e.preventDefault(); saveResume().catch(err => alert(err.message)); }
+        if (e.ctrlKey && e.key.toLowerCase() === "p") { e.preventDefault(); exportPDF().catch(err => alert(err.message)); }
+      });
+      isHydrating = false;
+    }
+    window.runAiAssistant = runAiAssistant;
+    window.runSmartBulletGenerator = runSmartBulletGenerator;
+    init().catch(err => alert(err.message));
+  </script>
+</body>
+</html>
+
+
+
+

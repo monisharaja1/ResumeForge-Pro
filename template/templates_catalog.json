@@ -1,0 +1,800 @@
+[
+  {
+    "id": "mod-clean",
+    "name": "Modern Clean",
+    "category": "Modern",
+    "preview_variant": "modern",
+    "mood": "Minimal",
+    "tagline": "Clean ATS-safe layout",
+    "canva_query": "modern clean resume",
+    "settings": {
+      "template": "modern",
+      "accent": "#0f766e",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false
+    },
+    "palette": [
+      "#0f766e",
+      "#d1fae5",
+      "#f0fdfa"
+    ]
+  },
+  {
+    "id": "mod-zen",
+    "name": "Zen Mono",
+    "category": "Modern",
+    "preview_variant": "minimal",
+    "mood": "Minimal",
+    "tagline": "Minimal black and white",
+    "canva_query": "minimal monochrome resume",
+    "settings": {
+      "template": "harsh_minimal",
+      "accent": "#111827",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false
+    },
+    "palette": [
+      "#111827",
+      "#e5e7eb",
+      "#ffffff"
+    ]
+  },
+  {
+    "id": "corp-royal",
+    "name": "Royal Corporate",
+    "category": "Corporate",
+    "preview_variant": "corporate",
+    "mood": "Formal",
+    "tagline": "Executive business tone",
+    "canva_query": "corporate executive resume",
+    "settings": {
+      "template": "corporate",
+      "accent": "#1e3a5f",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false
+    },
+    "palette": [
+      "#1e3a5f",
+      "#dbeafe",
+      "#f8fafc"
+    ]
+  },
+  {
+    "id": "corp-slate",
+    "name": "Slate Boardroom",
+    "category": "Corporate",
+    "preview_variant": "corporate",
+    "mood": "Formal",
+    "tagline": "Formal and dense",
+    "canva_query": "boardroom business resume",
+    "settings": {
+      "template": "executive",
+      "accent": "#1f2937",
+      "font": "Times",
+      "pageSize": "letter",
+      "compactMode": false
+    },
+    "palette": [
+      "#1f2937",
+      "#e5e7eb",
+      "#f9fafb"
+    ]
+  },
+  {
+    "id": "classic-ink",
+    "name": "Classic Ink",
+    "category": "Classic",
+    "preview_variant": "minimal",
+    "mood": "Traditional",
+    "tagline": "Timeless serif style",
+    "canva_query": "classic serif resume",
+    "settings": {
+      "template": "classic",
+      "accent": "#374151",
+      "font": "Times",
+      "pageSize": "letter",
+      "compactMode": false
+    },
+    "palette": [
+      "#374151",
+      "#f3f4f6",
+      "#ffffff"
+    ]
+  },
+  {
+    "id": "classic-paper",
+    "name": "Paper Archive",
+    "category": "Classic",
+    "preview_variant": "modern",
+    "mood": "Traditional",
+    "tagline": "Soft traditional profile",
+    "canva_query": "traditional profile resume",
+    "settings": {
+      "template": "classic",
+      "accent": "#2b3a55",
+      "font": "Times",
+      "pageSize": "a4",
+      "compactMode": false
+    },
+    "palette": [
+      "#2b3a55",
+      "#fef3c7",
+      "#fffbeb"
+    ]
+  },
+  {
+    "id": "creative-amber",
+    "name": "Amber Creative",
+    "category": "Creative",
+    "preview_variant": "hero",
+    "mood": "Bold",
+    "tagline": "Warm visual impact",
+    "canva_query": "creative bold resume",
+    "settings": {
+      "template": "snack_gray",
+      "accent": "#d65b2e",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false
+    },
+    "palette": [
+      "#d65b2e",
+      "#ffe4d6",
+      "#f8fafc"
+    ]
+  },
+  {
+    "id": "creative-blue",
+    "name": "Research Blue",
+    "category": "Creative",
+    "preview_variant": "hero",
+    "mood": "Academic",
+    "tagline": "Academic visual identity",
+    "canva_query": "research academic resume",
+    "settings": {
+      "template": "vision_blue",
+      "accent": "#1f4e96",
+      "font": "Helvetica",
+      "pageSize": "a4",
+      "compactMode": false
+    },
+    "palette": [
+      "#1f4e96",
+      "#dbeafe",
+      "#eff6ff"
+    ]
+  },
+  {
+    "id": "ats-fast",
+    "name": "ATS Fast Track",
+    "category": "ATS",
+    "preview_variant": "plain",
+    "mood": "Technical",
+    "tagline": "Dense one-page output",
+    "canva_query": "ats friendly one page resume",
+    "settings": {
+      "template": "compact",
+      "accent": "#0f766e",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": true
+    },
+    "palette": [
+      "#0f766e",
+      "#ccfbf1",
+      "#f0fdfa"
+    ]
+  },
+  {
+    "id": "ats-plain",
+    "name": "ATS Plain",
+    "category": "ATS",
+    "preview_variant": "plain",
+    "mood": "Technical",
+    "tagline": "Machine readable plain style",
+    "canva_query": "plain ats resume",
+    "settings": {
+      "template": "modern",
+      "accent": "#334155",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": true
+    },
+    "palette": [
+      "#334155",
+      "#e2e8f0",
+      "#f8fafc"
+    ]
+  },
+  {
+    "id": "two-column-tech",
+    "name": "Split Tech Story",
+    "category": "Creative",
+    "preview_variant": "sidebar",
+    "mood": "Bold",
+    "tagline": "Two-column profile pitch",
+    "canva_query": "two column tech resume",
+    "settings": {
+      "template": "javid_split",
+      "accent": "#6b7280",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false
+    },
+    "palette": [
+      "#6b7280",
+      "#e5e7eb",
+      "#f9fafb"
+    ]
+  },
+  {
+    "id": "canva-mint-pro",
+    "name": "Mint Pro Profile",
+    "category": "Canva Style",
+    "preview_variant": "sidebar",
+    "mood": "Fresh",
+    "tagline": "Modern left-rail profile with calm mint accents",
+    "canva_query": "mint modern resume template",
+    "settings": {
+      "template": "javid_split",
+      "accent": "#0f766e",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "two_column",
+      "headerLayout": "split",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#0f766e",
+      "#d1fae5",
+      "#ecfeff"
+    ],
+    "thumbnail": "/assets/canva-mint-pro.svg"
+  },
+  {
+    "id": "canva-editorial-rose",
+    "name": "Editorial Rose",
+    "category": "Canva Style",
+    "preview_variant": "hero",
+    "mood": "Elegant",
+    "tagline": "Soft editorial resume with premium hero heading",
+    "canva_query": "editorial elegant resume template",
+    "settings": {
+      "template": "modern",
+      "accent": "#be185d",
+      "font": "Times",
+      "pageSize": "a4",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "center",
+      "marginPreset": "wide"
+    },
+    "palette": [
+      "#be185d",
+      "#fce7f3",
+      "#fff1f2"
+    ],
+    "thumbnail": "/assets/canva-editorial-rose.svg"
+  },
+  {
+    "id": "canva-neo-charcoal",
+    "name": "Neo Charcoal",
+    "category": "Canva Style",
+    "preview_variant": "corporate",
+    "mood": "Professional",
+    "tagline": "High-contrast premium business presentation",
+    "canva_query": "charcoal corporate resume template",
+    "settings": {
+      "template": "executive",
+      "accent": "#111827",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "left",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#111827",
+      "#d1d5db",
+      "#f9fafb"
+    ],
+    "thumbnail": "/assets/canva-neo-charcoal.svg"
+  },
+  {
+    "id": "canva-skyline-aqua",
+    "name": "Skyline Aqua",
+    "category": "Canva Style",
+    "preview_variant": "modern",
+    "mood": "Clean",
+    "tagline": "Recruiter-friendly clean design with vivid aqua",
+    "canva_query": "clean aqua resume template",
+    "settings": {
+      "template": "vision_blue",
+      "accent": "#0891b2",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "narrow"
+    },
+    "palette": [
+      "#0891b2",
+      "#cffafe",
+      "#ecfeff"
+    ],
+    "thumbnail": "/assets/canva-skyline-aqua.svg"
+  },
+  {
+    "id": "canva-portfolio-craft",
+    "name": "Portfolio Craft",
+    "category": "Canva Style",
+    "preview_variant": "sidebar",
+    "mood": "Creative",
+    "tagline": "Portfolio-first layout for designers and creators",
+    "canva_query": "creative portfolio resume template",
+    "settings": {
+      "template": "javid_split",
+      "accent": "#7c3aed",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "two_column",
+      "headerLayout": "split",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#7c3aed",
+      "#ede9fe",
+      "#faf5ff"
+    ],
+    "thumbnail": "/assets/canva-portfolio-craft.svg"
+  },
+  {
+    "id": "canva-aurora-green",
+    "name": "Aurora Green",
+    "category": "Canva Style",
+    "preview_variant": "sidebar",
+    "mood": "Fresh",
+    "tagline": "Aurora Green premium visual preset",
+    "canva_query": "aurora green resume template",
+    "settings": {
+      "template": "javid_split",
+      "accent": "#0f766e",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "two_column",
+      "headerLayout": "split",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#0f766e",
+      "#ccfbf1",
+      "#ecfeff"
+    ],
+    "thumbnail": "/assets/canva-aurora-green.svg"
+  },
+  {
+    "id": "canva-midnight-navy",
+    "name": "Midnight Navy",
+    "category": "Canva Style",
+    "preview_variant": "corporate",
+    "mood": "Professional",
+    "tagline": "Midnight Navy premium visual preset",
+    "canva_query": "midnight navy resume template",
+    "settings": {
+      "template": "executive",
+      "accent": "#1e3a8a",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#1e3a8a",
+      "#dbeafe",
+      "#f8fafc"
+    ],
+    "thumbnail": "/assets/canva-midnight-navy.svg"
+  },
+  {
+    "id": "canva-sunset-coral",
+    "name": "Sunset Coral",
+    "category": "Canva Style",
+    "preview_variant": "hero",
+    "mood": "Bold",
+    "tagline": "Sunset Coral premium visual preset",
+    "canva_query": "sunset coral resume template",
+    "settings": {
+      "template": "modern",
+      "accent": "#ea580c",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#ea580c",
+      "#fed7aa",
+      "#fff7ed"
+    ],
+    "thumbnail": "/assets/canva-sunset-coral.svg"
+  },
+  {
+    "id": "canva-lilac-lite",
+    "name": "Lilac Lite",
+    "category": "Canva Style",
+    "preview_variant": "modern",
+    "mood": "Elegant",
+    "tagline": "Lilac Lite premium visual preset",
+    "canva_query": "lilac lite resume template",
+    "settings": {
+      "template": "modern",
+      "accent": "#7c3aed",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#7c3aed",
+      "#ede9fe",
+      "#faf5ff"
+    ],
+    "thumbnail": "/assets/canva-lilac-lite.svg"
+  },
+  {
+    "id": "canva-forest-charcoal",
+    "name": "Forest Charcoal",
+    "category": "Canva Style",
+    "preview_variant": "sidebar",
+    "mood": "Clean",
+    "tagline": "Forest Charcoal premium visual preset",
+    "canva_query": "forest charcoal resume template",
+    "settings": {
+      "template": "javid_split",
+      "accent": "#065f46",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "two_column",
+      "headerLayout": "split",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#065f46",
+      "#d1fae5",
+      "#f0fdf4"
+    ],
+    "thumbnail": "/assets/canva-forest-charcoal.svg"
+  },
+  {
+    "id": "canva-ice-blue",
+    "name": "Ice Blue",
+    "category": "Canva Style",
+    "preview_variant": "modern",
+    "mood": "Minimal",
+    "tagline": "Ice Blue premium visual preset",
+    "canva_query": "ice blue resume template",
+    "settings": {
+      "template": "modern",
+      "accent": "#0369a1",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#0369a1",
+      "#bae6fd",
+      "#f0f9ff"
+    ],
+    "thumbnail": "/assets/canva-ice-blue.svg"
+  },
+  {
+    "id": "canva-gold-ink",
+    "name": "Gold Ink",
+    "category": "Canva Style",
+    "preview_variant": "corporate",
+    "mood": "Traditional",
+    "tagline": "Gold Ink premium visual preset",
+    "canva_query": "gold ink resume template",
+    "settings": {
+      "template": "executive",
+      "accent": "#a16207",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#a16207",
+      "#fef3c7",
+      "#fffbeb"
+    ],
+    "thumbnail": "/assets/canva-gold-ink.svg"
+  },
+  {
+    "id": "canva-ruby-panel",
+    "name": "Ruby Panel",
+    "category": "Canva Style",
+    "preview_variant": "hero",
+    "mood": "Creative",
+    "tagline": "Ruby Panel premium visual preset",
+    "canva_query": "ruby panel resume template",
+    "settings": {
+      "template": "modern",
+      "accent": "#be123c",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#be123c",
+      "#fecdd3",
+      "#fff1f2"
+    ],
+    "thumbnail": "/assets/canva-ruby-panel.svg"
+  },
+  {
+    "id": "canva-slate-frost",
+    "name": "Slate Frost",
+    "category": "Canva Style",
+    "preview_variant": "plain",
+    "mood": "Technical",
+    "tagline": "Slate Frost premium visual preset",
+    "canva_query": "slate frost resume template",
+    "settings": {
+      "template": "modern",
+      "accent": "#334155",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#334155",
+      "#e2e8f0",
+      "#f8fafc"
+    ],
+    "thumbnail": "/assets/canva-slate-frost.svg"
+  },
+  {
+    "id": "canva-ocean-pro",
+    "name": "Ocean Pro",
+    "category": "Canva Style",
+    "preview_variant": "sidebar",
+    "mood": "Professional",
+    "tagline": "Ocean Pro premium visual preset",
+    "canva_query": "ocean pro resume template",
+    "settings": {
+      "template": "javid_split",
+      "accent": "#0c4a6e",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "two_column",
+      "headerLayout": "split",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#0c4a6e",
+      "#bae6fd",
+      "#ecfeff"
+    ],
+    "thumbnail": "/assets/canva-ocean-pro.svg"
+  },
+  {
+    "id": "sig-astra-clean",
+    "name": "Astra Clean",
+    "category": "Signature",
+    "preview_variant": "modern",
+    "mood": "Minimal",
+    "tagline": "Original ATS-safe modern profile style",
+    "canva_query": "astra clean resume",
+    "settings": {
+      "template": "astra_clean",
+      "accent": "#0f766e",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#0f766e",
+      "#ccfbf1",
+      "#f0fdfa"
+    ]
+  },
+  {
+    "id": "sig-metro-sidebar",
+    "name": "Metro Sidebar",
+    "category": "Signature",
+    "preview_variant": "sidebar",
+    "mood": "Professional",
+    "tagline": "Original left-rail profile presentation",
+    "canva_query": "metro sidebar resume",
+    "settings": {
+      "template": "metro_sidebar",
+      "accent": "#155e75",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "two_column",
+      "headerLayout": "split",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#155e75",
+      "#bae6fd",
+      "#ecfeff"
+    ]
+  },
+  {
+    "id": "sig-executive-slate",
+    "name": "Executive Slate",
+    "category": "Signature",
+    "preview_variant": "corporate",
+    "mood": "Formal",
+    "tagline": "Original boardroom style executive profile",
+    "canva_query": "executive slate resume",
+    "settings": {
+      "template": "executive_slate",
+      "accent": "#1f2937",
+      "font": "Times",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "left",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#1f2937",
+      "#d1d5db",
+      "#f9fafb"
+    ]
+  },
+  {
+    "id": "sig-creative-split",
+    "name": "Creative Split",
+    "category": "Signature",
+    "preview_variant": "sidebar",
+    "mood": "Bold",
+    "tagline": "Original creative two-column identity",
+    "canva_query": "creative split resume",
+    "settings": {
+      "template": "creative_split",
+      "accent": "#9333ea",
+      "font": "Montserrat",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "two_column",
+      "headerLayout": "split",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#9333ea",
+      "#ede9fe",
+      "#faf5ff"
+    ]
+  },
+  {
+    "id": "sig-mono-compact",
+    "name": "Mono Compact",
+    "category": "Signature",
+    "preview_variant": "plain",
+    "mood": "Technical",
+    "tagline": "Original compact one-page monochrome style",
+    "canva_query": "mono compact resume",
+    "settings": {
+      "template": "mono_compact",
+      "accent": "#111827",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": true,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "narrow"
+    },
+    "palette": [
+      "#111827",
+      "#e5e7eb",
+      "#f9fafb"
+    ]
+  },
+  {
+    "id": "sig-classic-clarity",
+    "name": "Classic Clarity",
+    "category": "Signature",
+    "preview_variant": "modern",
+    "mood": "Traditional",
+    "tagline": "Clean classic layout for readability and trust",
+    "canva_query": "classic clarity resume",
+    "settings": {
+      "template": "classic_clarity",
+      "accent": "#2563eb",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#2563eb",
+      "#dbeafe",
+      "#f8fafc"
+    ]
+  },
+  {
+    "id": "sig-impact-panel",
+    "name": "Impact Panel",
+    "category": "Signature",
+    "preview_variant": "sidebar",
+    "mood": "Bold",
+    "tagline": "Bold center-block profile with high contrast",
+    "canva_query": "impact panel resume",
+    "settings": {
+      "template": "impact_panel",
+      "accent": "#6b7280",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "two_column",
+      "headerLayout": "split",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#6b7280",
+      "#e5e7eb",
+      "#f8fafc"
+    ]
+  },
+  {
+    "id": "sig-contemporary-photo",
+    "name": "Contemporary Photo",
+    "category": "Signature",
+    "preview_variant": "corporate",
+    "mood": "Professional",
+    "tagline": "Photo-forward professional layout with clean hierarchy",
+    "canva_query": "contemporary photo resume",
+    "settings": {
+      "template": "contemporary_photo",
+      "accent": "#1d4ed8",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "left",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#1d4ed8",
+      "#dbeafe",
+      "#f8fafc"
+    ]
+  }
+]

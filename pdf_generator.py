@@ -417,7 +417,7 @@ class PDFGenerator:
         )
 
         # Draw page border on every page without affecting flowable layout.
-        def _soften(col: colors.Color, white_mix: float = 0.87) -> colors.Color:
+        def _soften(col: colors.Color, white_mix: float = 0.94) -> colors.Color:
             mix = min(0.96, max(0.0, white_mix))
             return colors.Color(
                 col.red * (1 - mix) + 1.0 * mix,
@@ -429,8 +429,9 @@ class PDFGenerator:
             art = str(template_cfg.get("bg_art", "")).strip().lower()
             if not art:
                 return
-            a_light = _soften(accent_color, 0.9)
-            a_mid = _soften(accent_color, 0.8)
+            # Keep decorative art very subtle to avoid a shadow-like cast in exports.
+            a_light = _soften(accent_color, 0.96)
+            a_mid = _soften(accent_color, 0.90)
             canv.saveState()
             canv.setStrokeColor(a_mid)
             canv.setFillColor(a_light)
@@ -472,6 +473,11 @@ class PDFGenerator:
 
         def _draw_page_border(canv, _doc):
             width, height = pagesize
+            # Paint a deterministic page background first to avoid viewer-specific gray shading.
+            canv.saveState()
+            canv.setFillColor(bg_color)
+            canv.rect(0, 0, width, height, stroke=0, fill=1)
+            canv.restoreState()
             _draw_template_art(canv, width, height)
             if not template_cfg.get("page_border", True):
                 return

@@ -736,7 +736,33 @@ def login():
             return redirect(url_for("index"))
     return render_template_string("""
 <!doctype html><html><head><title>Login</title>
-<style>body{font-family:Arial;margin:40px;background:#f3f4f6}.box{max-width:420px;margin:auto;background:#fff;padding:20px;border:1px solid #ddd;border-radius:10px}input,button{width:100%;padding:10px;margin:8px 0}button{background:#0f766e;color:#fff;border:none;border-radius:6px}a{display:block;margin-top:10px;text-align:center}</style>
+<style>
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:linear-gradient(140deg,#dbeafe 0%,#cffafe 48%,#ecfeff 100%);
+}
+.box{
+  width:min(560px,92vw);
+  background:#fff;
+  padding:34px 30px;
+  border:1px solid #bfdbfe;
+  border-radius:16px;
+  box-shadow:0 18px 42px rgba(15,23,42,0.12);
+}
+h2{margin:0 0 14px 0;font-size:32px;color:#0f172a}
+input,button{width:100%;padding:12px 13px;margin:8px 0;border-radius:10px}
+input{border:1px solid #cbd5e1;background:#f8fafc}
+button{background:#0f766e;color:#fff;border:none;font-weight:700}
+button:hover{background:#0b5f58}
+a{display:block;margin-top:10px;text-align:center;color:#0f3b66;text-decoration:none}
+a:hover{text-decoration:underline}
+</style>
 </head><body><div class="box"><h2>Login</h2>
 {% if error %}<p style="color:#b91c1c;">{{error}}</p>{% endif %}
 <form method="post">

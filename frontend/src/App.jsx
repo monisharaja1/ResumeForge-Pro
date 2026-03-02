@@ -5,7 +5,9 @@ const trimTrailingSlash = (v) => String(v || '').trim().replace(/\/+$/, '')
 const unique = (arr) => [...new Set(arr.filter(Boolean))]
 const HOSTNAME = typeof window !== 'undefined' ? window.location.hostname : ''
 const ORIGIN = typeof window !== 'undefined' ? trimTrailingSlash(window.location.origin) : ''
+const PROTOCOL = typeof window !== 'undefined' ? window.location.protocol : 'http:'
 const IS_LOCAL_HOST = HOSTNAME === 'localhost' || HOSTNAME === '127.0.0.1' || HOSTNAME === '::1'
+const SAME_HOST_5000_API = HOSTNAME ? `${PROTOCOL}//${HOSTNAME}:5000/api` : ''
 const ENV_API_BASE_RAW = trimTrailingSlash(import.meta.env.VITE_API_BASE || '')
 const ENV_API_ROOT = ENV_API_BASE_RAW
   ? (ENV_API_BASE_RAW.endsWith('/api') ? ENV_API_BASE_RAW : `${ENV_API_BASE_RAW}/api`)
@@ -16,9 +18,10 @@ const ENV_BACKEND_ROOT = ENV_API_ROOT.endsWith('/api')
 
 const API_ROOTS = unique([
   ENV_API_ROOT,
-  ORIGIN ? `${ORIGIN}/api` : '',
+  SAME_HOST_5000_API,
   IS_LOCAL_HOST ? 'http://127.0.0.1:5000/api' : '',
   IS_LOCAL_HOST ? 'http://localhost:5000/api' : '',
+  ORIGIN ? `${ORIGIN}/api` : '',
 ])
 
 const CATALOG_ROOTS = unique([
@@ -28,7 +31,7 @@ const CATALOG_ROOTS = unique([
   IS_LOCAL_HOST ? 'http://localhost:5000/templates_catalog.json' : '',
 ])
 const GOOGLE_TEMPLATE_QUERY = String(import.meta.env.VITE_GOOGLE_TEMPLATE_QUERY || 'resume template').trim()
-const STEP_LABELS = ['Templates', 'Details', 'AI', 'Review']
+const STEP_LABELS = ['Templates', 'PDF Settings', 'Details', 'AI', 'Review']
 
 const TEMPLATE_CHOICES = [
   'modern', 'corporate', 'classic', 'compact', 'executive', 'snack_gray', 'vision_blue',
@@ -478,13 +481,19 @@ export default function App() {
     }
   }
 
-  async function smartFetch(urls, options = {}) {
+  async function smartFetch(urls, options = {}, shouldAccept = null) {
     let lastError = null
     let lastResponse = null
     for (const u of urls) {
       try {
         const r = await fetch(u, options)
-        if (r.ok) return r
+        if (r.ok) {
+          if (typeof shouldAccept === 'function' && !shouldAccept(r, u)) {
+            lastResponse = r
+            continue
+          }
+          return r
+        }
         lastResponse = r
       } catch (e) {
         lastError = e
@@ -497,7 +506,22 @@ export default function App() {
 
   async function apiFetch(path, options = {}) {
     const urls = API_ROOTS.map((r) => `${r}${path}`)
-    return smartFetch(urls, options)
+    const headers = options?.headers || {}
+    const acceptRaw = String(headers.Accept || headers.accept || '').toLowerCase()
+    const expectsBinary = (
+      acceptRaw.includes('application/pdf')
+      || acceptRaw.includes('application/zip')
+      || acceptRaw.includes('application/rtf')
+      || acceptRaw.includes('application/octet-stream')
+    )
+    return smartFetch(urls, options, (response, url) => {
+      if (expectsBinary) return true
+      const contentType = String(response.headers.get('content-type') || '').toLowerCase()
+      if (contentType.includes('application/json')) return true
+      // In local dev, avoid accepting HTML fallbacks from the frontend dev server for /api routes.
+      if (contentType.includes('text/html') && String(url).includes('/api/')) return false
+      return true
+    })
   }
 
   async function fetchHealth() {
@@ -666,12 +690,21 @@ export default function App() {
 
   async function runApi(path, body, onOk) {
     try {
+      setAssist('Running...')
       const r = await apiFetch(path, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
         body: JSON.stringify(body),
       })
-      if (!r.ok) throw new Error(await r.text())
+      const contentType = String(r.headers.get('content-type') || '').toLowerCase()
+      if (!r.ok) {
+        const errText = await r.text()
+        throw new Error(errText || `Request failed (${r.status})`)
+      }
+      if (!contentType.includes('application/json')) {
+        const raw = await r.text()
+        throw new Error(`Unexpected response from API (${r.status}): ${raw.slice(0, 180)}`)
+      }
       const d = await r.json()
       onOk(d)
     } catch (e) {
@@ -778,7 +811,7 @@ export default function App() {
       if (pdfPreviewUrl) URL.revokeObjectURL(pdfPreviewUrl)
       const url = URL.createObjectURL(blob)
       setPdfPreviewUrl(url)
-      setStep(3)
+      setStep(4)
       setMessage('Live PDF preview ready.')
     } catch (e) {
       setMessage(e.message || 'PDF preview failed')
@@ -828,18 +861,25 @@ export default function App() {
 
   function applyTemplate(t) {
     const settings = t?.settings || {}
+    const pageSizeRaw = settings.pageSize || settings.page_size
+    const compactRaw = settings.compactMode ?? settings.compact_mode
+    const atsRaw = settings.atsSafeMode ?? settings.ats_safe_mode
+    const fontScaleRaw = settings.fontScale ?? settings.font_scale
+    const parsedFontScale = Number(fontScaleRaw)
     setCfgState((p) => ({
       ...p,
-      template_name: settings.template || p.template_name,
+      template_name: settings.template || settings.template_name || p.template_name,
       accent_color_override: settings.accent || p.accent_color_override,
-      font_override: settings.font || p.font_override,
-      page_size: settings.pageSize ? String(settings.pageSize).toLowerCase() : p.page_size,
-      compact_mode: !!settings.compactMode,
-      ats_safe_mode: !!settings.atsSafeMode,
-      layout_override: settings.pageLayout || p.layout_override,
-      header_layout: settings.headerLayout || p.header_layout,
-      heading_align_override: settings.headingAlign || '',
-      body_align_override: settings.bodyAlign || '',
+      font_override: settings.font || settings.font_override || p.font_override,
+      page_size: pageSizeRaw ? String(pageSizeRaw).toLowerCase() : p.page_size,
+      compact_mode: compactRaw == null ? p.compact_mode : !!compactRaw,
+      ats_safe_mode: atsRaw == null ? p.ats_safe_mode : !!atsRaw,
+      layout_override: settings.pageLayout || settings.layout_override || p.layout_override,
+      header_layout: settings.headerLayout || settings.header_layout || p.header_layout,
+      margin_preset: settings.marginPreset || settings.margin_preset || p.margin_preset,
+      font_scale: Number.isFinite(parsedFontScale) && parsedFontScale > 0 ? parsedFontScale : p.font_scale,
+      heading_align_override: settings.headingAlign || settings.heading_align || p.heading_align_override,
+      body_align_override: settings.bodyAlign || settings.body_align || p.body_align_override,
     }))
     setMessage(`Template selected: ${t?.name || '-'}`)
   }
@@ -1174,6 +1214,89 @@ export default function App() {
 
           {step === 1 ? (
             <>
+              <h2>PDF Settings</h2>
+              <div className="form-grid">
+                <label>Template</label>
+                <select value={cfg.template_name} onChange={(e) => setCfgField('template_name', e.target.value)}>
+                  {TEMPLATE_CHOICES.map((t) => <option key={t} value={t}>{t.replaceAll('_', ' ')}</option>)}
+                </select>
+                <label>Page Size</label>
+                <select value={cfg.page_size} onChange={(e) => setCfgField('page_size', e.target.value)}>
+                  <option value="letter">Letter</option>
+                  <option value="a4">A4</option>
+                </select>
+                <label>Font</label>
+                <select value={cfg.font_override} onChange={(e) => setCfgField('font_override', e.target.value)}>
+                  <option value="Helvetica">Default</option>
+                  <option value="Times">Times</option>
+                  <option value="Courier">Courier</option>
+                </select>
+                <label>Accent</label><input type="color" value={cfg.accent_color_override} onChange={(e) => setCfgField('accent_color_override', e.target.value)} />
+                <label>Page Layout</label>
+                <select value={cfg.layout_override} onChange={(e) => setCfgField('layout_override', e.target.value)}>
+                  <option value="">Auto</option>
+                  <option value="single_column">Single Column</option>
+                  <option value="two_column">Two Column</option>
+                </select>
+                <label>Header Layout</label>
+                <select value={cfg.header_layout} onChange={(e) => setCfgField('header_layout', e.target.value)}>
+                  <option value="default">Default</option>
+                  <option value="left">Left</option>
+                  <option value="center">Center</option>
+                  <option value="split">Split</option>
+                </select>
+                <label>Heading Align</label>
+                <select value={cfg.heading_align_override} onChange={(e) => setCfgField('heading_align_override', e.target.value)}>
+                  <option value="">Template Default</option>
+                  <option value="left">Left</option>
+                  <option value="center">Center</option>
+                  <option value="right">Right</option>
+                </select>
+                <label>Body Align</label>
+                <select value={cfg.body_align_override} onChange={(e) => setCfgField('body_align_override', e.target.value)}>
+                  <option value="">Template Default</option>
+                  <option value="left">Left</option>
+                  <option value="justify">Justify</option>
+                  <option value="center">Center</option>
+                  <option value="right">Right</option>
+                </select>
+                <label>Margins</label>
+                <select value={cfg.margin_preset} onChange={(e) => setCfgField('margin_preset', e.target.value)}>
+                  <option value="normal">Normal</option>
+                  <option value="compact">Compact</option>
+                  <option value="wide">Wide</option>
+                </select>
+                <label>Compact PDF</label>
+                <input type="checkbox" checked={cfg.compact_mode} onChange={(e) => setCfgField('compact_mode', e.target.checked)} />
+                <label>Font Size</label>
+                <div className="fit-row">
+                  <input
+                    type="range"
+                    min="80"
+                    max="120"
+                    step="1"
+                    value={Math.round((cfg.font_scale || 1) * 100)}
+                    onChange={(e) => setFontScalePercent(e.target.value)}
+                  />
+                  <span className="muted">{Math.round((cfg.font_scale || 1) * 100)}%</span>
+                </div>
+                <label>Space Reduce</label>
+                <select value={spacingMode} onChange={(e) => setSpacingMode(e.target.value)}>
+                  <option value="tight">Tight (Less Space)</option>
+                  <option value="normal">Normal</option>
+                  <option value="wide">Wide</option>
+                </select>
+                <label>Auto 1-Page Fit</label>
+                <div className="fit-row">
+                  <button type="button" onClick={autoOnePageFit}>Auto 1-Page Fit</button>
+                  <span className="muted">{Math.round((cfg.font_scale || 1) * 100)}% font</span>
+                </div>
+              </div>
+            </>
+          ) : null}
+
+          {step === 2 ? (
+            <>
               <h2>Resume Details</h2>
               <div className="profile-box">
                 <h3>User Profile</h3>
@@ -1237,7 +1360,7 @@ export default function App() {
             </>
           ) : null}
 
-          {step === 2 ? (
+          {step === 3 ? (
             <>
               <h2>AI Assistant</h2>
               <div className="form-grid">
@@ -1258,8 +1381,10 @@ export default function App() {
                   if (Array.isArray(d.projects)) setField('projects', projRowsToText(d.projects))
                   setAssist(d.message || 'Bullets enhanced.')
                 })}>Enhance Bullets</button>
-                <button type="button" onClick={() => runApi('/ai-assistant', { ...payload(), prompt: aiPrompt, job_description: jobDesc }, (d) => {
-                  setAssist(d.answer || 'No answer')
+                <button type="button" onClick={() => runApi('/ai-assistant', { ...payload(), prompt: aiPrompt, job_description: jobDesc, prefer_llm: true }, (d) => {
+                  const engineTag = d?.engine ? `\n\nEngine: ${d.engine}${d.model ? ` (${d.model})` : ''}` : ''
+                  const fallbackTag = d?.fallback_reason ? `\nFallback: ${d.fallback_reason}` : ''
+                  setAssist(`${d.answer || 'No answer'}${engineTag}${fallbackTag}`)
                   setAiPatch(d.apply_patch || null)
                 })}>Ask AI Assistant</button>
                 <button type="button" onClick={applyAiPatch} disabled={!aiPatch}>Apply AI Changes</button>
@@ -1268,7 +1393,7 @@ export default function App() {
             </>
           ) : null}
 
-          {step === 3 ? (
+          {step === 4 ? (
             <>
               <h2>Review & Generate</h2>
               <div className={`preview-box tone-${selectedTemplateVisual.tone}`} style={selectedTemplateVisual.vars}>
@@ -1290,86 +1415,6 @@ export default function App() {
           ) : null}
         </section>
 
-        <aside className="card side-card">
-          <h3>PDF Settings</h3>
-          <div className="form-grid">
-            <label>Template</label>
-            <select value={cfg.template_name} onChange={(e) => setCfgField('template_name', e.target.value)}>
-              {TEMPLATE_CHOICES.map((t) => <option key={t} value={t}>{t.replaceAll('_', ' ')}</option>)}
-            </select>
-            <label>Page Size</label>
-            <select value={cfg.page_size} onChange={(e) => setCfgField('page_size', e.target.value)}>
-              <option value="letter">Letter</option>
-              <option value="a4">A4</option>
-            </select>
-            <label>Font</label>
-            <select value={cfg.font_override} onChange={(e) => setCfgField('font_override', e.target.value)}>
-              <option value="Helvetica">Default</option>
-              <option value="Times">Times</option>
-              <option value="Courier">Courier</option>
-            </select>
-            <label>Accent</label><input type="color" value={cfg.accent_color_override} onChange={(e) => setCfgField('accent_color_override', e.target.value)} />
-            <label>Page Layout</label>
-            <select value={cfg.layout_override} onChange={(e) => setCfgField('layout_override', e.target.value)}>
-              <option value="">Auto</option>
-              <option value="single_column">Single Column</option>
-              <option value="two_column">Two Column</option>
-            </select>
-            <label>Header Layout</label>
-            <select value={cfg.header_layout} onChange={(e) => setCfgField('header_layout', e.target.value)}>
-              <option value="default">Default</option>
-              <option value="left">Left</option>
-              <option value="center">Center</option>
-              <option value="split">Split</option>
-            </select>
-            <label>Heading Align</label>
-            <select value={cfg.heading_align_override} onChange={(e) => setCfgField('heading_align_override', e.target.value)}>
-              <option value="">Template Default</option>
-              <option value="left">Left</option>
-              <option value="center">Center</option>
-              <option value="right">Right</option>
-            </select>
-            <label>Body Align</label>
-            <select value={cfg.body_align_override} onChange={(e) => setCfgField('body_align_override', e.target.value)}>
-              <option value="">Template Default</option>
-              <option value="left">Left</option>
-              <option value="justify">Justify</option>
-              <option value="center">Center</option>
-              <option value="right">Right</option>
-            </select>
-            <label>Margins</label>
-            <select value={cfg.margin_preset} onChange={(e) => setCfgField('margin_preset', e.target.value)}>
-              <option value="normal">Normal</option>
-              <option value="compact">Compact</option>
-              <option value="wide">Wide</option>
-            </select>
-            <label>Compact PDF</label>
-            <input type="checkbox" checked={cfg.compact_mode} onChange={(e) => setCfgField('compact_mode', e.target.checked)} />
-            <label>Font Size</label>
-            <div className="fit-row">
-              <input
-                type="range"
-                min="80"
-                max="120"
-                step="1"
-                value={Math.round((cfg.font_scale || 1) * 100)}
-                onChange={(e) => setFontScalePercent(e.target.value)}
-              />
-              <span className="muted">{Math.round((cfg.font_scale || 1) * 100)}%</span>
-            </div>
-            <label>Space Reduce</label>
-            <select value={spacingMode} onChange={(e) => setSpacingMode(e.target.value)}>
-              <option value="tight">Tight (Less Space)</option>
-              <option value="normal">Normal</option>
-              <option value="wide">Wide</option>
-            </select>
-            <label>Auto 1-Page Fit</label>
-            <div className="fit-row">
-              <button type="button" onClick={autoOnePageFit}>Auto 1-Page Fit</button>
-              <span className="muted">{Math.round((cfg.font_scale || 1) * 100)}% font</span>
-            </div>
-          </div>
-        </aside>
       </main>
 
       <div className="action-row card nav-card">
@@ -1442,7 +1487,7 @@ export default function App() {
               <div><span>Website</span><strong>{userProfile.website || form.website || '-'}</strong></div>
             </div>
             <div className="user-card-actions">
-              <button type="button" onClick={() => { setStep(1); setShowUserCard(false) }}>Edit Profile</button>
+              <button type="button" onClick={() => { setStep(2); setShowUserCard(false) }}>Edit Profile</button>
               <button type="button" className="primary" onClick={() => { applyUserProfileToResume(); setShowUserCard(false) }}>Apply to Resume</button>
             </div>
           </div>

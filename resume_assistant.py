@@ -1,13 +1,17 @@
 """
 Lightweight ATS and tailoring utilities.
-No external AI calls; deterministic heuristics for offline use.
+Supports deterministic offline heuristics and optional LLM-assisted outputs.
 """
 from __future__ import annotations
 
 import math
+import json
+import os
 import re
+import urllib.error
+import urllib.request
 from collections import Counter
-from typing import Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 
 from models import Resume
 
@@ -478,6 +482,508 @@ def plan_skill_gap(resume: Resume, job_description: str) -> Dict[str, object]:
         "missing_skills": missing,
         "plan_30_days": weekly,
         "message": "Skill gap plan generated from current job description.",
+    }
+
+
+def _infer_assistant_intent(prompt: str) -> str:
+    q = (prompt or "").strip().lower()
+    if any(k in q for k in ["ats", "score", "keyword match", "jd match"]):
+        return "ats"
+    if any(k in q for k in ["tailor", "customize", "optimize resume", "align resume"]):
+        return "tailor"
+    if any(k in q for k in ["bullet", "enhance", "improve experience", "rewrite experience"]):
+        return "bullets"
+    if any(k in q for k in ["cover letter", "cover", "application letter"]):
+        return "cover_letter"
+    if any(k in q for k in ["interview", "questions"]):
+        return "interview"
+    if any(k in q for k in ["skill gap", "missing skills", "learning plan"]):
+        return "skill_gap"
+    if any(k in q for k in ["rewrite summary", "summary tone", "make summary"]):
+        return "rewrite_summary"
+    return "general"
+
+
+def _resume_snapshot_for_llm(resume: Resume) -> Dict[str, Any]:
+    def _cap(text: Any, limit: int = 420) -> str:
+        t = re.sub(r"\s+", " ", str(text or "").strip())
+        return t[:limit]
+
+    experiences = []
+    for e in (resume.experiences or [])[:8]:
+        experiences.append({
+            "job_title": _cap(e.job_title, 90),
+            "company": _cap(e.company, 90),
+            "start_date": _cap(e.start_date, 32),
+            "end_date": _cap(e.end_date, 32),
+            "description": _cap(e.description, 420),
+        })
+
+    projects = []
+    for p in (resume.projects or [])[:8]:
+        projects.append({
+            "name": _cap(p.name, 90),
+            "role": _cap(p.role, 90),
+            "technologies": _cap(p.technologies, 160),
+            "start_date": _cap(p.start_date, 32),
+            "end_date": _cap(p.end_date, 32),
+            "description": _cap(p.description, 420),
+            "link": _cap(p.link, 180),
+        })
+
+    educations = []
+    for e in (resume.educations or [])[:5]:
+        educations.append({
+            "degree": _cap(e.degree, 100),
+            "institution": _cap(e.institution, 120),
+            "start_date": _cap(e.start_date, 32),
+            "end_date": _cap(e.end_date, 32),
+            "description": _cap(e.description, 220),
+        })
+
+    return {
+        "full_name": _cap(resume.full_name, 120),
+        "profile_title": _cap(resume.profile_title, 120),
+        "summary": _cap(resume.summary, 850),
+        "email": _cap(resume.email, 160),
+        "phone": _cap(resume.phone, 64),
+        "location": _cap(f"{resume.city} {resume.address}", 180),
+        "skills": [str(s).strip()[:64] for s in (resume.skills or [])[:25] if str(s).strip()],
+        "experiences": experiences,
+        "projects": projects,
+        "educations": educations,
+    }
+
+
+def _sanitize_string(value: Any, max_chars: int = 1200) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    return text[:max_chars]
+
+
+def _sanitize_string_list(values: Any, max_items: int = 25, max_chars: int = 80) -> List[str]:
+    if not isinstance(values, list):
+        return []
+    out: List[str] = []
+    seen = set()
+    for v in values:
+        s = _sanitize_string(v, max_chars)
+        if not s:
+            continue
+        k = s.lower()
+        if k in seen:
+            continue
+        seen.add(k)
+        out.append(s)
+        if len(out) >= max_items:
+            break
+    return out
+
+
+def _sanitize_experience_items(values: Any, max_items: int = 10) -> List[Dict[str, str]]:
+    if not isinstance(values, list):
+        return []
+    items: List[Dict[str, str]] = []
+    for row in values:
+        if not isinstance(row, dict):
+            continue
+        description_raw = row.get("description")
+        if isinstance(description_raw, list):
+            description = "\n".join(
+                [_sanitize_string(x, 220) for x in description_raw if _sanitize_string(x, 220)]
+            )
+        else:
+            description = _sanitize_string(description_raw, 900)
+        item = {
+            "job_title": _sanitize_string(row.get("job_title"), 100),
+            "company": _sanitize_string(row.get("company"), 100),
+            "start_date": _sanitize_string(row.get("start_date"), 40),
+            "end_date": _sanitize_string(row.get("end_date"), 40),
+            "description": description,
+        }
+        if any(item.values()):
+            items.append(item)
+        if len(items) >= max_items:
+            break
+    return items
+
+
+def _sanitize_project_items(values: Any, max_items: int = 10) -> List[Dict[str, str]]:
+    if not isinstance(values, list):
+        return []
+    items: List[Dict[str, str]] = []
+    for row in values:
+        if not isinstance(row, dict):
+            continue
+        description_raw = row.get("description")
+        if isinstance(description_raw, list):
+            description = "\n".join(
+                [_sanitize_string(x, 220) for x in description_raw if _sanitize_string(x, 220)]
+            )
+        else:
+            description = _sanitize_string(description_raw, 900)
+        item = {
+            "name": _sanitize_string(row.get("name"), 120),
+            "role": _sanitize_string(row.get("role"), 100),
+            "technologies": _sanitize_string(row.get("technologies"), 180),
+            "start_date": _sanitize_string(row.get("start_date"), 40),
+            "end_date": _sanitize_string(row.get("end_date"), 40),
+            "description": description,
+            "link": _sanitize_string(row.get("link"), 220),
+        }
+        if any(item.values()):
+            items.append(item)
+        if len(items) >= max_items:
+            break
+    return items
+
+
+def _sanitize_ai_patch(patch: Any) -> Dict[str, Any]:
+    if not isinstance(patch, dict):
+        return {}
+    out: Dict[str, Any] = {}
+    summary = _sanitize_string(patch.get("summary"), 1800)
+    skills = _sanitize_string_list(patch.get("skills"), max_items=30, max_chars=70)
+    experiences = _sanitize_experience_items(patch.get("experiences"), max_items=10)
+    projects = _sanitize_project_items(patch.get("projects"), max_items=10)
+    if summary:
+        out["summary"] = summary
+    if skills:
+        out["skills"] = skills
+    if experiences:
+        out["experiences"] = experiences
+    if projects:
+        out["projects"] = projects
+    return out
+
+
+def _merge_ai_patches(primary: Dict[str, Any], fallback: Dict[str, Any]) -> Dict[str, Any]:
+    out: Dict[str, Any] = dict(primary or {})
+    for key, value in (fallback or {}).items():
+        if key not in out:
+            out[key] = value
+            continue
+        curr = out.get(key)
+        if isinstance(curr, list) and not curr and isinstance(value, list):
+            out[key] = value
+        elif isinstance(curr, str) and not curr.strip() and isinstance(value, str):
+            out[key] = value
+    return out
+
+
+def _extract_json_object(text: str) -> Optional[Dict[str, Any]]:
+    raw = str(text or "").strip()
+    if not raw:
+        return None
+
+    # Common fenced-code response cleanup.
+    if raw.startswith("```"):
+        raw = re.sub(r"^```(?:json)?\s*", "", raw, flags=re.IGNORECASE)
+        raw = re.sub(r"\s*```$", "", raw).strip()
+
+    for candidate in (raw, raw[raw.find("{"): raw.rfind("}") + 1] if ("{" in raw and "}" in raw) else ""):
+        if not candidate:
+            continue
+        try:
+            parsed = json.loads(candidate)
+            if isinstance(parsed, dict):
+                return parsed
+        except Exception:
+            continue
+    return None
+
+
+def _looks_like_placeholder_api_key(value: str) -> bool:
+    v = str(value or "").strip().lower()
+    if not v:
+        return False
+    if v in {"sk-xxxx", "your_openai_api_key", "your-api-key", "replace_me", "changeme"}:
+        return True
+    if v.startswith("sk-") and v.endswith("xxxx"):
+        return True
+    if "your" in v and "key" in v:
+        return True
+    return False
+
+
+def _call_openai_structured_assistant(
+    prompt: str,
+    job_description: str,
+    resume: Resume,
+    company: str = "",
+    role: str = "",
+    timeout_sec: int = 25,
+) -> Tuple[Optional[Dict[str, Any]], Dict[str, str]]:
+    api_key = (os.getenv("OPENAI_API_KEY") or "").strip()
+    if not api_key:
+        return None, {"reason": "OPENAI_API_KEY not configured"}
+    if _looks_like_placeholder_api_key(api_key):
+        return None, {"reason": "OPENAI_API_KEY uses placeholder value; set a real key"}
+
+    model = (os.getenv("OPENAI_MODEL") or "gpt-4o-mini").strip()
+    base_url = (os.getenv("OPENAI_BASE_URL") or "https://api.openai.com/v1").strip().rstrip("/")
+    url = f"{base_url}/chat/completions"
+
+    system_prompt = (
+        "You are a resume copilot. Reply ONLY as valid JSON object with keys: "
+        "answer (string), apply_patch (object). "
+        "apply_patch may include summary (string), skills (array of strings), "
+        "experiences (array of objects with job_title, company, start_date, end_date, description), "
+        "projects (array of objects with name, role, technologies, start_date, end_date, description, link). "
+        "Do not invent companies, dates, or metrics unless explicitly present in input. "
+        "When uncertain, keep apply_patch empty and give safe guidance in answer."
+    )
+    user_payload = {
+        "prompt": _sanitize_string(prompt, 1200),
+        "job_description": _sanitize_string(job_description, 4000),
+        "company": _sanitize_string(company, 120),
+        "role": _sanitize_string(role, 120),
+        "resume": _resume_snapshot_for_llm(resume),
+    }
+    req_body = {
+        "model": model,
+        "temperature": 0.2,
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
+        ],
+    }
+
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(req_body).encode("utf-8"),
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=max(10, int(timeout_sec))) as resp:
+            raw = resp.read().decode("utf-8", errors="ignore")
+    except urllib.error.HTTPError as e:
+        body = ""
+        try:
+            body = e.read().decode("utf-8", errors="ignore")
+        except Exception:
+            body = ""
+        status = getattr(e, "code", "http_error")
+        reason = f"LLM HTTP {status}"
+        if body:
+            reason = f"{reason}: {body[:220]}"
+        return None, {"reason": reason, "model": model}
+    except Exception as e:
+        return None, {"reason": f"LLM request failed: {str(e)}", "model": model}
+
+    try:
+        payload = json.loads(raw or "{}")
+    except Exception:
+        return None, {"reason": "LLM response is not valid JSON", "model": model}
+
+    try:
+        content = (
+            payload.get("choices", [{}])[0]
+            .get("message", {})
+            .get("content", "")
+        )
+    except Exception:
+        content = ""
+    parsed = _extract_json_object(str(content or ""))
+    if not parsed:
+        return None, {"reason": "LLM did not return a valid JSON object", "model": model}
+    return parsed, {"model": model}
+
+
+def _quick_resume_score_local(resume: Resume) -> int:
+    score = 0
+    if (resume.full_name or "").strip():
+        score += 10
+    if (resume.email or "").strip():
+        score += 10
+    if (resume.phone or "").strip():
+        score += 6
+    if len(resume.skills or []) >= 5:
+        score += 14
+    if len(resume.experiences or []) >= 1:
+        score += 20
+    if len(resume.educations or []) >= 1:
+        score += 14
+    if len(resume.projects or []) >= 1:
+        score += 12
+    if (resume.summary or "").strip() and len((resume.summary or "").strip()) >= 40:
+        score += 14
+    return min(100, score)
+
+
+def _heuristic_assistant_response(
+    resume: Resume,
+    prompt: str,
+    job_description: str = "",
+    company: str = "",
+    role: str = "",
+) -> Dict[str, Any]:
+    intent = _infer_assistant_intent(prompt)
+
+    def _reply(answer: str, patch: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        return {
+            "answer": _sanitize_string(answer, 4000),
+            "apply_patch": _sanitize_ai_patch(patch or {}),
+            "intent": intent,
+        }
+
+    if intent == "ats":
+        result = analyze_ats(resume, job_description)
+        lines = [
+            f"ATS Score: {result.get('score', 0)}/100",
+            f"Matched: {', '.join(result.get('matched_keywords', [])[:10]) or '-'}",
+            f"Missing: {', '.join(result.get('missing_keywords', [])[:10]) or '-'}",
+        ]
+        if result.get("suggestions"):
+            lines.append("Top Suggestions:\n- " + "\n- ".join(result["suggestions"][:4]))
+        return _reply("\n".join(lines))
+
+    if intent == "tailor":
+        result = tailor_resume(resume, job_description)
+        patch = {
+            "summary": result.get("tailored_summary", ""),
+            "skills": result.get("recommended_skills", [])[:20],
+        }
+        lines = [
+            "Tailored resume suggestions ready.",
+            f"Focus Keywords: {', '.join(result.get('focus_keywords', [])[:10]) or '-'}",
+            "Click 'Apply AI Changes' to update summary + skills.",
+        ]
+        return _reply("\n".join(lines), patch)
+
+    if intent == "bullets":
+        result = enhance_resume_bullets(resume)
+        patch = {
+            "experiences": result.get("experiences", []),
+            "projects": result.get("projects", []),
+        }
+        msg = result.get("message") or "Bullet suggestions ready."
+        return _reply(f"{msg}\nClick 'Apply AI Changes' to update bullets.", patch)
+
+    if intent == "cover_letter":
+        result = generate_cover_letter(
+            resume=resume,
+            job_description=job_description,
+            company=company,
+            role=role,
+        )
+        return _reply(result.get("cover_letter") or "Cover letter could not be generated.")
+
+    if intent == "interview":
+        result = generate_interview_questions(resume=resume, job_description=job_description, count=10)
+        questions = result.get("questions", [])[:10]
+        lines = [f"{i + 1}. {v}" for i, v in enumerate(questions)]
+        return _reply("Interview Questions:\n" + ("\n".join(lines) if lines else "No questions generated."))
+
+    if intent == "skill_gap":
+        result = plan_skill_gap(resume, job_description)
+        lines = [
+            f"Missing Skills: {', '.join(result.get('missing_skills', [])[:10]) or '-'}",
+        ]
+        plan = result.get("learning_plan") or result.get("plan_30_days") or []
+        if plan:
+            lines.append("Learning Plan:\n- " + "\n- ".join(plan[:8]))
+        if result.get("message"):
+            lines.append(result["message"])
+        return _reply("\n".join(lines))
+
+    if intent == "rewrite_summary":
+        tone = "formal"
+        q = (prompt or "").lower()
+        if "friendly" in q:
+            tone = "friendly"
+        elif "crisp" in q or "short" in q:
+            tone = "crisp"
+        result = rewrite_summary_tone(resume.summary or "", tone)
+        patch = {"summary": result.get("rewritten_summary", "")}
+        return _reply(f"Summary rewritten in {tone} tone. Click 'Apply AI Changes'.", patch)
+
+    score = _quick_resume_score_local(resume)
+    checks = []
+    if not (resume.summary or "").strip():
+        checks.append("Add a 2-3 line summary.")
+    if len(resume.skills or []) < 6:
+        checks.append("Add at least 6 core skills.")
+    if len(resume.experiences or []) < 1:
+        checks.append("Add at least 1 experience entry.")
+    if len(resume.projects or []) < 1:
+        checks.append("Add at least 1 project with outcomes.")
+    if not resume.email or not resume.phone:
+        checks.append("Complete email and phone in personal details.")
+    if not checks:
+        checks.append("Resume looks strong. Run ATS Score and Tailor Resume for job-specific optimization.")
+    return _reply(
+        f"I can help with ATS, tailoring, bullets, interview Q, cover letter, and skill-gap plans.\n"
+        f"Current quick score: {score}/100\n"
+        f"Next actions:\n- " + "\n- ".join(checks)
+    )
+
+
+def assist_resume_hybrid(
+    resume: Resume,
+    prompt: str,
+    job_description: str = "",
+    company: str = "",
+    role: str = "",
+    prefer_llm: bool = True,
+) -> Dict[str, Any]:
+    heuristic = _heuristic_assistant_response(
+        resume=resume,
+        prompt=prompt,
+        job_description=job_description,
+        company=company,
+        role=role,
+    )
+    heuristic_patch = _sanitize_ai_patch(heuristic.get("apply_patch", {}))
+    intent = str(heuristic.get("intent") or _infer_assistant_intent(prompt))
+
+    if not prefer_llm:
+        return {
+            "answer": heuristic.get("answer", ""),
+            "apply_patch": heuristic_patch,
+            "intent": intent,
+            "engine": "heuristic",
+            "model": None,
+            "fallback_used": False,
+        }
+
+    llm_data, llm_meta = _call_openai_structured_assistant(
+        prompt=prompt,
+        job_description=job_description,
+        resume=resume,
+        company=company,
+        role=role,
+    )
+    if not llm_data:
+        return {
+            "answer": heuristic.get("answer", ""),
+            "apply_patch": heuristic_patch,
+            "intent": intent,
+            "engine": "heuristic",
+            "model": None,
+            "fallback_used": True,
+            "fallback_reason": llm_meta.get("reason", "LLM unavailable"),
+        }
+
+    llm_answer = _sanitize_string(llm_data.get("answer"), 5000)
+    llm_patch = _sanitize_ai_patch(llm_data.get("apply_patch"))
+    merged_patch = _merge_ai_patches(llm_patch, heuristic_patch)
+    answer = llm_answer or heuristic.get("answer", "")
+    if not answer:
+        answer = "No answer generated. Please retry with a clearer prompt."
+
+    return {
+        "answer": answer,
+        "apply_patch": merged_patch,
+        "intent": intent,
+        "engine": "llm",
+        "model": llm_meta.get("model"),
+        "fallback_used": False,
     }
 
 

@@ -11,7 +11,7 @@ import re
 import urllib.parse
 import urllib.request
 from email.message import EmailMessage
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 import json
 from flask import session, redirect, url_for, render_template_string
@@ -38,7 +38,76 @@ from resume_assistant import (
     quantify_achievement_lines,
     detect_duplicates,
     recommend_templates_ml,
+    assist_resume_hybrid,
 )
+
+_APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+
+def _looks_like_placeholder_secret(value: str) -> bool:
+    v = str(value or "").strip().lower()
+    if not v:
+        return False
+    placeholders = {
+        "sk-xxxx",
+        "your_openai_api_key",
+        "your-api-key",
+        "your_api_key",
+        "replace_me",
+        "replace-this",
+        "changeme",
+    }
+    if v in placeholders:
+        return True
+    if v.startswith("sk-") and v.endswith("xxxx"):
+        return True
+    if "your" in v and "key" in v:
+        return True
+    return False
+
+
+def _should_override_existing_env(key: str, existing: str) -> bool:
+    if not existing:
+        return True
+    low = (key or "").strip().lower()
+    if any(k in low for k in ("key", "token", "secret", "password")):
+        return _looks_like_placeholder_secret(existing)
+    return False
+
+
+def _load_env_from_file(path: str) -> None:
+    if not os.path.exists(path):
+        return
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            for raw in f:
+                line = raw.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                key, value = line.split("=", 1)
+                key = key.strip()
+                if not key:
+                    continue
+                value = value.strip()
+                if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+                    value = value[1:-1]
+                existing = (os.getenv(key) or "").strip()
+                if _should_override_existing_env(key, existing):
+                    os.environ[key] = value
+    except Exception:
+        # Keep startup robust even if .env parse fails.
+        return
+
+
+_load_env_from_file(os.path.join(_APP_ROOT, ".env"))
+
+
+def _utc_now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+def _utc_now_iso() -> str:
+    return _utc_now().isoformat()
 
 app = Flask(__name__, template_folder="template", static_folder="template")
 CORS(app)  # Allow front-end requests
@@ -427,6 +496,99 @@ def _fetch_google_templates(query: str, limit: int) -> list[dict]:
     return templates
 
 
+def _to_bool(value, default: bool = False) -> bool:
+    if value is None:
+        return default
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return value != 0
+    text = str(value).strip().lower()
+    if text in {"1", "true", "yes", "y", "on"}:
+        return True
+    if text in {"0", "false", "no", "n", "off", ""}:
+        return False
+    return default
+
+
+def _extract_pdf_options(data: dict) -> dict:
+    payload = data if isinstance(data, dict) else {}
+    settings = payload.get("settings")
+    if not isinstance(settings, dict):
+        settings = {}
+
+    def pick(*keys, default=None):
+        for key in keys:
+            value = payload.get(key)
+            if value not in (None, ""):
+                return value
+        for key in keys:
+            value = settings.get(key)
+            if value not in (None, ""):
+                return value
+        return default
+
+    template_name = pick(
+        "template_name",
+        "templateName",
+        "template",
+        "template_key",
+        "templateKey",
+        default=AppConfig.DEFAULT_TEMPLATE,
+    )
+    page_size = str(pick("page_size", "pageSize", default="letter") or "letter").strip().lower()
+    if page_size not in {"letter", "a4"}:
+        page_size = "letter"
+
+    raw_section_order = pick("section_order", "sectionOrder", default=[])
+    if isinstance(raw_section_order, list):
+        section_order = [str(x).strip() for x in raw_section_order if str(x).strip()]
+    elif isinstance(raw_section_order, str):
+        section_order = [x.strip() for x in raw_section_order.split(",") if x.strip()]
+    else:
+        section_order = []
+
+    raw_font_scale = pick("font_scale", "fontScale", default=1.0)
+    try:
+        font_scale = float(raw_font_scale)
+    except Exception:
+        font_scale = 1.0
+
+    margin_preset = str(pick("margin_preset", "marginPreset", default="normal") or "normal").strip().lower()
+    if margin_preset not in {"narrow", "compact", "normal", "wide", "relaxed"}:
+        margin_preset = "normal"
+
+    raw_section_visibility = pick("section_visibility", "sectionVisibility", default={})
+    section_visibility = raw_section_visibility if isinstance(raw_section_visibility, dict) else {}
+
+    return {
+        "template_name": template_name,
+        "page_size": page_size,
+        "layout_override": pick("layout_override", "layoutOverride", "page_layout", "pageLayout"),
+        "heading_align_override": pick(
+            "heading_align_override",
+            "headingAlignOverride",
+            "heading_align",
+            "headingAlign",
+        ),
+        "body_align_override": pick(
+            "body_align_override",
+            "bodyAlignOverride",
+            "body_align",
+            "bodyAlign",
+        ),
+        "accent_color_override": pick("accent_color_override", "accentColorOverride", "accent"),
+        "font_override": pick("font_override", "fontOverride", "font"),
+        "compact_mode": _to_bool(pick("compact_mode", "compactMode", default=False), False),
+        "ats_safe_mode": _to_bool(pick("ats_safe_mode", "atsSafeMode", default=False), False),
+        "section_order": section_order,
+        "font_scale": font_scale,
+        "margin_preset": margin_preset,
+        "section_visibility": section_visibility,
+        "header_layout": pick("header_layout", "headerLayout"),
+    }
+
+
 def _is_public_path(path: str) -> bool:
     public_paths = {
         "/login",
@@ -466,11 +628,13 @@ def auth_guard():
         return None
     # Session timeout for user/admin sessions.
     if session.get("user_authenticated") or session.get("admin_authenticated"):
-        now = datetime.utcnow()
+        now = _utc_now()
         last = session.get("last_activity_utc")
         if last:
             try:
                 last_dt = datetime.fromisoformat(last)
+                if last_dt.tzinfo is None:
+                    last_dt = last_dt.replace(tzinfo=timezone.utc)
                 if now - last_dt > app.permanent_session_lifetime:
                     session.clear()
                     if path.startswith("/api/"):
@@ -478,7 +642,7 @@ def auth_guard():
                     return redirect(url_for("login"))
             except Exception:
                 pass
-        session["last_activity_utc"] = now.isoformat()
+        session["last_activity_utc"] = _utc_now_iso()
 
     if _is_public_path(path):
         return None
@@ -568,7 +732,7 @@ def login():
             session["user_id"] = row["id"]
             session["user_name"] = row["username"]
             session["user_status"] = row["status"]
-            session["last_activity_utc"] = datetime.utcnow().isoformat()
+            session["last_activity_utc"] = _utc_now_iso()
             return redirect(url_for("index"))
     return render_template_string("""
 <!doctype html><html><head><title>Login</title>
@@ -730,7 +894,7 @@ def admin_login():
         if password == ADMIN_PASSWORD:
             session.permanent = True
             session["admin_authenticated"] = True
-            session["last_activity_utc"] = datetime.utcnow().isoformat()
+            session["last_activity_utc"] = _utc_now_iso()
             return redirect(url_for("admin_requests"))
         err = "Invalid admin password."
     return render_template_string("""
@@ -1201,25 +1365,21 @@ def export_pdf():
     try:
         data = request.json or {}
         resume = utils.dict_to_resume(data)
-        template_name = (
-            data.get("template_name")
-            or data.get("template")
-            or data.get("template_key")
-            or AppConfig.DEFAULT_TEMPLATE
-        )
-        page_size = data.get("page_size", "letter")
-        layout_override = data.get("layout_override") or data.get("page_layout")
-        heading_align_override = data.get("heading_align_override") or data.get("heading_align")
-        body_align_override = data.get("body_align_override") or data.get("body_align")
-        accent_color_override = data.get("accent_color_override")
-        font_override = data.get("font_override")
-        compact_mode = bool(data.get("compact_mode", False))
-        ats_safe_mode = bool(data.get("ats_safe_mode", False))
-        section_order = data.get("section_order") or []
-        font_scale = data.get("font_scale", 1.0)
-        margin_preset = data.get("margin_preset", "normal")
-        section_visibility = data.get("section_visibility") or {}
-        header_layout = data.get("header_layout") or data.get("headerLayout")
+        pdf_opts = _extract_pdf_options(data)
+        template_name = pdf_opts["template_name"]
+        page_size = pdf_opts["page_size"]
+        layout_override = pdf_opts["layout_override"]
+        heading_align_override = pdf_opts["heading_align_override"]
+        body_align_override = pdf_opts["body_align_override"]
+        accent_color_override = pdf_opts["accent_color_override"]
+        font_override = pdf_opts["font_override"]
+        compact_mode = pdf_opts["compact_mode"]
+        ats_safe_mode = pdf_opts["ats_safe_mode"]
+        section_order = pdf_opts["section_order"]
+        font_scale = pdf_opts["font_scale"]
+        margin_preset = pdf_opts["margin_preset"]
+        section_visibility = pdf_opts["section_visibility"]
+        header_layout = pdf_opts["header_layout"]
 
         # Generate PDF in memory
         pdf_buffer = io.BytesIO()
@@ -1265,25 +1425,21 @@ def preview_pdf():
     try:
         data = request.json or {}
         resume = utils.dict_to_resume(data)
-        template_name = (
-            data.get("template_name")
-            or data.get("template")
-            or data.get("template_key")
-            or AppConfig.DEFAULT_TEMPLATE
-        )
-        page_size = data.get("page_size", "letter")
-        layout_override = data.get("layout_override") or data.get("page_layout")
-        heading_align_override = data.get("heading_align_override") or data.get("heading_align")
-        body_align_override = data.get("body_align_override") or data.get("body_align")
-        accent_color_override = data.get("accent_color_override")
-        font_override = data.get("font_override")
-        compact_mode = bool(data.get("compact_mode", False))
-        ats_safe_mode = bool(data.get("ats_safe_mode", False))
-        section_order = data.get("section_order") or []
-        font_scale = data.get("font_scale", 1.0)
-        margin_preset = data.get("margin_preset", "normal")
-        section_visibility = data.get("section_visibility") or {}
-        header_layout = data.get("header_layout") or data.get("headerLayout")
+        pdf_opts = _extract_pdf_options(data)
+        template_name = pdf_opts["template_name"]
+        page_size = pdf_opts["page_size"]
+        layout_override = pdf_opts["layout_override"]
+        heading_align_override = pdf_opts["heading_align_override"]
+        body_align_override = pdf_opts["body_align_override"]
+        accent_color_override = pdf_opts["accent_color_override"]
+        font_override = pdf_opts["font_override"]
+        compact_mode = pdf_opts["compact_mode"]
+        ats_safe_mode = pdf_opts["ats_safe_mode"]
+        section_order = pdf_opts["section_order"]
+        font_scale = pdf_opts["font_scale"]
+        margin_preset = pdf_opts["margin_preset"]
+        section_visibility = pdf_opts["section_visibility"]
+        header_layout = pdf_opts["header_layout"]
 
         pdf_buffer = io.BytesIO()
         PDFGenerator.generate(
@@ -1322,35 +1478,44 @@ def export_bulk_pdf():
     try:
         data = request.json or {}
         resume = utils.dict_to_resume(data)
-        templates = data.get("template_names") or []
+        pdf_opts = _extract_pdf_options(data)
+        templates = (
+            data.get("template_names")
+            or data.get("templateNames")
+            or data.get("templates")
+            or []
+        )
+        if isinstance(templates, str):
+            templates = [x.strip() for x in templates.split(",") if x.strip()]
         if not isinstance(templates, list):
             templates = []
         templates = [str(t).strip() for t in templates if str(t).strip()]
         if not templates:
-            templates = [AppConfig.DEFAULT_TEMPLATE]
+            templates = [pdf_opts["template_name"] or AppConfig.DEFAULT_TEMPLATE]
         # Keep only known templates and avoid huge ZIP requests.
         known = set(AppConfig.TEMPLATES.keys())
         selected = []
         for t in templates:
-            if t in known and t not in selected:
-                selected.append(t)
+            resolved = PDFGenerator._resolve_template_name(t)
+            if resolved in known and resolved not in selected:
+                selected.append(resolved)
         selected = selected[:12]
         if not selected:
             return jsonify({"error": "No valid templates selected"}), 400
 
-        page_size = data.get("page_size", "letter")
-        layout_override = data.get("layout_override")
-        heading_align_override = data.get("heading_align_override") or data.get("heading_align")
-        body_align_override = data.get("body_align_override") or data.get("body_align")
-        accent_color_override = data.get("accent_color_override")
-        font_override = data.get("font_override")
-        compact_mode = bool(data.get("compact_mode", False))
-        ats_safe_mode = bool(data.get("ats_safe_mode", False))
-        section_order = data.get("section_order") or []
-        font_scale = data.get("font_scale", 1.0)
-        margin_preset = data.get("margin_preset", "normal")
-        section_visibility = data.get("section_visibility") or {}
-        header_layout = data.get("header_layout") or data.get("headerLayout")
+        page_size = pdf_opts["page_size"]
+        layout_override = pdf_opts["layout_override"]
+        heading_align_override = pdf_opts["heading_align_override"]
+        body_align_override = pdf_opts["body_align_override"]
+        accent_color_override = pdf_opts["accent_color_override"]
+        font_override = pdf_opts["font_override"]
+        compact_mode = pdf_opts["compact_mode"]
+        ats_safe_mode = pdf_opts["ats_safe_mode"]
+        section_order = pdf_opts["section_order"]
+        font_scale = pdf_opts["font_scale"]
+        margin_preset = pdf_opts["margin_preset"]
+        section_visibility = pdf_opts["section_visibility"]
+        header_layout = pdf_opts["header_layout"]
 
         zip_buffer = io.BytesIO()
         base = (resume.full_name or "resume").strip().replace(" ", "_")
@@ -1690,7 +1855,7 @@ def duplicate_detector_api():
 
 @app.route('/api/ai-assistant', methods=['POST'])
 def ai_assistant_api():
-    """Lightweight AI assistant router for common resume tasks."""
+    """Hybrid AI assistant: LLM-first (when configured) with deterministic fallback."""
     try:
         data = request.json or {}
         prompt = (data.get("prompt") or data.get("message") or "").strip()
@@ -1699,104 +1864,18 @@ def ai_assistant_api():
 
         resume = utils.dict_to_resume(data)
         jd = (data.get("job_description") or "").strip()
-        q = prompt.lower()
-
-        def _reply(answer: str, patch=None):
-            return jsonify({
-                "answer": answer.strip(),
-                "apply_patch": patch or {}
-            })
-
-        if any(k in q for k in ["ats", "score", "keyword match", "jd match"]):
-            result = analyze_ats(resume, jd)
-            lines = [
-                f"ATS Score: {result.get('score', 0)}/100",
-                f"Matched: {', '.join(result.get('matched_keywords', [])[:10]) or '-'}",
-                f"Missing: {', '.join(result.get('missing_keywords', [])[:10]) or '-'}",
-            ]
-            if result.get("suggestions"):
-                lines.append("Top Suggestions:\n- " + "\n- ".join(result["suggestions"][:4]))
-            return _reply("\n".join(lines))
-
-        if any(k in q for k in ["tailor", "customize", "optimize resume", "align resume"]):
-            result = tailor_resume(resume, jd)
-            patch = {
-                "summary": result.get("tailored_summary", ""),
-                "skills": result.get("recommended_skills", [])[:20],
-            }
-            lines = [
-                "Tailored resume suggestions ready.",
-                f"Focus Keywords: {', '.join(result.get('focus_keywords', [])[:10]) or '-'}",
-                "Click 'Apply AI Changes' to update summary + skills.",
-            ]
-            return _reply("\n".join(lines), patch)
-
-        if any(k in q for k in ["bullet", "enhance", "improve experience", "rewrite experience"]):
-            result = enhance_resume_bullets(resume)
-            patch = {
-                "experiences": result.get("experiences", []),
-                "projects": result.get("projects", []),
-            }
-            msg = result.get("message") or "Bullet suggestions ready."
-            return _reply(f"{msg}\nClick 'Apply AI Changes' to update bullets.", patch)
-
-        if any(k in q for k in ["cover letter", "cover", "application letter"]):
-            result = generate_cover_letter(
-                resume=resume,
-                job_description=jd,
-                company=data.get("company", ""),
-                role=data.get("role", ""),
-            )
-            return _reply(result.get("cover_letter") or "Cover letter could not be generated.")
-
-        if any(k in q for k in ["interview", "questions"]):
-            result = generate_interview_questions(resume=resume, job_description=jd, count=10)
-            questions = result.get("questions", [])[:10]
-            lines = [f"{i + 1}. {v}" for i, v in enumerate(questions)]
-            return _reply("Interview Questions:\n" + ("\n".join(lines) if lines else "No questions generated."))
-
-        if any(k in q for k in ["skill gap", "missing skills", "learning plan"]):
-            result = plan_skill_gap(resume, jd)
-            lines = [
-                f"Missing Skills: {', '.join(result.get('missing_skills', [])[:10]) or '-'}",
-            ]
-            plan = result.get("learning_plan", [])
-            if plan:
-                lines.append("Learning Plan:\n- " + "\n- ".join(plan[:8]))
-            if result.get("message"):
-                lines.append(result["message"])
-            return _reply("\n".join(lines))
-
-        if any(k in q for k in ["rewrite summary", "summary tone", "make summary"]):
-            tone = "formal"
-            if "friendly" in q:
-                tone = "friendly"
-            elif "crisp" in q or "short" in q:
-                tone = "crisp"
-            result = rewrite_summary_tone(resume.summary or "", tone)
-            patch = {"summary": result.get("rewritten_summary", "")}
-            return _reply(f"Summary rewritten in {tone} tone. Click 'Apply AI Changes'.", patch)
-
-        # General assistant fallback.
-        score = _quick_resume_score(resume)
-        checks = []
-        if not (resume.summary or "").strip():
-            checks.append("Add a 2-3 line summary.")
-        if len(resume.skills or []) < 6:
-            checks.append("Add at least 6 core skills.")
-        if len(resume.experiences or []) < 1:
-            checks.append("Add at least 1 experience entry.")
-        if len(resume.projects or []) < 1:
-            checks.append("Add at least 1 project with outcomes.")
-        if not resume.email or not resume.phone:
-            checks.append("Complete email and phone in personal details.")
-        if not checks:
-            checks.append("Resume looks strong. Run ATS Score and Tailor Resume for job-specific optimization.")
-        return _reply(
-            f"I can help with ATS, tailoring, bullets, interview Q, cover letter, and skill-gap plans.\n"
-            f"Current quick score: {score}/100\n"
-            f"Next actions:\n- " + "\n- ".join(checks)
+        prefer_llm = _to_bool(data.get("prefer_llm", data.get("use_llm", True)), True)
+        if _to_bool(data.get("force_heuristic", False), False):
+            prefer_llm = False
+        result = assist_resume_hybrid(
+            resume=resume,
+            prompt=prompt,
+            job_description=jd,
+            company=(data.get("company") or ""),
+            role=(data.get("role") or ""),
+            prefer_llm=prefer_llm,
         )
+        return jsonify(result)
     except Exception as e:
         app.logger.error(f"AI assistant failed: {e}")
         return jsonify({"error": str(e)}), 500

@@ -5,9 +5,7 @@ const trimTrailingSlash = (v) => String(v || '').trim().replace(/\/+$/, '')
 const unique = (arr) => [...new Set(arr.filter(Boolean))]
 const HOSTNAME = typeof window !== 'undefined' ? window.location.hostname : ''
 const ORIGIN = typeof window !== 'undefined' ? trimTrailingSlash(window.location.origin) : ''
-const PROTOCOL = typeof window !== 'undefined' ? window.location.protocol : 'http:'
 const IS_LOCAL_HOST = HOSTNAME === 'localhost' || HOSTNAME === '127.0.0.1' || HOSTNAME === '::1'
-const SAME_HOST_5000_API = HOSTNAME ? `${PROTOCOL}//${HOSTNAME}:5000/api` : ''
 const ENV_API_BASE_RAW = trimTrailingSlash(import.meta.env.VITE_API_BASE || '')
 const ENV_API_ROOT = ENV_API_BASE_RAW
   ? (ENV_API_BASE_RAW.endsWith('/api') ? ENV_API_BASE_RAW : `${ENV_API_BASE_RAW}/api`)
@@ -18,7 +16,6 @@ const ENV_BACKEND_ROOT = ENV_API_ROOT.endsWith('/api')
 
 const API_ROOTS = unique([
   ENV_API_ROOT,
-  SAME_HOST_5000_API,
   IS_LOCAL_HOST ? 'http://127.0.0.1:5000/api' : '',
   IS_LOCAL_HOST ? 'http://localhost:5000/api' : '',
   ORIGIN ? `${ORIGIN}/api` : '',

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Template - Executive Minimal</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Georgia, "Times New Roman", serif;
+      background: #f4f2ee;
+      color: #1f1d1a;
+      padding: 28px 12px;
+    }
+    .resume {
+      max-width: 860px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #ddd8cf;
+      box-shadow: 0 12px 28px rgba(35, 28, 20, 0.11);
+      padding: 34px 42px;
+    }
+    header {
+      border-bottom: 1px solid #d9d2c8;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: 36px;
+      letter-spacing: 0.4px;
+      font-weight: 600;
+      color: #1c1a17;
+      margin-bottom: 2px;
+    }
+    .role {
+      font-size: 16px;
+      color: #48433a;
+      margin-bottom: 8px;
+    }
+    .contact {
+      font-size: 13px;
+      color: #5e564b;
+      line-height: 1.6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 10px 24px;
+      margin-bottom: 18px;
+    }
+    .label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      color: #70675a;
+      padding-top: 4px;
+      font-weight: 700;
+    }
+    .content {
+      font-size: 14px;
+      line-height: 1.72;
+      color: #2f2b24;
+      text-align: justify;
+    }
+    .job {
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #ece7df;
+    }
+    .job:last-child { border-bottom: 0; padding-bottom: 0; margin-bottom: 0; }
+    .job-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+    .title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #1f1a15;
+    }
+    .period {
+      font-size: 12px;
+      color: #6f665b;
+      white-space: nowrap;
+    }
+    .org {
+      font-style: italic;
+      font-size: 14px;
+      color: #4f473d;
+      margin-bottom: 4px;
+    }
+    ul {
+      margin-top: 6px;
+      margin-left: 20px;
+      font-size: 13.5px;
+      color: #2f2b24;
+      line-height: 1.65;
+    }
+    .edu-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #2f2b24;
+    }
+    .edu-line strong { color: #191612; }
+    @media (max-width: 720px) {
+      .resume { padding: 24px 20px; }
+      .grid { grid-template-columns: 1fr; gap: 6px; }
+      .label { padding-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <article class="resume">
+    <header>
+      <h1>Tiffany Giroux</h1>
+      <div class="role">Freight and Logistics Analyst</div>
+      <div class="contact">Orlando, Florida 27267 | +1 (555) 249-8810 | tiffany.giroux@email.com</div>
+    </header>
+
+    <section class="grid">
+      <div class="label">Summary</div>
+      <div class="content">
+        Supply chain and logistics professional with strong analytical ability and experience in freight, bookkeeping, and process controls.
+        Skilled in linking detailed operational metrics to strategic cost optimization initiatives and business outcomes.
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="label">Experience</div>
+      <div>
+        <div class="job">
+          <div class="job-head">
+            <div class="title">Freight Audit and Logistics Analyst</div>
+            <div class="period">Jul 2014 - Present</div>
+          </div>
+          <div class="org">Ford, Dennis, USA</div>
+          <div class="content">Delivered data-led process improvements across freight lifecycle management and audit operations.</div>
+          <ul>
+            <li>Improved freight efficiency and reduced costs by 13% across key shipping lanes.</li>
+          </ul>
+        </div>
+
+        <div class="job">
+          <div class="job-head">
+            <div class="title">Senior Logistics Business Analyst</div>
+            <div class="period">May 2012 - Jun 2014</div>
+          </div>
+          <div class="org">Honda, Christina, USA</div>
+          <div class="content">Prepared monthly KPI dashboards, budget forecasts, and route-cost impact analysis for leadership teams.</div>
+        </div>
+
+        <div class="job">
+          <div class="job-head">
+            <div class="title">Senior Logistics Coordinator</div>
+            <div class="period">May 2011 - May 2012</div>
+          </div>
+          <div class="org">Honda, Christina, USA</div>
+          <div class="content">Supported distribution operations and executed process improvements to increase operational throughput.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="label">Education</div>
+      <div>
+        <div class="edu-line">
+          <strong>Postgraduate Diploma, Management Studies</strong>
+          <span>Sep 2009 - Sep 2010</span>
+        </div>
+        <div class="edu-line">
+          <strong>University of Hertfordshire, Bedford</strong>
+          <span>Sep 2007 - Sep 2009</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="label">Skills</div>
+      <div class="content">Freight Audit, KPI Reporting, Cost Analysis, Forecasting, Process Improvement, SAP, SQL, Excel, Power BI</div>
+    </section>
+  </article>
+</body>
+</html>

@@ -796,5 +796,83 @@
       "#dbeafe",
       "#f8fafc"
     ]
+  },
+  {
+    "id": "html-sidebar-modern",
+    "name": "Sidebar Modern (HTML)",
+    "category": "HTML Custom",
+    "preview_variant": "sidebar",
+    "mood": "Professional",
+    "tagline": "Sidebar-driven modern layout with strong profile panel",
+    "canva_query": "sidebar modern resume template",
+    "settings": {
+      "template": "metro_sidebar",
+      "accent": "#123a60",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "two_column",
+      "headerLayout": "split",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#123a60",
+      "#dbeafe",
+      "#f8fafc"
+    ],
+    "thumbnail": "/assets/canva-ocean-pro.svg",
+    "html_template": "/html-templates/sidebar_modern_resume.html"
+  },
+  {
+    "id": "html-executive-minimal",
+    "name": "Executive Minimal (HTML)",
+    "category": "HTML Custom",
+    "preview_variant": "plain",
+    "mood": "Formal",
+    "tagline": "Minimal executive style with classic reading flow",
+    "canva_query": "executive minimal resume template",
+    "settings": {
+      "template": "executive_slate",
+      "accent": "#1f2937",
+      "font": "Times",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "left",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#1f2937",
+      "#e5e7eb",
+      "#f9fafb"
+    ],
+    "thumbnail": "/assets/canva-slate-frost.svg",
+    "html_template": "/html-templates/executive_minimal_resume.html"
+  },
+  {
+    "id": "html-creative-grid",
+    "name": "Creative Grid (HTML)",
+    "category": "HTML Custom",
+    "preview_variant": "creative",
+    "mood": "Bold",
+    "tagline": "Creative two-panel grid with strong visual contrast",
+    "canva_query": "creative grid resume template",
+    "settings": {
+      "template": "creative_split",
+      "accent": "#0f6b84",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "two_column",
+      "headerLayout": "split",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#0f6b84",
+      "#cffafe",
+      "#ecfeff"
+    ],
+    "thumbnail": "/assets/canva-skyline-aqua.svg",
+    "html_template": "/html-templates/creative_grid_resume.html"
   }
 ]

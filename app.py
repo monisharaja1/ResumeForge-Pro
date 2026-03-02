@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file, render_template, send_from_directory
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import io
 import base64
@@ -8,6 +8,8 @@ import html
 import zipfile
 import smtplib
 import re
+import urllib.parse
+import urllib.request
 from email.message import EmailMessage
 from datetime import datetime, timedelta
 from functools import wraps
@@ -46,6 +48,9 @@ app.permanent_session_lifetime = timedelta(minutes=int(os.getenv("SESSION_TIMEOU
 db = Database(AppConfig.DB_PATH)
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "monisharajap2003@gmail.com")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "monisharaja")
+GOOGLE_TEMPLATES_API_KEY = (os.getenv("GOOGLE_TEMPLATES_API_KEY") or "").strip()
+GOOGLE_TEMPLATES_CSE_ID = (os.getenv("GOOGLE_TEMPLATES_CSE_ID") or "").strip()
+GOOGLE_TEMPLATES_DEFAULT_QUERY = (os.getenv("GOOGLE_TEMPLATES_DEFAULT_QUERY") or "resume template").strip()
 
 
 def _auth_conn():
@@ -336,6 +341,92 @@ def _send_email(subject: str, body: str, to_email: str):
         server.send_message(msg)
 
 
+def _guess_template_for_google_item(title: str, snippet: str) -> str:
+    text = f"{title} {snippet}".lower()
+    if any(k in text for k in ["executive", "board", "director", "leadership"]):
+        return "executive_slate"
+    if any(k in text for k in ["corporate", "business", "manager"]):
+        return "corporate"
+    if any(k in text for k in ["creative", "portfolio", "designer", "visual"]):
+        return "creative_split"
+    if any(k in text for k in ["minimal", "simple", "clean"]):
+        return "modern"
+    if any(k in text for k in ["classic", "traditional"]):
+        return "classic"
+    if any(k in text for k in ["ats", "plain", "machine readable"]):
+        return "mono_compact"
+    if any(k in text for k in ["sidebar", "two column", "split"]):
+        return "metro_sidebar"
+    return AppConfig.DEFAULT_TEMPLATE
+
+
+def _fetch_google_templates(query: str, limit: int) -> list[dict]:
+    if not GOOGLE_TEMPLATES_API_KEY or not GOOGLE_TEMPLATES_CSE_ID:
+        return []
+
+    prompt = (query or GOOGLE_TEMPLATES_DEFAULT_QUERY or "resume template").strip()
+    params = urllib.parse.urlencode({
+        "key": GOOGLE_TEMPLATES_API_KEY,
+        "cx": GOOGLE_TEMPLATES_CSE_ID,
+        "q": f"{prompt} site:docs.google.com",
+        "num": max(1, min(10, int(limit or 8))),
+        "safe": "active",
+    })
+    url = f"https://www.googleapis.com/customsearch/v1?{params}"
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "ResumeForge-Pro/3.0",
+        },
+    )
+
+    with urllib.request.urlopen(req, timeout=12) as resp:
+        raw = resp.read().decode("utf-8", errors="ignore")
+    payload = json.loads(raw or "{}")
+    items = payload.get("items", [])
+    if not isinstance(items, list):
+        items = []
+
+    templates = []
+    for idx, item in enumerate(items):
+        if not isinstance(item, dict):
+            continue
+        link = str(item.get("link", "") or "").strip()
+        if not link:
+            continue
+        title = str(item.get("title", "") or "").strip() or f"Google Template {idx + 1}"
+        snippet = str(item.get("snippet", "") or "").replace("\n", " ").strip()
+        display_link = str(item.get("displayLink", "") or "docs.google.com").strip()
+        pagemap = item.get("pagemap", {}) if isinstance(item.get("pagemap"), dict) else {}
+        thumb = ""
+        cse_images = pagemap.get("cse_image", [])
+        if isinstance(cse_images, list) and cse_images:
+            first = cse_images[0]
+            if isinstance(first, dict):
+                thumb = str(first.get("src", "") or "").strip()
+        template_key = _guess_template_for_google_item(title, snippet)
+        templates.append({
+            "id": f"google-template-{idx + 1}",
+            "name": title,
+            "category": "Google Templates",
+            "mood": "External",
+            "tagline": snippet or f"Source: {display_link}",
+            "source": "google",
+            "html_template": link,
+            "thumbnail": thumb,
+            "settings": {
+                "template": template_key,
+                "accent": AppConfig.ACCENT_COLOR,
+                "font": AppConfig.DEFAULT_FONT,
+                "pageSize": "letter",
+                "compactMode": False,
+            },
+            "palette": [AppConfig.ACCENT_COLOR, "#e2e8f0", "#ffffff"],
+        })
+    return templates
+
+
 def _is_public_path(path: str) -> bool:
     public_paths = {
         "/login",
@@ -353,6 +444,8 @@ def _is_public_path(path: str) -> bool:
     if path.startswith("/public/"):
         return True
     if path.startswith("/static") or path.startswith("/template"):
+        return True
+    if path.startswith("/assets") or path.startswith("/html-templates/"):
         return True
     return False
 
@@ -417,7 +510,11 @@ _init_auth_db()
 # ---------- Serve Front-End ----------
 @app.route('/')
 def index():
-    return render_template('index.html')
+    dist_dir = os.path.join("frontend", "dist")
+    index_file = os.path.join(dist_dir, "index.html")
+    if os.path.exists(index_file):
+        return send_from_directory(dist_dir, "index.html")
+    return "Frontend build not found. Run `npm run build` in `frontend`.", 503
 
 
 @app.route('/templates_catalog.json')
@@ -428,8 +525,28 @@ def templates_catalog():
 
 @app.route('/assets/<path:filename>')
 def template_assets(filename):
-    """Serve local preview asset files used by template cards."""
+    """Serve React build assets first, then template preview asset files."""
+    react_assets_dir = os.path.join("frontend", "dist", "assets")
+    react_asset = os.path.join(react_assets_dir, filename)
+    if os.path.exists(react_asset):
+        return send_from_directory(react_assets_dir, filename)
     return send_from_directory(os.path.join("template", "assets"), filename)
+
+
+@app.route('/html-templates/<path:filename>')
+def html_template_file(filename):
+    """Serve static HTML resume templates for template previews."""
+    return send_from_directory(os.path.join("template", "html_templates"), filename)
+
+
+@app.route('/vite.svg')
+def vite_svg():
+    """Serve Vite favicon from the React build output if present."""
+    dist_dir = os.path.join("frontend", "dist")
+    icon_file = os.path.join(dist_dir, "vite.svg")
+    if os.path.exists(icon_file):
+        return send_from_directory(dist_dir, "vite.svg")
+    return "", 404
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -1361,6 +1478,46 @@ def template_recommend_api():
     except Exception as e:
         app.logger.error(f"Template recommendation failed: {e}")
         return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/google-templates', methods=['GET'])
+@_login_required
+def google_templates_api():
+    """Fetch template ideas from Google Custom Search and normalize for gallery UI."""
+    query = (request.args.get("q") or GOOGLE_TEMPLATES_DEFAULT_QUERY or "resume template").strip()
+    try:
+        limit = int(request.args.get("limit", "8") or 8)
+    except Exception:
+        limit = 8
+    limit = max(1, min(10, limit))
+
+    if not GOOGLE_TEMPLATES_API_KEY or not GOOGLE_TEMPLATES_CSE_ID:
+        return jsonify({
+            "enabled": False,
+            "provider": "google_custom_search",
+            "query": query,
+            "templates": [],
+            "message": "Set GOOGLE_TEMPLATES_API_KEY and GOOGLE_TEMPLATES_CSE_ID to enable Google templates.",
+        })
+
+    try:
+        templates = _fetch_google_templates(query=query, limit=limit)
+        return jsonify({
+            "enabled": True,
+            "provider": "google_custom_search",
+            "query": query,
+            "count": len(templates),
+            "templates": templates,
+        })
+    except Exception as e:
+        app.logger.error(f"Google templates fetch failed: {e}")
+        return jsonify({
+            "enabled": True,
+            "provider": "google_custom_search",
+            "query": query,
+            "templates": [],
+            "error": str(e),
+        }), 502
 
 
 @app.route('/api/tailor-resume', methods=['POST'])

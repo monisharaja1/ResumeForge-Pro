@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Template - Sidebar Modern</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+      background: #eef3f9;
+      color: #1f2d3d;
+      padding: 24px;
+    }
+    .page {
+      max-width: 940px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 14px 32px rgba(20, 40, 65, 0.14);
+      display: grid;
+      grid-template-columns: 280px 1fr;
+    }
+    .sidebar {
+      background: linear-gradient(180deg, #123a60 0%, #194e7f 100%);
+      color: #e8f1fb;
+      padding: 28px 22px;
+    }
+    .name {
+      font-size: 30px;
+      line-height: 1.15;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .role {
+      font-size: 15px;
+      color: #c7dcf4;
+      margin-bottom: 24px;
+    }
+    .side-block { margin-bottom: 22px; }
+    .side-title {
+      font-size: 12px;
+      letter-spacing: 1.6px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .side-line {
+      font-size: 13px;
+      line-height: 1.45;
+      color: #d7e8fb;
+      margin-bottom: 6px;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #eaf3ff;
+      border-radius: 999px;
+      font-size: 12px;
+      padding: 4px 10px;
+    }
+    .main {
+      padding: 28px 30px;
+      background: #ffffff;
+    }
+    .section { margin-bottom: 24px; }
+    .section-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.6px;
+      color: #13446f;
+      border-bottom: 2px solid #e3ecf6;
+      padding-bottom: 7px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    .summary {
+      font-size: 14px;
+      line-height: 1.65;
+      color: #304559;
+      text-align: justify;
+    }
+    .item { margin-bottom: 16px; }
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+    .job-title {
+      font-size: 17px;
+      color: #102b44;
+      font-weight: 700;
+    }
+    .dates {
+      font-size: 12px;
+      color: #4f6882;
+      background: #eef4fb;
+      border-radius: 20px;
+      padding: 3px 10px;
+      white-space: nowrap;
+    }
+    .company {
+      font-size: 14px;
+      color: #1d5a8a;
+      font-weight: 600;
+      margin-bottom: 7px;
+    }
+    .item p {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #344a5f;
+    }
+    ul {
+      margin-top: 7px;
+      margin-left: 18px;
+      color: #2e465d;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .education-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .degree { font-weight: 700; color: #162d44; }
+    .edu-meta { color: #4f6680; font-size: 13px; }
+    @media (max-width: 780px) {
+      .page { grid-template-columns: 1fr; }
+      .main { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <aside class="sidebar">
+      <div class="name">Tiffany Giroux</div>
+      <div class="role">Freight and Logistics Analyst</div>
+
+      <div class="side-block">
+        <div class="side-title">Contact</div>
+        <div class="side-line">Orlando, Florida</div>
+        <div class="side-line">+1 (555) 249-8810</div>
+        <div class="side-line">tiffany.giroux@email.com</div>
+        <div class="side-line">linkedin.com/in/tiffanygiroux</div>
+      </div>
+
+      <div class="side-block">
+        <div class="side-title">Core Skills</div>
+        <div class="chips">
+          <span class="chip">Freight Audit</span>
+          <span class="chip">KPI Reporting</span>
+          <span class="chip">Cost Analysis</span>
+          <span class="chip">Forecasting</span>
+          <span class="chip">Process Improvement</span>
+          <span class="chip">Carrier Management</span>
+        </div>
+      </div>
+
+      <div class="side-block">
+        <div class="side-title">Tools</div>
+        <div class="side-line">SAP, Oracle, SQL, Excel, Power BI</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="section">
+        <div class="section-title">Profile</div>
+        <p class="summary">
+          Logistics and supply chain professional with strong bookkeeping and analytical background.
+          Experienced in process optimization, freight cost control, and cross-functional execution.
+          Delivers measurable outcomes through data-backed planning and operational discipline.
+        </p>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Experience</div>
+
+        <article class="item">
+          <div class="top-row">
+            <div class="job-title">Freight Audit and Logistics Analyst</div>
+            <div class="dates">Jul 2014 - Present</div>
+          </div>
+          <div class="company">Ford, Dennis, USA</div>
+          <p>Led freight data analysis and identified high-impact improvement opportunities across transportation operations.</p>
+          <ul>
+            <li>Reduced total freight spending by 13% through process and invoice control improvements.</li>
+            <li>Improved exception-handling workflow and lowered billing disputes.</li>
+          </ul>
+        </article>
+
+        <article class="item">
+          <div class="top-row">
+            <div class="job-title">Senior Logistics Business Analyst</div>
+            <div class="dates">May 2012 - Jun 2014</div>
+          </div>
+          <div class="company">Honda, Christina, USA</div>
+          <p>Produced monthly logistics metrics, budget variance forecasting, and routing impact analysis for leadership decisions.</p>
+        </article>
+
+        <article class="item">
+          <div class="top-row">
+            <div class="job-title">Senior Logistics Coordinator</div>
+            <div class="dates">May 2011 - May 2012</div>
+          </div>
+          <div class="company">Honda, Christina, USA</div>
+          <p>Supported daily transportation operations and coordinated reporting for regional distribution teams.</p>
+        </article>
+      </section>
+
+      <section class="section">
+        <div class="section-title">Education</div>
+        <div class="education-row">
+          <div class="degree">Postgraduate Diploma, Management Studies</div>
+          <div class="edu-meta">Sep 2009 - Sep 2010</div>
+        </div>
+        <div class="education-row">
+          <div class="degree">University of Hertfordshire, Bedford</div>
+          <div class="edu-meta">Sep 2007 - Sep 2009</div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

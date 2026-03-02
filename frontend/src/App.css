@@ -278,10 +278,12 @@
   display: flex;
   gap: 8px;
   margin-top: 6px;
+  flex-wrap: wrap;
 }
 
 .template-actions button {
   flex: 1;
+  min-width: 92px;
 }
 
 .template-actions button:first-child {
@@ -643,6 +645,7 @@ button:hover {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 @media (max-width: 1100px) {

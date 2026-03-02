@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resume Template - Creative Grid</title>
+  <style>
+    :root {
+      --bg: #edf4fb;
+      --paper: #ffffff;
+      --ink: #1d2a35;
+      --muted: #54697c;
+      --accent: #0f6b84;
+      --accent-soft: #e4f4f8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at top left, #f5fbff 0%, var(--bg) 44%, #e6eef8 100%);
+      color: var(--ink);
+      padding: 24px 14px;
+    }
+    .resume {
+      max-width: 980px;
+      margin: 0 auto;
+      background: var(--paper);
+      border-radius: 16px;
+      box-shadow: 0 18px 34px rgba(14, 48, 78, 0.16);
+      overflow: hidden;
+    }
+    .hero {
+      padding: 26px 30px;
+      background: linear-gradient(135deg, #0f6b84 0%, #0a4f7f 55%, #14395d 100%);
+      color: #f4fbff;
+    }
+    .hero h1 {
+      font-size: 34px;
+      margin-bottom: 4px;
+      letter-spacing: 0.2px;
+    }
+    .hero .role { font-size: 17px; color: #d8edf8; margin-bottom: 10px; }
+    .hero .meta { font-size: 13px; color: #c8e6f5; }
+    .layout {
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 0;
+    }
+    .left, .right { padding: 24px 28px; }
+    .right {
+      background: #f8fbff;
+      border-left: 1px solid #dfeaf5;
+    }
+    .section { margin-bottom: 22px; }
+    .section h2 {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+    .summary {
+      font-size: 14px;
+      line-height: 1.7;
+      color: #304656;
+      text-align: justify;
+    }
+    .job {
+      border: 1px solid #e4edf5;
+      border-radius: 10px;
+      padding: 12px 13px;
+      margin-bottom: 10px;
+      background: #ffffff;
+    }
+    .job .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .job .title { font-size: 16px; font-weight: 700; color: #143044; }
+    .job .date {
+      font-size: 12px;
+      color: #3d627b;
+      background: var(--accent-soft);
+      border-radius: 14px;
+      padding: 3px 9px;
+      white-space: nowrap;
+    }
+    .job .org {
+      font-size: 13px;
+      color: #296086;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .job p {
+      font-size: 13px;
+      line-height: 1.55;
+      color: #385062;
+    }
+    .stack {
+      display: grid;
+      gap: 8px;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #dbe8f4;
+      border-radius: 10px;
+      padding: 10px 11px;
+    }
+    .card h3 {
+      font-size: 12px;
+      color: #1c4f73;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .card p {
+      font-size: 13px;
+      line-height: 1.55;
+      color: #41596d;
+    }
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+    .skill {
+      border: 1px solid #c9dceb;
+      background: #ffffff;
+      color: #2e5873;
+      font-size: 12px;
+      border-radius: 999px;
+      padding: 4px 10px;
+    }
+    @media (max-width: 820px) {
+      .layout { grid-template-columns: 1fr; }
+      .right { border-left: 0; border-top: 1px solid #dfeaf5; }
+    }
+  </style>
+</head>
+<body>
+  <div class="resume">
+    <header class="hero">
+      <h1>Tiffany Giroux</h1>
+      <div class="role">Freight and Logistics Analyst</div>
+      <div class="meta">Orlando, Florida 27267 | +1 (555) 249-8810 | tiffany.giroux@email.com</div>
+    </header>
+
+    <div class="layout">
+      <section class="left">
+        <div class="section">
+          <h2>Profile</h2>
+          <p class="summary">
+            Data-driven logistics specialist with experience in freight analytics, distribution planning,
+            and process standardization. Combines operational detail with strategic focus to reduce cost and improve reliability.
+          </p>
+        </div>
+
+        <div class="section">
+          <h2>Professional Experience</h2>
+
+          <article class="job">
+            <div class="head">
+              <div class="title">Freight Audit and Logistics Analyst</div>
+              <div class="date">Jul 2014 - Present</div>
+            </div>
+            <div class="org">Ford, Dennis, USA</div>
+            <p>Owned freight invoice audit and data analysis workflows, identifying process bottlenecks and savings opportunities.</p>
+          </article>
+
+          <article class="job">
+            <div class="head">
+              <div class="title">Senior Logistics Business Analyst</div>
+              <div class="date">May 2012 - Jun 2014</div>
+            </div>
+            <div class="org">Honda, Christina, USA</div>
+            <p>Prepared monthly operational metrics, cost forecasts, and strategic recommendations on routing and carrier utilization.</p>
+          </article>
+
+          <article class="job">
+            <div class="head">
+              <div class="title">Senior Logistics Coordinator</div>
+              <div class="date">May 2011 - May 2012</div>
+            </div>
+            <div class="org">Honda, Christina, USA</div>
+            <p>Coordinated logistics operations and implemented workflow changes that saved more than 50 man-hours each month.</p>
+          </article>
+        </div>
+      </section>
+
+      <aside class="right">
+        <div class="section">
+          <h2>Skills</h2>
+          <div class="skills">
+            <span class="skill">Freight Audit</span>
+            <span class="skill">Logistics KPI</span>
+            <span class="skill">Forecasting</span>
+            <span class="skill">Budget Control</span>
+            <span class="skill">Process Design</span>
+            <span class="skill">SAP</span>
+            <span class="skill">SQL</span>
+            <span class="skill">Power BI</span>
+          </div>
+        </div>
+
+        <div class="section stack">
+          <div class="card">
+            <h3>Education</h3>
+            <p><strong>Postgraduate Diploma, Management Studies</strong><br />Sep 2009 - Sep 2010</p>
+            <p style="margin-top: 8px;"><strong>University of Hertfordshire, Bedford</strong><br />Sep 2007 - Sep 2009</p>
+          </div>
+
+          <div class="card">
+            <h3>Key Achievement</h3>
+            <p>Improved freight process efficiency and delivered 13% cost reduction through audit and optimization initiatives.</p>
+          </div>
+
+          <div class="card">
+            <h3>Certification</h3>
+            <p>Lean Operations Fundamentals, Data Analytics for Supply Chain</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

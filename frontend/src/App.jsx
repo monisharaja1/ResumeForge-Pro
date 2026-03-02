@@ -1,8 +1,33 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 
-const API_ROOTS = ['http://127.0.0.1:5000/api', '/api']
-const CATALOG_ROOTS = ['/templates_catalog.json', 'http://127.0.0.1:5000/templates_catalog.json']
+const trimTrailingSlash = (v) => String(v || '').trim().replace(/\/+$/, '')
+const unique = (arr) => [...new Set(arr.filter(Boolean))]
+const HOSTNAME = typeof window !== 'undefined' ? window.location.hostname : ''
+const ORIGIN = typeof window !== 'undefined' ? trimTrailingSlash(window.location.origin) : ''
+const IS_LOCAL_HOST = HOSTNAME === 'localhost' || HOSTNAME === '127.0.0.1' || HOSTNAME === '::1'
+const ENV_API_BASE_RAW = trimTrailingSlash(import.meta.env.VITE_API_BASE || '')
+const ENV_API_ROOT = ENV_API_BASE_RAW
+  ? (ENV_API_BASE_RAW.endsWith('/api') ? ENV_API_BASE_RAW : `${ENV_API_BASE_RAW}/api`)
+  : ''
+const ENV_BACKEND_ROOT = ENV_API_ROOT.endsWith('/api')
+  ? ENV_API_ROOT.slice(0, -4)
+  : ENV_API_ROOT
+
+const API_ROOTS = unique([
+  ENV_API_ROOT,
+  ORIGIN ? `${ORIGIN}/api` : '',
+  IS_LOCAL_HOST ? 'http://127.0.0.1:5000/api' : '',
+  IS_LOCAL_HOST ? 'http://localhost:5000/api' : '',
+])
+
+const CATALOG_ROOTS = unique([
+  '/templates_catalog.json',
+  ENV_BACKEND_ROOT ? `${ENV_BACKEND_ROOT}/templates_catalog.json` : '',
+  IS_LOCAL_HOST ? 'http://127.0.0.1:5000/templates_catalog.json' : '',
+  IS_LOCAL_HOST ? 'http://localhost:5000/templates_catalog.json' : '',
+])
+const GOOGLE_TEMPLATE_QUERY = String(import.meta.env.VITE_GOOGLE_TEMPLATE_QUERY || 'resume template').trim()
 const STEP_LABELS = ['Templates', 'Details', 'AI', 'Review']
 
 const TEMPLATE_CHOICES = [
@@ -63,7 +88,12 @@ const TEMPLATE_VISUALS = {
   contemporary_photo: { tone: 'photo', badge: 'Photo' },
 }
 
-const FLASK_ASSET_BASES = ['http://127.0.0.1:5000', 'http://localhost:5000']
+const FLASK_ASSET_BASES = unique([
+  ENV_BACKEND_ROOT,
+  IS_LOCAL_HOST ? 'http://127.0.0.1:5000' : '',
+  IS_LOCAL_HOST ? 'http://localhost:5000' : '',
+  ORIGIN,
+])
 
 const TEMPLATE_THUMB_VARIANT = {
   modern: 'modern',
@@ -319,6 +349,12 @@ const parsePipe = (line, n) => {
   return parts
 }
 
+const templateDedupKey = (item) =>
+  String(
+    item?.id
+    || `${item?.name || ''}|${item?.settings?.template || ''}|${item?.html_template || ''}`,
+  ).trim().toLowerCase()
+
 const expRowsToText = (rows) =>
   (rows || [])
     .map((x) => [x.job_title, x.company, x.start_date, x.end_date, x.description].map((v) => (v || '').trim()).join(' | '))
@@ -401,19 +437,26 @@ export default function App() {
     return `data:image/png;base64,${form.profile_pic}`
   }
 
-  function templateThumb(item) {
-    const toAbsoluteAsset = (rawPath) => {
-      const p = String(rawPath || '').trim()
-      if (!p) return ''
-      if (p.startsWith('http://') || p.startsWith('https://') || p.startsWith('data:')) return p
-      if (!p.startsWith('/')) return p
-      if (typeof window !== 'undefined' && (window.location.port === '5173' || window.location.port === '5174')) {
-        return `${FLASK_ASSET_BASES[0]}${p}`
-      }
-      return p
+  function toAbsoluteServerPath(rawPath) {
+    const p = String(rawPath || '').trim()
+    if (!p) return ''
+    if (p.startsWith('http://') || p.startsWith('https://') || p.startsWith('data:')) return p
+    if (!p.startsWith('/')) return p
+    if (ENV_BACKEND_ROOT) return `${ENV_BACKEND_ROOT}${p}`
+    if (typeof window !== 'undefined' && (window.location.port === '5173' || window.location.port === '5174')) {
+      return `${FLASK_ASSET_BASES[0]}${p}`
     }
+    return p
+  }
 
-    if (item?.thumbnail) return toAbsoluteAsset(item.thumbnail)
+  function openHtmlTemplate(item) {
+    const url = toAbsoluteServerPath(item?.html_template || '')
+    if (!url) return
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
+
+  function templateThumb(item) {
+    if (item?.thumbnail) return toAbsoluteServerPath(item.thumbnail)
     const key = String(item?.settings?.template || item?.id || '').toLowerCase()
     if (EMBEDDED_TEMPLATE_THUMBS[key]) return EMBEDDED_TEMPLATE_THUMBS[key]
     return EMBEDDED_TEMPLATE_THUMBS.modern
@@ -547,13 +590,38 @@ export default function App() {
     }
   }
 
+  async function fetchGoogleTemplates() {
+    try {
+      const q = encodeURIComponent(GOOGLE_TEMPLATE_QUERY || 'resume template')
+      const r = await apiFetch(`/google-templates?q=${q}&limit=8`)
+      if (!r.ok) return []
+      const d = await r.json()
+      return Array.isArray(d?.templates) ? d.templates : []
+    } catch {
+      return []
+    }
+  }
+
   async function fetchTemplates() {
     try {
       const r = await smartFetch(CATALOG_ROOTS)
       if (!r.ok) throw new Error('Template catalog load failed')
       const d = await r.json()
-      const arr = Array.isArray(d) && d.length ? d : FALLBACK_CATALOG
-      setTemplates(arr)
+      const catalog = Array.isArray(d) && d.length ? d : FALLBACK_CATALOG
+      const googleTemplates = await fetchGoogleTemplates()
+      if (!googleTemplates.length) {
+        setTemplates(catalog)
+        return
+      }
+      const merged = [...catalog]
+      const seen = new Set(catalog.map((t) => templateDedupKey(t)))
+      for (const item of googleTemplates) {
+        const key = templateDedupKey(item)
+        if (!key || seen.has(key)) continue
+        seen.add(key)
+        merged.push(item)
+      }
+      setTemplates(merged)
     } catch {
       setTemplates(FALLBACK_CATALOG)
     }
@@ -987,7 +1055,7 @@ export default function App() {
     <div className={`app-shell theme-${theme}`}>
       <header className="topbar card">
         <div>
-          <h1>ResumeForge React</h1>
+          <h1>ResumeForge</h1>
           <p>Professional Resume Builder</p>
         </div>
         <div className="top-actions">
@@ -1081,6 +1149,18 @@ export default function App() {
                           >
                             Preview
                           </button>
+                          {t?.html_template ? (
+                            <button
+                              type="button"
+                              className="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                openHtmlTemplate(t)
+                              }}
+                            >
+                              Open HTML
+                            </button>
+                          ) : null}
                         </div>
                       </button>
                     )
@@ -1319,6 +1399,14 @@ export default function App() {
               {previewTemplate.category || 'General'} | {previewTemplate.mood || 'Balanced'} | {previewTemplate.tagline || 'Styled design'}
             </p>
             <div className="tpl-modal-actions">
+              {previewTemplate?.html_template ? (
+                <button
+                  type="button"
+                  onClick={() => openHtmlTemplate(previewTemplate)}
+                >
+                  Open HTML
+                </button>
+              ) : null}
               <button
                 type="button"
                 className="primary"

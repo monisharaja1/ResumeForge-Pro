@@ -801,6 +801,27 @@ h2{
   font-size:13px;
   outline:none;
 }
+.field.password-field input{padding-right:36px}
+.field.password-field .toggle-pass{
+  position:absolute;
+  right:2px;
+  top:4px;
+  width:26px;
+  height:26px;
+  border:none;
+  padding:0;
+  margin:0;
+  min-width:0;
+  border-radius:50%;
+  background:transparent;
+  color:rgba(233,244,255,0.95);
+  font-size:13px;
+  line-height:1;
+  cursor:pointer;
+}
+.field.password-field .toggle-pass:hover{
+  background:rgba(255,255,255,0.16);
+}
 .field input::placeholder{
   color:rgba(225,240,255,0.7);
   font-style:italic;
@@ -871,9 +892,10 @@ button:hover{
 <span class="icon">&#128100;</span>
 <input name="username" placeholder="Username" autocomplete="username" required />
 </div>
-<div class="field">
+<div class="field password-field">
 <span class="icon">&#128274;</span>
-<input name="password" type="password" placeholder="Password" autocomplete="current-password" required />
+<input id="password-field" name="password" type="password" placeholder="Password" autocomplete="current-password" required />
+<button id="toggle-password" class="toggle-pass" type="button" aria-label="Show password" aria-pressed="false">&#128065;</button>
 </div>
 <div class="meta">
 <label><input type="checkbox" name="remember" /> Remember me</label>
@@ -882,6 +904,20 @@ button:hover{
 <button type="submit">Login</button>
 </form>
 <p class="footer">Don't have an account? <a href="/register">Register now</a><a class="admin-link" href="/admin/login">Admin login</a></p>
+<script>
+(function () {
+  const input = document.getElementById("password-field");
+  const toggle = document.getElementById("toggle-password");
+  if (!input || !toggle) return;
+  toggle.addEventListener("click", function () {
+    const hidden = input.type === "password";
+    input.type = hidden ? "text" : "password";
+    toggle.setAttribute("aria-label", hidden ? "Hide password" : "Show password");
+    toggle.setAttribute("aria-pressed", hidden ? "true" : "false");
+    toggle.innerHTML = hidden ? "&#128584;" : "&#128065;";
+  });
+})();
+</script>
 </div></body></html>
 """, error=error)
 

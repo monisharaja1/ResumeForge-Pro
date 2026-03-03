@@ -759,6 +759,26 @@ h2{margin:0 0 14px 0;font-size:32px;color:#0f172a}
 .box h1,.box h2{display:none !important}
 input,button{width:100%;padding:12px 13px;margin:8px 0;border-radius:10px}
 input{border:1px solid #cbd5e1;background:#f8fafc}
+.password-wrap{position:relative;margin:8px 0}
+.password-wrap input{margin:0;padding-right:44px}
+.password-wrap .toggle-pass{
+  position:absolute;
+  right:8px;
+  top:50%;
+  transform:translateY(-50%);
+  width:30px;
+  height:30px;
+  margin:0;
+  padding:0;
+  border:none;
+  border-radius:8px;
+  background:transparent;
+  color:#475569;
+  font-size:16px;
+  line-height:1;
+  cursor:pointer;
+}
+.password-wrap .toggle-pass:hover{background:#e2e8f0;color:#0f172a}
 button{background:#0f766e;color:#fff;border:none;font-weight:700}
 button:hover{background:#0b5f58}
 a{display:block;margin-top:10px;text-align:center;color:#0f3b66;text-decoration:none}
@@ -768,12 +788,29 @@ a:hover{text-decoration:underline}
 {% if error %}<p style="color:#b91c1c;">{{error}}</p>{% endif %}
 <form method="post">
 <input name="username" placeholder="Username or Email" required />
-<input name="password" type="password" placeholder="Password" required />
+<div class="password-wrap">
+<input id="password-field" name="password" type="password" placeholder="Password" required />
+<button id="toggle-password" class="toggle-pass" type="button" aria-label="Show password" aria-pressed="false">👁</button>
+</div>
 <button type="submit">Login</button>
 </form>
 <a href="/register">Create account</a>
 <a href="/forgot-password">Forgot password</a>
 <a href="/admin/login">Admin login</a>
+<script>
+(function () {
+  const input = document.getElementById("password-field");
+  const toggle = document.getElementById("toggle-password");
+  if (!input || !toggle) return;
+  toggle.addEventListener("click", function () {
+    const isHidden = input.type === "password";
+    input.type = isHidden ? "text" : "password";
+    toggle.textContent = isHidden ? "🙈" : "👁";
+    toggle.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
+    toggle.setAttribute("aria-pressed", isHidden ? "true" : "false");
+  });
+})();
+</script>
 </div></body></html>
 """, error=error)
 

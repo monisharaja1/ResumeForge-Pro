@@ -735,7 +735,7 @@ def login():
             session["last_activity_utc"] = _utc_now_iso()
             return redirect(url_for("index"))
     return render_template_string("""
-<!doctype html><html><head><title>Login</title>
+<!doctype html><html><head><title>ResumeForge Pro</title>
 <style>
 body{
   font-family:Arial,Helvetica,sans-serif;
@@ -756,6 +756,7 @@ body{
   box-shadow:0 18px 42px rgba(15,23,42,0.12);
 }
 h2{margin:0 0 14px 0;font-size:32px;color:#0f172a}
+.box h1,.box h2{display:none !important}
 input,button{width:100%;padding:12px 13px;margin:8px 0;border-radius:10px}
 input{border:1px solid #cbd5e1;background:#f8fafc}
 button{background:#0f766e;color:#fff;border:none;font-weight:700}
@@ -763,7 +764,7 @@ button:hover{background:#0b5f58}
 a{display:block;margin-top:10px;text-align:center;color:#0f3b66;text-decoration:none}
 a:hover{text-decoration:underline}
 </style>
-</head><body><div class="box"><h2>Login</h2>
+</head><body><div class="box">
 {% if error %}<p style="color:#b91c1c;">{{error}}</p>{% endif %}
 <form method="post">
 <input name="username" placeholder="Username or Email" required />

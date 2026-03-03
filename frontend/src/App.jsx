@@ -387,6 +387,9 @@ export default function App() {
   const [resumes, setResumes] = useState([])
   const [selectedResumeId, setSelectedResumeId] = useState('')
   const [pdfPreviewUrl, setPdfPreviewUrl] = useState('')
+  const [isMobileViewport, setIsMobileViewport] = useState(() => (
+    typeof window !== 'undefined' ? window.innerWidth <= 900 : false
+  ))
   const [previewTemplate, setPreviewTemplate] = useState(null)
   const [uploadingPhoto, setUploadingPhoto] = useState(false)
   const [userProfile, setUserProfile] = useState(EMPTY_USER_PROFILE)
@@ -426,6 +429,10 @@ export default function App() {
     if (parts.length === 1) return parts[0][0].toUpperCase()
     return `${parts[0][0] || ''}${parts[1][0] || ''}`.toUpperCase()
   }, [userProfile.display_name, form.full_name])
+  const pdfEmbedSrc = useMemo(
+    () => (pdfPreviewUrl ? `${pdfPreviewUrl}#toolbar=0&navpanes=0&view=FitH` : ''),
+    [pdfPreviewUrl],
+  )
 
   const setField = (k, v) => setForm((p) => ({ ...p, [k]: v }))
   const setCfgField = (k, v) => setCfgState((p) => ({ ...p, [k]: v }))
@@ -830,6 +837,11 @@ export default function App() {
     }
   }
 
+  function openPreviewInNewTab() {
+    if (!pdfPreviewUrl) return
+    window.open(pdfPreviewUrl, '_blank', 'noopener,noreferrer')
+  }
+
   async function uploadProfilePhoto(file) {
     try {
       setUploadingPhoto(true)
@@ -1087,6 +1099,13 @@ export default function App() {
   useEffect(() => () => {
     if (pdfPreviewUrl) URL.revokeObjectURL(pdfPreviewUrl)
   }, [pdfPreviewUrl])
+
+  useEffect(() => {
+    const onResize = () => setIsMobileViewport(window.innerWidth <= 900)
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   return (
     <div className={`app-shell theme-${theme}`}>
@@ -1406,7 +1425,23 @@ export default function App() {
                 <button type="button" onClick={() => exportPdf().catch((e) => setMessage(e.message || 'PDF failed'))}>Download PDF</button>
               </div>
               <div className={`pdf-preview-wrap ${pdfPreviewUrl ? 'show' : ''}`}>
-                {pdfPreviewUrl ? <iframe src={pdfPreviewUrl} title="PDF Preview" /> : <p className="muted">Click Live PDF Preview to load.</p>}
+                {pdfPreviewUrl ? (
+                  <>
+                    <div className="pdf-preview-toolbar">
+                      <button type="button" onClick={openPreviewInNewTab}>Open Fullscreen</button>
+                      <button type="button" onClick={() => exportPdf().catch((e) => setMessage(e.message || 'PDF failed'))}>Download Fresh PDF</button>
+                    </div>
+                    {isMobileViewport ? (
+                      <p className="muted pdf-mobile-note">
+                        Mobile browsers may not render inline PDF preview reliably. Use Open Fullscreen for a stable view.
+                      </p>
+                    ) : (
+                      <object data={pdfEmbedSrc} type="application/pdf" className="pdf-preview-frame">
+                        <iframe src={pdfEmbedSrc} title="PDF Preview" className="pdf-preview-frame" />
+                      </object>
+                    )}
+                  </>
+                ) : <p className="muted">Click Live PDF Preview to load.</p>}
               </div>
             </>
           ) : null}

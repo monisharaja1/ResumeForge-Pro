@@ -1213,13 +1213,151 @@ def admin_login():
         err = "Invalid admin password."
     return render_template_string("""
 <!doctype html><html><head><title>Admin Login</title>
-<style>body{font-family:Arial;margin:40px;background:#f3f4f6}.box{max-width:420px;margin:auto;background:#fff;padding:20px;border:1px solid #ddd;border-radius:10px}input,button{width:100%;padding:10px;margin:8px 0}button{background:#1e3a5f;color:#fff;border:none;border-radius:6px}</style>
-</head><body><div class="box"><h2>Admin Login</h2>
-{% if err %}<p style="color:#b91c1c;">{{err}}</p>{% endif %}
+<style>
+body{
+  font-family:"Segoe UI",Arial,Helvetica,sans-serif;
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(180deg,#1aa9d3 0%,#346dc4 52%,#3a4eb4 100%);
+}
+.box{
+  width:min(430px,94vw);
+  padding:28px 30px 24px;
+  border-radius:6px;
+  border:1px solid rgba(186,223,255,0.8);
+  background:linear-gradient(180deg,rgba(47,177,226,0.34) 0%,rgba(56,79,184,0.45) 100%);
+  box-shadow:0 14px 28px rgba(7,22,79,0.45), inset 0 0 0 1px rgba(255,255,255,0.14);
+  backdrop-filter:blur(1px);
+}
+.avatar{
+  width:46px;
+  height:46px;
+  margin:0 auto 10px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,0.72);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:18px;
+}
+h2{
+  margin:0 0 18px;
+  text-align:center;
+  color:#f3f8ff;
+  font-weight:500;
+}
+.error{
+  margin:0 0 10px;
+  color:#ffe3e3;
+  font-size:14px;
+  text-align:center;
+}
+.field{
+  position:relative;
+  margin:0 0 16px;
+}
+.field .icon{
+  position:absolute;
+  left:4px;
+  top:9px;
+  color:rgba(236,247,255,0.95);
+  font-size:12px;
+}
+.field input{
+  width:100%;
+  box-sizing:border-box;
+  border:none;
+  border-bottom:1px solid rgba(228,242,255,0.78);
+  background:transparent;
+  color:#ffffff;
+  padding:8px 8px 8px 22px;
+  font-size:13px;
+  outline:none;
+}
+.field input::placeholder{
+  color:rgba(225,240,255,0.7);
+  font-style:italic;
+}
+.field.password-field input{padding-right:36px}
+.field.password-field .toggle-pass{
+  position:absolute;
+  right:2px;
+  top:4px;
+  width:26px;
+  height:26px;
+  border:none;
+  padding:0;
+  margin:0;
+  min-width:0;
+  border-radius:50%;
+  background:transparent;
+  color:rgba(233,244,255,0.95);
+  font-size:13px;
+  line-height:1;
+  cursor:pointer;
+}
+.field.password-field .toggle-pass:hover{
+  background:rgba(255,255,255,0.16);
+}
+button{
+  display:block;
+  margin:6px auto 0;
+  min-width:110px;
+  padding:8px 22px;
+  border:1px solid rgba(225,241,255,0.8);
+  border-radius:2px;
+  background:rgba(8,40,101,0.2);
+  color:#ffffff;
+  cursor:pointer;
+}
+button:hover{background:rgba(8,40,101,0.34)}
+.footer{
+  margin-top:16px;
+  text-align:center;
+  color:rgba(220,237,255,0.78);
+  font-size:13px;
+}
+.footer a{
+  color:rgba(233,244,255,0.95);
+  text-decoration:none;
+}
+.footer a:hover{text-decoration:underline}
+@media (max-width:480px){
+  .box{padding:22px 18px 20px}
+}
+</style>
+</head><body><div class="box">
+<div class="avatar">&#128274;</div>
+<h2>Admin Login</h2>
+{% if err %}<p class="error">{{err}}</p>{% endif %}
 <form method="post">
-<input name="password" type="password" placeholder="Admin password" required />
+<div class="field password-field">
+<span class="icon">&#128274;</span>
+<input id="admin-password" name="password" type="password" placeholder="Admin password" autocomplete="current-password" required />
+<button id="toggle-admin-password" class="toggle-pass" type="button" aria-label="Show password" aria-pressed="false">&#128065;</button>
+</div>
 <button type="submit">Login</button>
-</form></div></body></html>
+</form>
+<p class="footer"><a href="/login">Back to user login</a></p>
+<script>
+(function () {
+  const input = document.getElementById("admin-password");
+  const toggle = document.getElementById("toggle-admin-password");
+  if (!input || !toggle) return;
+  toggle.addEventListener("click", function () {
+    const hidden = input.type === "password";
+    input.type = hidden ? "text" : "password";
+    toggle.setAttribute("aria-label", hidden ? "Hide password" : "Show password");
+    toggle.setAttribute("aria-pressed", hidden ? "true" : "false");
+    toggle.innerHTML = hidden ? "&#128584;" : "&#128065;";
+  });
+})();
+</script>
+</div></body></html>
 """, err=err)
 
 

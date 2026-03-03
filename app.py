@@ -738,79 +738,150 @@ def login():
 <!doctype html><html><head><title>ResumeForge Pro</title>
 <style>
 body{
-  font-family:Arial,Helvetica,sans-serif;
+  font-family:"Segoe UI",Arial,Helvetica,sans-serif;
   margin:0;
   min-height:100vh;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:24px;
-  background:linear-gradient(140deg,#dbeafe 0%,#cffafe 48%,#ecfeff 100%);
+  padding:20px;
+  background:linear-gradient(180deg,#1aa9d3 0%,#346dc4 52%,#3a4eb4 100%);
 }
 .box{
-  width:min(560px,92vw);
-  background:#fff;
-  padding:34px 30px;
-  border:1px solid #bfdbfe;
-  border-radius:16px;
-  box-shadow:0 18px 42px rgba(15,23,42,0.12);
+  width:min(430px,94vw);
+  padding:28px 30px 24px;
+  border-radius:6px;
+  border:1px solid rgba(186,223,255,0.8);
+  background:linear-gradient(180deg,rgba(47,177,226,0.34) 0%,rgba(56,79,184,0.45) 100%);
+  box-shadow:0 14px 28px rgba(7,22,79,0.45), inset 0 0 0 1px rgba(255,255,255,0.14);
+  backdrop-filter:blur(1px);
 }
-h2{margin:0 0 14px 0;font-size:32px;color:#0f172a}
-.box h1,.box h2{display:none !important}
-input,button{width:100%;padding:12px 13px;margin:8px 0;border-radius:10px}
-input{border:1px solid #cbd5e1;background:#f8fafc}
-.password-wrap{position:relative;margin:8px 0}
-.password-wrap input{margin:0;padding-right:44px}
-.password-wrap .toggle-pass{
+.avatar{
+  width:46px;
+  height:46px;
+  margin:0 auto 10px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,0.72);
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:18px;
+}
+h2{
+  margin:0 0 18px;
+  text-align:center;
+  color:#f3f8ff;
+  font-weight:500;
+}
+.error{
+  margin:0 0 10px;
+  color:#ffe3e3;
+  font-size:14px;
+  text-align:center;
+}
+.field{
+  position:relative;
+  margin:0 0 16px;
+}
+.field .icon{
   position:absolute;
-  right:8px;
-  top:50%;
-  transform:translateY(-50%);
-  width:30px;
-  height:30px;
-  margin:0;
-  padding:0;
+  left:4px;
+  top:9px;
+  color:rgba(236,247,255,0.95);
+  font-size:12px;
+}
+.field input{
+  width:100%;
+  box-sizing:border-box;
   border:none;
-  border-radius:8px;
+  border-bottom:1px solid rgba(228,242,255,0.78);
   background:transparent;
-  color:#475569;
-  font-size:16px;
-  line-height:1;
+  color:#ffffff;
+  padding:8px 8px 8px 22px;
+  font-size:13px;
+  outline:none;
+}
+.field input::placeholder{
+  color:rgba(225,240,255,0.7);
+  font-style:italic;
+}
+.meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  margin:8px 0 18px;
+  color:rgba(233,244,255,0.9);
+  font-size:12px;
+}
+.meta label{
+  display:flex;
+  align-items:center;
+  gap:6px;
   cursor:pointer;
 }
-.password-wrap .toggle-pass:hover{background:#e2e8f0;color:#0f172a}
-button{background:#0f766e;color:#fff;border:none;font-weight:700}
-button:hover{background:#0b5f58}
-a{display:block;margin-top:10px;text-align:center;color:#0f3b66;text-decoration:none}
-a:hover{text-decoration:underline}
+.meta input[type="checkbox"]{
+  accent-color:#d9ecff;
+}
+.meta a{
+  color:rgba(233,244,255,0.95);
+  text-decoration:none;
+}
+.meta a:hover{text-decoration:underline}
+button{
+  display:block;
+  margin:0 auto;
+  min-width:110px;
+  padding:8px 22px;
+  border:1px solid rgba(225,241,255,0.8);
+  border-radius:2px;
+  background:rgba(8,40,101,0.2);
+  color:#ffffff;
+  cursor:pointer;
+}
+button:hover{
+  background:rgba(8,40,101,0.34);
+}
+.footer{
+  margin-top:16px;
+  text-align:center;
+  color:rgba(220,237,255,0.74);
+  font-size:13px;
+}
+.footer a{
+  color:rgba(233,244,255,0.95);
+  text-decoration:none;
+}
+.footer a:hover{text-decoration:underline}
+.admin-link{
+  display:block;
+  margin-top:8px;
+  font-size:12px;
+}
+@media (max-width:480px){
+  .box{padding:22px 18px 20px}
+}
 </style>
 </head><body><div class="box">
-{% if error %}<p style="color:#b91c1c;">{{error}}</p>{% endif %}
+<div class="avatar">&#128100;</div>
+<h2>Sign in</h2>
+{% if error %}<p class="error">{{error}}</p>{% endif %}
 <form method="post">
-<input name="username" placeholder="Username or Email" required />
-<div class="password-wrap">
-<input id="password-field" name="password" type="password" placeholder="Password" required />
-<button id="toggle-password" class="toggle-pass" type="button" aria-label="Show password" aria-pressed="false">👁</button>
+<div class="field">
+<span class="icon">&#128100;</span>
+<input name="username" placeholder="Username" autocomplete="username" required />
+</div>
+<div class="field">
+<span class="icon">&#128274;</span>
+<input name="password" type="password" placeholder="Password" autocomplete="current-password" required />
+</div>
+<div class="meta">
+<label><input type="checkbox" name="remember" /> Remember me</label>
+<a href="/forgot-password">Forgot password?</a>
 </div>
 <button type="submit">Login</button>
 </form>
-<a href="/register">Create account</a>
-<a href="/forgot-password">Forgot password</a>
-<a href="/admin/login">Admin login</a>
-<script>
-(function () {
-  const input = document.getElementById("password-field");
-  const toggle = document.getElementById("toggle-password");
-  if (!input || !toggle) return;
-  toggle.addEventListener("click", function () {
-    const isHidden = input.type === "password";
-    input.type = isHidden ? "text" : "password";
-    toggle.textContent = isHidden ? "🙈" : "👁";
-    toggle.setAttribute("aria-label", isHidden ? "Hide password" : "Show password");
-    toggle.setAttribute("aria-pressed", isHidden ? "true" : "false");
-  });
-})();
-</script>
+<p class="footer">Don't have an account? <a href="/register">Register now</a><a class="admin-link" href="/admin/login">Admin login</a></p>
 </div></body></html>
 """, error=error)
 

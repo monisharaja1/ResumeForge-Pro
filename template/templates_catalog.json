@@ -42,6 +42,27 @@
     ]
   },
   {
+    "id": "blank-canvas",
+    "name": "Blank Canvas",
+    "category": "Minimal",
+    "preview_variant": "minimal",
+    "mood": "Neutral",
+    "tagline": "Plain layout for full customization",
+    "canva_query": "blank resume template",
+    "settings": {
+      "template": "blank",
+      "accent": "#111111",
+      "font": "Helvetica",
+      "pageSize": "letter",
+      "compactMode": false
+    },
+    "palette": [
+      "#111111",
+      "#f3f4f6",
+      "#ffffff"
+    ]
+  },
+  {
     "id": "corp-royal",
     "name": "Royal Corporate",
     "category": "Corporate",
@@ -876,3 +897,4 @@
     "html_template": "/html-templates/creative_grid_resume.html"
   }
 ]
+

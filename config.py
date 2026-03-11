@@ -1,4 +1,4 @@
-﻿"""Configuration and templates for ResumeBuilder."""
+"""Configuration and templates for ResumeBuilder."""
 
 import os
 from typing import Any, Dict
@@ -19,7 +19,7 @@ class AppConfig:
     # PDF templates used by pdf_generator.py
     TEMPLATES: Dict[str, Dict[str, Any]] = {
 
-        # ðŸ”¥ MODERN PREMIUM TEMPLATE
+        # 🔥 MODERN PREMIUM TEMPLATE
         "modern": {
             "name": "Modern Premium",
             "font_heading": "Helvetica-Bold",
@@ -228,6 +228,30 @@ class AppConfig:
             "references_two_column": False,
         },
 
+        # BLANK TEMPLATE - neutral base for custom styling
+        "blank": {
+            "name": "Blank Canvas",
+            "font_heading": "Helvetica-Bold",
+            "font_body": "Helvetica",
+            "font_size_title": 24,
+            "font_size_heading": 12,
+            "font_size_body": 10,
+            "accent": "#111111",
+            "background": "#ffffff",
+            "section_border": False,
+            "layout": "single",
+            "heading_align": "left",
+            "body_align": "left",
+            "bullet": "-",
+            "show_date_on_right": True,
+            "date_format": "{start} - {end}",
+            "spacing": 12,
+            "border_radius": 0,
+            "page_border": False,
+            "contact_icons": False,
+            "education_table": False,
+            "references_two_column": False,
+        },
         # CLEAN TWO-COLUMN - inspired by minimalist profile layout
         "javid_split": {
             "name": "Javid Split",
@@ -254,7 +278,7 @@ class AppConfig:
             "references_two_column": False,
         },
 
-        # à®ªà¯à®¤à®¿à®¯ à®Ÿà¯†à®®à¯à®ªà¯à®³à¯‡à®Ÿà¯: TEAL MODERN
+        # புதிய டெம்ப்ளேட்: TEAL MODERN
         "teal_modern": {
             "name": "Teal Modern",
             "font_heading": "Helvetica-Bold",
@@ -262,13 +286,13 @@ class AppConfig:
             "font_size_title": 28,
             "font_size_heading": 13,
             "font_size_body": 10,
-            "accent": "#008080",       # à®Ÿà¯€à®²à¯ (Teal) à®¨à®¿à®±à®®à¯
+            "accent": "#008080",       # டீல் (Teal) நிறம்
             "background": "#ffffff",
-            "section_border": False,    # à®¤à®²à¯ˆà®ªà¯à®ªà¯à®•à¯à®•à¯ à®•à¯€à®´à¯‡ à®•à¯‹à®Ÿà¯
+            "section_border": False,    # தலைப்புக்கு கீழே கோடு
             "layout": "single",
             "heading_align": "left",
             "body_align": "left",
-            "bullet": "-",             # à®ªà¯à®²à¯à®²à®Ÿà¯ à®¸à¯à®Ÿà¯ˆà®²à¯
+            "bullet": "-",             # புல்லட் ஸ்டைல்
             "show_date_on_right": True,
             "date_format": "{start} | {end}",
             "spacing": 13,
@@ -493,4 +517,5 @@ AppConfig.TEMPLATES = {
 
 # Ensure backup directory exists
 os.makedirs(AppConfig.BACKUP_DIR, exist_ok=True)
+
 

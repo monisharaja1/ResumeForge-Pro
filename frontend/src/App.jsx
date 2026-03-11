@@ -32,7 +32,7 @@ const STEP_LABELS = ['Templates', 'PDF Settings', 'Details', 'AI', 'Review']
 
 const TEMPLATE_CHOICES = [
   'modern', 'corporate', 'classic', 'compact', 'executive', 'snack_gray', 'vision_blue',
-  'harsh_minimal', 'javid_split', 'teal_modern', 'astra_clean', 'metro_sidebar',
+  'harsh_minimal', 'blank', 'javid_split', 'teal_modern', 'astra_clean', 'metro_sidebar',
   'executive_slate', 'creative_split', 'mono_compact', 'classic_clarity', 'impact_panel',
   'contemporary_photo',
 ]
@@ -55,6 +55,7 @@ const TEMPLATE_THUMB_BY_NAME = {
   snack_gray: '#ea580c',
   vision_blue: '#2563eb',
   harsh_minimal: '#1f2937',
+  blank: '#111827',
   javid_split: '#6b7280',
   teal_modern: '#0d9488',
   astra_clean: '#0f766e',
@@ -76,6 +77,7 @@ const TEMPLATE_VISUALS = {
   snack_gray: { tone: 'snack', badge: 'Creative' },
   vision_blue: { tone: 'vision', badge: 'Academic' },
   harsh_minimal: { tone: 'minimal', badge: 'Minimal' },
+  blank: { tone: 'minimal', badge: 'Blank' },
   javid_split: { tone: 'split', badge: 'Two-Column' },
   teal_modern: { tone: 'teal', badge: 'Fresh' },
   astra_clean: { tone: 'astra', badge: 'ATS Friendly' },
@@ -104,6 +106,7 @@ const TEMPLATE_THUMB_VARIANT = {
   snack_gray: 'creative',
   vision_blue: 'modern',
   harsh_minimal: 'minimal',
+  blank: 'minimal',
   javid_split: 'sidebar',
   teal_modern: 'modern',
   astra_clean: 'minimal',
@@ -1528,3 +1531,4 @@ export default function App() {
     </div>
   )
 }
+

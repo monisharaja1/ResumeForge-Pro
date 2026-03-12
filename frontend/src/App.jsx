@@ -37,6 +37,22 @@ const TEMPLATE_CHOICES = [
   'contemporary_photo',
 ]
 
+const FONT_OPTIONS = [
+  { value: 'Helvetica', label: 'Default (Helvetica)' },
+  { value: 'Poppins', label: 'Poppins' },
+  { value: 'Montserrat', label: 'Montserrat' },
+  { value: 'Nunito', label: 'Nunito' },
+  { value: 'FiraSans', label: 'Fira Sans' },
+  { value: 'Times', label: 'Times' },
+  { value: 'Georgia', label: 'Georgia' },
+  { value: 'Lora', label: 'Lora' },
+  { value: 'Merriweather', label: 'Merriweather' },
+  { value: 'RobotoSlab', label: 'Roboto Slab' },
+  { value: 'PlayfairDisplay', label: 'Playfair Display' },
+  { value: 'LibreBaskerville', label: 'Libre Baskerville' },
+  { value: 'Courier', label: 'Courier' },
+]
+
 const FALLBACK_CATALOG = TEMPLATE_CHOICES.map((name) => ({
   id: `tpl-${name}`,
   name: name.replaceAll('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
@@ -1246,9 +1262,9 @@ export default function App() {
                 </select>
                 <label>Font</label>
                 <select value={cfg.font_override} onChange={(e) => setCfgField('font_override', e.target.value)}>
-                  <option value="Helvetica">Default</option>
-                  <option value="Times">Times</option>
-                  <option value="Courier">Courier</option>
+                  {FONT_OPTIONS.map((font) => (
+                    <option key={font.value} value={font.value}>{font.label}</option>
+                  ))}
                 </select>
                 <label>Accent</label><input type="color" value={cfg.accent_color_override} onChange={(e) => setCfgField('accent_color_override', e.target.value)} />
                 <label>Page Layout</label>
@@ -1531,4 +1547,6 @@ export default function App() {
     </div>
   )
 }
+
+
 

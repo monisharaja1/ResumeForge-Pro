@@ -818,6 +818,157 @@
       "#f8fafc"
     ]
   },
+
+  {
+    "id": "sig-nordic-ice",
+    "name": "Nordic Ice",
+    "category": "Signature",
+    "preview_variant": "modern",
+    "mood": "Clean",
+    "tagline": "Crisp modern layout with icy blue accents",
+    "canva_query": "nordic ice resume",
+    "settings": {
+      "template": "modern",
+      "accent": "#0ea5e9",
+      "font": "Poppins",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#0ea5e9",
+      "#e0f2fe",
+      "#f8fafc"
+    ],
+    "thumbnail": "/assets/canva-ice-blue.svg"
+  },
+  {
+    "id": "sig-olive-heritage",
+    "name": "Olive Heritage",
+    "category": "Classic",
+    "preview_variant": "classic",
+    "mood": "Traditional",
+    "tagline": "Serif-forward classic with olive highlights",
+    "canva_query": "olive heritage resume",
+    "settings": {
+      "template": "classic_clarity",
+      "accent": "#365314",
+      "font": "Lora",
+      "pageSize": "a4",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "center",
+      "marginPreset": "wide"
+    },
+    "palette": [
+      "#365314",
+      "#ecfccb",
+      "#fefce8"
+    ],
+    "thumbnail": "/assets/canva-forest-charcoal.svg"
+  },
+  {
+    "id": "sig-berry-slate",
+    "name": "Berry Slate",
+    "category": "Creative",
+    "preview_variant": "creative",
+    "mood": "Bold",
+    "tagline": "Two-column creative split with berry accents",
+    "canva_query": "berry slate resume",
+    "settings": {
+      "template": "creative_split",
+      "accent": "#be185d",
+      "font": "Montserrat",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "two_column",
+      "headerLayout": "split",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#be185d",
+      "#fce7f3",
+      "#fdf2f8"
+    ],
+    "thumbnail": "/assets/canva-ruby-panel.svg"
+  },
+  {
+    "id": "sig-graphite-mono",
+    "name": "Graphite Mono",
+    "category": "ATS",
+    "preview_variant": "compact",
+    "mood": "Technical",
+    "tagline": "Monospace ATS-friendly one-page layout",
+    "canva_query": "monospace ats resume",
+    "settings": {
+      "template": "mono_compact",
+      "accent": "#0f172a",
+      "font": "Courier",
+      "pageSize": "letter",
+      "compactMode": true,
+      "pageLayout": "single_column",
+      "headerLayout": "left",
+      "marginPreset": "compact"
+    },
+    "palette": [
+      "#0f172a",
+      "#e2e8f0",
+      "#f8fafc"
+    ],
+    "thumbnail": "/assets/canva-neo-charcoal.svg"
+  },
+  {
+    "id": "sig-midnight-harbor",
+    "name": "Midnight Harbor",
+    "category": "Corporate",
+    "preview_variant": "corporate",
+    "mood": "Professional",
+    "tagline": "Deep navy executive tone with serif balance",
+    "canva_query": "midnight harbor resume",
+    "settings": {
+      "template": "executive_slate",
+      "accent": "#0b3954",
+      "font": "Georgia",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "left",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#0b3954",
+      "#dbeafe",
+      "#f8fafc"
+    ],
+    "thumbnail": "/assets/canva-midnight-navy.svg"
+  },
+  {
+    "id": "sig-ember-ledger",
+    "name": "Ember Ledger",
+    "category": "Classic",
+    "preview_variant": "classic",
+    "mood": "Traditional",
+    "tagline": "Warm serif classic with ember accents",
+    "canva_query": "ember ledger resume",
+    "settings": {
+      "template": "classic",
+      "accent": "#9a3412",
+      "font": "LibreBaskerville",
+      "pageSize": "letter",
+      "compactMode": false,
+      "pageLayout": "single_column",
+      "headerLayout": "default",
+      "marginPreset": "normal"
+    },
+    "palette": [
+      "#9a3412",
+      "#ffedd5",
+      "#fff7ed"
+    ],
+    "thumbnail": "/assets/canva-gold-ink.svg"
+  },
   {
     "id": "html-sidebar-modern",
     "name": "Sidebar Modern (HTML)",
@@ -897,4 +1048,6 @@
     "html_template": "/html-templates/creative_grid_resume.html"
   }
 ]
+
+
 

@@ -1123,7 +1123,7 @@ def _build_settings_tab(self):
     ttk.Label(tab, text="Font:").grid(row=row, column=0, sticky='w', padx=10, pady=5)
     self.font_var = tk.StringVar(value="")
     font_combo = ttk.Combobox(tab, textvariable=self.font_var,
-                              values=["", "Helvetica", "Times", "Courier", "Georgia"],
+                              values=["", "Helvetica", "Poppins", "Montserrat", "Nunito", "FiraSans", "Times", "Georgia", "Lora", "Merriweather", "RobotoSlab", "PlayfairDisplay", "LibreBaskerville", "Courier"],
                               state="readonly", width=15)
     font_combo.grid(row=row, column=1, sticky='w', padx=10, pady=5)
     row += 1
@@ -1235,3 +1235,4 @@ def _build_achievements_tab(self):
     threading.Thread(target=generate, daemon=True).start()
 '''
     
+

@@ -1,5 +1,5 @@
-﻿"""
-Professional PDF Generator â€“ with icons, tables, two-column references, achievements.
+"""
+Professional PDF Generator – with icons, tables, two-column references, achievements.
 """
 import os
 import io
@@ -10,6 +10,8 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT, TA_JUSTIFY
 from reportlab.lib import colors
 from reportlab.lib.units import inch
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
     Image, HRFlowable
@@ -21,6 +23,52 @@ from models import Resume
 
 import logging
 logger = logging.getLogger(__name__)
+
+_CUSTOM_FONTS_REGISTERED = False
+_CUSTOM_FONT_FILES = {
+    "Poppins": ("Poppins-Regular.ttf", "Poppins-Bold.ttf"),
+    "Montserrat": ("Montserrat-Regular.ttf", "Montserrat-Bold.ttf"),
+    "Nunito": ("Nunito-Regular.ttf", "Nunito-Bold.ttf"),
+    "FiraSans": ("FiraSans-Regular.ttf", "FiraSans-Bold.ttf"),
+    "Lora": ("Lora-Regular.ttf", "Lora-Bold.ttf"),
+    "Merriweather": ("Merriweather-Regular.ttf", "Merriweather-Bold.ttf"),
+    "RobotoSlab": ("RobotoSlab-Regular.ttf", "RobotoSlab-Bold.ttf"),
+    "PlayfairDisplay": ("PlayfairDisplay-Regular.ttf", "PlayfairDisplay-Bold.ttf"),
+    "LibreBaskerville": ("LibreBaskerville-Regular.ttf", "LibreBaskerville-Bold.ttf"),
+}
+
+
+def _register_custom_fonts() -> None:
+    global _CUSTOM_FONTS_REGISTERED
+    if _CUSTOM_FONTS_REGISTERED:
+        return
+    font_dir = os.path.join(os.path.dirname(__file__), "template", "assets", "fonts")
+    registered = set(pdfmetrics.getRegisteredFontNames())
+    for family, (regular_file, bold_file) in _CUSTOM_FONT_FILES.items():
+        regular_path = os.path.join(font_dir, regular_file)
+        bold_path = os.path.join(font_dir, bold_file)
+        try:
+            if os.path.exists(regular_path) and family not in registered:
+                pdfmetrics.registerFont(TTFont(family, regular_path))
+                registered.add(family)
+            bold_name = f"{family}-Bold"
+            if os.path.exists(bold_path) and bold_name not in registered:
+                pdfmetrics.registerFont(TTFont(bold_name, bold_path))
+                registered.add(bold_name)
+        except Exception:
+            logger.warning("Failed to register font: %s", family, exc_info=True)
+    _CUSTOM_FONTS_REGISTERED = True
+
+
+def _resolve_custom_font_pair(font_name: str) -> Optional[tuple[str, str]]:
+    if font_name not in _CUSTOM_FONT_FILES:
+        return None
+    body_font = font_name
+    heading_font = f"{font_name}-Bold"
+    registered = set(pdfmetrics.getRegisteredFontNames())
+    if body_font in registered and heading_font in registered:
+        return (body_font, heading_font)
+    return None
 
 
 class PDFGenerator:
@@ -208,7 +256,7 @@ class PDFGenerator:
                 "heading_align": "left",
                 "body_align": "left",
                 "section_border": False,
-                "bullet": "â€¢",
+                "bullet": "•",
                 "header_layout_default": "split",
                 "bg_art": "creative_block",
             },
@@ -232,7 +280,7 @@ class PDFGenerator:
                 "heading_align": "left",
                 "body_align": "left",
                 "section_border": True,
-                "bullet": "â€¢",
+                "bullet": "•",
                 "header_layout_default": "split",
                 "bg_art": "impact_band",
             },
@@ -323,27 +371,32 @@ class PDFGenerator:
         if accent_color_override:
             template_cfg["accent"] = accent_color_override
         if font_override:
-            font_map = {
-                "Helvetica": ("Helvetica", "Helvetica-Bold"),
-                "Times": ("Times-Roman", "Times-Bold"),
-                "Courier": ("Courier", "Courier-Bold"),
-                # Fallback to Times because Georgia is not guaranteed to be registered.
-                "Georgia": ("Times-Roman", "Times-Bold"),
-                # Web/modern names mapped to built-in safe PDF fonts.
-                "Poppins": ("Helvetica", "Helvetica-Bold"),
-                "Montserrat": ("Helvetica", "Helvetica-Bold"),
-                "Nunito": ("Helvetica", "Helvetica-Bold"),
-                "FiraSans": ("Helvetica", "Helvetica-Bold"),
-                "Lora": ("Times-Roman", "Times-Bold"),
-                "Merriweather": ("Times-Roman", "Times-Bold"),
-                "RobotoSlab": ("Times-Roman", "Times-Bold"),
-                "PlayfairDisplay": ("Times-Roman", "Times-Bold"),
-                "LibreBaskerville": ("Times-Roman", "Times-Bold"),
-            }
-            body_font, heading_font = font_map.get(font_override, ("Helvetica", "Helvetica-Bold"))
+            _register_custom_fonts()
+            custom_pair = _resolve_custom_font_pair(font_override)
+            if custom_pair:
+                body_font, heading_font = custom_pair
+            else:
+                font_map = {
+                    "Helvetica": ("Helvetica", "Helvetica-Bold"),
+                    "Times": ("Times-Roman", "Times-Bold"),
+                    "Courier": ("Courier", "Courier-Bold"),
+                    # Fallback to Times because Georgia is not guaranteed to be registered.
+                    "Georgia": ("Times-Roman", "Times-Bold"),
+                    # Web/modern names mapped to built-in safe PDF fonts when custom files are missing.
+                    "Poppins": ("Helvetica", "Helvetica-Bold"),
+                    "Montserrat": ("Helvetica", "Helvetica-Bold"),
+                    "Nunito": ("Helvetica", "Helvetica-Bold"),
+                    "FiraSans": ("Helvetica", "Helvetica-Bold"),
+                    "Lora": ("Times-Roman", "Times-Bold"),
+                    "Merriweather": ("Times-Roman", "Times-Bold"),
+                    "RobotoSlab": ("Times-Roman", "Times-Bold"),
+                    "PlayfairDisplay": ("Times-Roman", "Times-Bold"),
+                    "LibreBaskerville": ("Times-Roman", "Times-Bold"),
+                }
+                body_font, heading_font = font_map.get(font_override, ("Helvetica", "Helvetica-Bold"))
             template_cfg["font_body"] = body_font
             template_cfg["font_heading"] = heading_font
-        if page_border_override is not None:
+if page_border_override is not None:
             template_cfg["page_border"] = page_border_override
 
         # Normalize alignment keys so all templates render consistently.
@@ -1299,7 +1352,7 @@ class PDFGenerator:
             for proj in resume.projects:
                 proj_name = f"{proj.name}"
                 if proj.role:
-                    proj_name += f" â€” {proj.role}"
+                    proj_name += f" — {proj.role}"
                 date_str = _format_date_range(proj.start_date, proj.end_date, False)
                 if proj.start_date or proj.end_date:
                     _append_meta_row(proj_name, date_str)
@@ -1324,7 +1377,7 @@ class PDFGenerator:
             for cert in resume.certifications:
                 cert_name = f"{cert.name}"
                 if cert.issuer:
-                    cert_name += f" â€” {cert.issuer}"
+                    cert_name += f" — {cert.issuer}"
                 if cert.date:
                     _append_meta_row(cert_name, cert.date)
                 else:
@@ -1379,11 +1432,11 @@ class PDFGenerator:
                     if left.company:
                         left_text += f"<br/>{left.company}"
                     if left.phone:
-                        left_text += f"<br/>ðŸ“ž {left.phone}"
+                        left_text += f"<br/>📞 {left.phone}"
                     if left.email:
-                        left_text += f"<br/>ðŸ“§ {left.email}"
+                        left_text += f"<br/>📧 {left.email}"
                     if left.website:
-                        left_text += f"<br/>ðŸŒ {left.website}"
+                        left_text += f"<br/>🌐 {left.website}"
                     row.append(Paragraph(left_text, styles["Body"]))
 
                     # Right reference (if exists)
@@ -1395,11 +1448,11 @@ class PDFGenerator:
                         if right.company:
                             right_text += f"<br/>{right.company}"
                         if right.phone:
-                            right_text += f"<br/>ðŸ“ž {right.phone}"
+                            right_text += f"<br/>📞 {right.phone}"
                         if right.email:
-                            right_text += f"<br/>ðŸ“§ {right.email}"
+                            right_text += f"<br/>📧 {right.email}"
                         if right.website:
-                            right_text += f"<br/>ðŸŒ {right.website}"
+                            right_text += f"<br/>🌐 {right.website}"
                         row.append(Paragraph(right_text, styles["Body"]))
                     else:
                         row.append("")
@@ -1420,16 +1473,16 @@ class PDFGenerator:
                 for ref in resume.references:
                     ref_text = f"{ref.name}"
                     if ref.title:
-                        ref_text += f" â€” {ref.title}"
+                        ref_text += f" — {ref.title}"
                     if ref.company:
                         ref_text += f", {ref.company}"
                     story.append(Paragraph(ref_text, styles["Body"]))
                     if ref.phone:
-                        story.append(Paragraph(f"ðŸ“ž {ref.phone}", styles["Body"]))
+                        story.append(Paragraph(f"📞 {ref.phone}", styles["Body"]))
                     if ref.email:
-                        story.append(Paragraph(f"ðŸ“§ {ref.email}", styles["Body"]))
+                        story.append(Paragraph(f"📧 {ref.email}", styles["Body"]))
                     if ref.website:
-                        story.append(Paragraph(f"ðŸŒ {ref.website}", styles["Body"]))
+                        story.append(Paragraph(f"🌐 {ref.website}", styles["Body"]))
                     story.append(Spacer(1, section_tail_spacing))
 
         # ----- CUSTOM SECTIONS -----
@@ -1450,5 +1503,6 @@ class PDFGenerator:
         # Build the PDF
         doc.build(story, onFirstPage=_draw_page_border, onLaterPages=_draw_page_border)
         return output
+
 
 

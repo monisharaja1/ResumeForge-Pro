@@ -396,7 +396,7 @@ class PDFGenerator:
                 body_font, heading_font = font_map.get(font_override, ("Helvetica", "Helvetica-Bold"))
             template_cfg["font_body"] = body_font
             template_cfg["font_heading"] = heading_font
-if page_border_override is not None:
+        if page_border_override is not None:
             template_cfg["page_border"] = page_border_override
 
         # Normalize alignment keys so all templates render consistently.
@@ -1503,6 +1503,8 @@ if page_border_override is not None:
         # Build the PDF
         doc.build(story, onFirstPage=_draw_page_border, onLaterPages=_draw_page_border)
         return output
+
+
 
 
 

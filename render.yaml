@@ -2,6 +2,7 @@ services:
   - type: web
     name: resumeforge-pro
     runtime: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && cd frontend && npm ci && npm run build
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     healthCheckPath: /api/health
+
